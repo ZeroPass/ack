@@ -9,7 +9,7 @@
 namespace ck::test {
 
     EOSIO_TEST_BEGIN(sha3_256_test)
-        // CAVS 19.0
+        // NIST CAVS 19.0
         // "SHA3-256 ShortMsg" information for "SHA3AllBytes1-28-16"
         // Length values represented in bits
         // Generated on Thu Jan 28 13:32:44 2016
