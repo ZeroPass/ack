@@ -2,6 +2,7 @@
 
 #include "keccak_test.hpp"
 #include "public_key_test.hpp"
+#include "rsa_test.hpp"
 #include "sha2.hpp"
 
 using namespace ck::test;
@@ -22,5 +23,6 @@ int main(int argc, char** argv)
 
     EOSIO_TEST( keccak_test )
     EOSIO_TEST( public_key_test )
+    EOSIO_TEST( rsa_pkcs_1_5_test )
     return has_failed();
 }
