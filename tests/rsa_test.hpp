@@ -24,18 +24,31 @@ namespace ck::test {
         auto r = false; // Result = F
         auto d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA-256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA-256 signature verification failed"
+            );
+        })
 
+        e = "eef211"_hex;
         m = "1e422f898ff258a99bc53648541709b3a3bba5828d36d070b42bec6a2117d6e6403f0d762ce6179d2dc220e180b1e52156a9d0291eed64840787dc91c1f20fda841797a0547b32bb83b668a177276fc4aee64b21fefa391522cc4e7372dc5cd5f2b3152f8e1973aaa48757afc3df7041b35b5e91b5c317cc0be48a38bb3d837f"_hex;
         s = "2e37c8221597f7e2b1970c40a50db5fefde31b1dff1e9b9d6a70b023acb014971580eddf1d67f15d9fbbddfcdf49cda14ccb7516c33b787a3a3fd43d005d02de10f93ffc99585ae5dfaa766c0f1f5bfa62e50e76a059a4a1e814c1ee9836e01595731dce48f94aa1ae36d9c5165a3eb28013fac271e091f7018fe96ec26009c1"_hex;
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
+        e = "eef211"_hex;
         m = "084e3b56d68ea7c99068489e2c8080b9d3eb5ffea1e67eaea9c82af33935c5b960956ac0aec4d0ef3b0b71ecea50ebe9ef89a6c18f77b743279004cd703da91e01459b6516898b9d8ff30e1d3ca9fa6b5786135252cae734d410f6a1fe811627f248166c9645a27b9506665ca7f377e713c8eed97249d628b5314894696bd47f"_hex;
         s = "1b7dfda3e6da9e67ee9f207a9e03559fb5d7ec88f0310ac051e1e0612119214bcb11d1003bb5fbea088354c2a9c3318baa0264f67f0860f17528bfa63ee35f22908caf0e8e57c0ce63b334b747cc1a31ff90cdd550b27a34b05695a39d48e900a5e1ab4ce3f5030d903315a5dadbdbb0ffae04134a74cde2b99b8f8b5305759c"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "990d05"_hex;
         m = "c65f67c4843110ad555134fa8b9ec51dd9c93ff9ad5d96febffd6c95eaed88be3cd584f749c1c561c46bb11e50bd1bfd939202598cbd7c3e274cedce0f0e7ce3c452c8f6edf2d640ef904f1ebe20e8baf4a621e82041324e606942c83275db0b87609b8819cc2c93ff4776c47ece129d238f026e0ef3a07691dcd54bfa2c8b7c"_hex;
@@ -43,6 +56,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "eef211"_hex;
         m = "edf40a32aed24e14439d8db48e80d92c4c11035dedd30d90a4ffde5dba8439cd274cf0bb63c155807a90f2cf5fac7add8297ffc5a4dd642ceae1162031dbf746a2229b3586a7b71d5bc2d6ac27324e320c5f73031de10a1d7046010a74105d0885fe7368be8d5b340fbda2148f183f7213f1c8ddffeae6ab5cb907e32b2b525a"_hex;
@@ -50,12 +68,23 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "eef211"_hex;
         m = "b1bd4eedcbef7c57ecab2aed92cbd60052ddeb201181969a7713d53fa18ad16716a06d36fd341f1e8decffa5c41e1d695cf11861fbbfec65aabe0cf188e0b126bff77111b81d13308b53a232ba68c0ff1e1d3df82186e8802eb3a5bb6690c095950a810764730196d0283b1cda7166ca80a8836eed9e32f2ed3ac925a363a7bf"_hex;
         s = "7a0225a29a5f3e4592843c5c4d543d14ac544a3eeee9dd5e795ffa87c4e16dabaf07ef75363d773d89ca712df7c32010d3ca024ed84a954ff9625390e498d04e2c676f3c51ebf0a46fe22ccbffa53c52f9a292886e6a8b64efe5717c527dfaed41d2290c79c18ab28a96ab5afd2f071689653550a64be24fdb5f90a8014df659"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "8f705d5529b5bf74600abc485bc4bb76deb9627088e51fdd26dd0f37bb3b98a9da4094d275d55011a844884122daf8b4abe99d43d918eb50d9642436647f60577c5f60fb9b810147a910dd7dd610318392dffa3fcc41f89f461bb5be85bf885b672cecf00da3af4d7d90074c4c0144c4bcd2d49145f8097648ec7230747f7033"_hex;
         e = "d90b53"_hex;
@@ -64,6 +93,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "09ffbd"_hex;
         m = "393f6cd3c89e67def9579e586c945fe97d567bae23c54a2e18c5f0903bc9df0b32ec9d9d533ec800c55b57dae2432234e065a52db1fd00ef27a043e35c15e9215167a22bd53856daa9586698e19735d08dd7e7a3996568ddf289b027ea5b467eded903e316371954ec7654fc31389fa7ccd3c978a4a489dec1a6c0c4ae42ff08"_hex;
@@ -71,30 +105,55 @@ namespace ck::test {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
+        e = "09ffbd"_hex;
         m = "036f62daacf68776f409d0595509a596a544b085ec7649687390324e1db78538fa90ea7b1abb0d659f9d50231663bde208433e35cb0510b79ec375f1f6eda97e128f186cd5d7cee6d5d22f10b076e8339fe5251a4df005bce9da4a1b795f566b72f553778652b141be2ed5e8c84a0fcf92b1cdfc183e0fbe7a5e1b9351177248"_hex;
         s = "56c4af89728a322066b8c291b4f03da5a038e4a44ffd9b49be9ee5d1a800da1c58e7a852218eaee853f9695dd308e1a5fd95b41a441c2a6bd124088868fa26f384c9ce87849b2eb5edac55cb95d5dcda7bfffea621b3fa66e6b200ce755b947e778fbae07490410509f5036a07280f943b7300562926cdca3b20097f1ffc24e2"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "09ffbd"_hex;
         m = "8c25bd2bed75a33ac134f9c1d445245fd8e580d6148fae11591c2b65382f271772d0941eb0577d2b748c99e7500c207b56efdd56cfa7852a302b47384956a4cec089810ebe987af0e8e47a8b91c488902d2ae4170983539e3adeb74ed451e2815c98ac827f0043930384c335ff3507a347dfbea02be9c172617da42f3fe98a37"_hex;
         s = "56254367f71f6f1fc6944ebd29f8a5592095ebc73ff5222bd815da17bac7f12290f747deaeb29b98c98d31a3ea32508d7683a67d449c59a0d6c16b4855aaa7d6f170c02c5cef61c9b6889207ad021017094d24246c4c90a0de055f02a5984efb67481684667eea36ad6373c36712625fa18d3ed41b1dec22f3bfb0d534e52da6"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "09ffbd"_hex;
         m = "2cb9740e0c1b8867866aa81c64122295854ed681e8eceabf0651bf7a65bc23996acfc8566f4bf42c151b7bf7db94eb57f0fb065546477549e829bafb8d4a67086dd48d87533378edf41d992e7fcfc425759a9c36bb9f4b32eed7767af6566f68ded0adeae25c7a70ca78ec09774d16c8bc357f6d6f7bd441bf62d942c768a580"_hex;
         s = "156747b263be659661e5e35e363d0523303ded9eec1e751575ab3a43156773a056acfd0daaa68625b1cc068458ff9e40ae167594bac846cca2b98bf6e5a4a01e961adfcd70206c05d66e3903a64b61afcbd17391ad0db529944fc2d0d7be3a4da8091cb75910f670d9515ee4f8ff3d62307eb54657e03a330e3cb0661e6fb796"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "09ffbd"_hex;
         m = "127498bf44b97a4a4ed7ad4bbc7c3781e2f83a53149fc95c1a6efa27def23d376866ec4b0c1c23e0e21ed1f677140f17c268b1965aa91b15e62d5749d4fb64024ee7d06569ff897ca026f0f282ff2f17a70dcc2ae8187fd8cfd241004dbaa6b9ab416c96c32b5429703930c543053e88782db49928b39cafc0a4e2d3b1f8ac66"_hex;
         s = "1976fe18cf82bf6ba851626bf94509348f56866930c771c82a6e12c30735c283694a0eeac9337e407525e0a831ba7eff77299c6896a85050b960718a40d5e34b7bf71eae4cdfad0d91d8fa6dfe37f30679ef444ccd360971ddc47e038123b7eceb3072f370796122aaf0b9427563280222328fc0068ae1dbd39a033740789536"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "a16c7fcbb8d6fc602277e9cebb1790bd14999ef7670400c0bd0ea6116fc72e29b868c8b62ada0e7b4cd351b5a76c177f158b4f724f1d287d66df114eabd68e3e8d12409b69f96e334c0daff79392d184b9102ea5c4ec13052bfc509d9ae76851e8557a417b86e9d37687d243cf48812ce621c5f39404cd6b22a60beef744a42f"_hex;
         e = "681201"_hex;
@@ -103,24 +162,43 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "681201"_hex;
         m = "820e27d35ad139ca305e9eb26c128ff59dcac86f05522e7e5721b458bf437fa22396493ea93903647942bef4c4afcb0a05a021d386c300a0260fd4395bb55c7473530b061f6baf983115501ea5f05b64de5e00e933f1d8f1aa20cbd6033f319ff9ae37d3c4508490e23e1dd717bd862ab36e2b5913c5fe996abc60d6c2c945"_hex;
         s = "519c717e336e7a28d648acf178931f6cb958684979b23e1d53ad32aa242e327699ca1a1f294feeb8b6ad8668b75a3e42ca4ce08a91c3fcae06c7974e6d9e23e622363cae4cdcd1914d31f38f95002b1a6da863e70c244411cb1be90ffea30ca4e345429e58eb751f676ea7ebee4363c552aa5bda5d57908fd5a87142db8d9821"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "681201"_hex;
         m = "d8330fa49a0a75f27470a2898ec1134666515fb467ad6b74be23dde26984d3f59028d467193307167717a2abc25aa6790d9acaa8f4ceb49274ce6f6d00161a2bd0c6dd9e7dee22e0cb0901f2c5c7fba31010ecb379453b39d0c95442f9c058bb40161291edc32e16184ea5a7bf907c8c16bbae1f1e9b6730791b72a97d0af56e"_hex;
         s = "5a692ebff6a43c5e63602018577fcac17415fcec4087e4c41065da33dbd7d87862de2e0c003bef2ebd0a411884811c7fbfa893590ea885acfb023857b904b0aff0e5061f2fe3376be5ae4de0510b2c34be6e0192722e63dd6f3fa9a7f8a191b7160997c463d7f7d46577e6cce534da08d1e5245b3a03b780f8144070cb66e6ff"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "681201"_hex;
         m = "243db9a1c203c792db3204bbfb3cea400d6e5efec0c935092f0df759c016e3c04c6b331f8115a1da85ad2989dcb911f18c3927327f7c4a4128382b996ada552eb51b6ba372d4b1bca113ce16c06ed116ef97711f53319908b8e224cd7aaae584a573ea935be90121768b7cca6f0232977fb2c62d03902c442533685bb92d99aa"_hex;
         s = "8d1a40fbd8186e3cd1dfbb529e1ee9ab13a6c8e6cf04e663a4de2349c05334f0ab3c694ea89397ca3e70a2a1957ac75a6544842af88cbe3ebf641f68cbce75638da1c953c3f594f8ee8b3825ab4aaafb9fb152f05bb7dcc07e3b666ca8626e69bb262bc240398007b871b7790eca96512d64f3ff94470224fa075ce3164cb1e1"_hex;
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
         e = "eefc9f"_hex;
         m = "186594f37c9ff1fe3ef55bbb511dfebdcf5b64723cacddf80f4425326e3b411c3a84aa5b4b1ead19fd8e120feb8cfce3fafd10b59a21d9f5480e6b77575d47c9f1237fc459231b617241bace853a7dc13f93200df9cf6a733de5c8ba85f13501452a5c552c14017fa7f79d1fa88f48ffa505dca1e31e581af4b382237f61d16e"_hex;
@@ -128,6 +206,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "681201"_hex;
         m = "2ab6c6ad26e227177b6458a1caf18bc083c162a1f18b0fbc77b0baac19b7223e3df988c8b39dc9bcf4c7ca7ca70d18706a2bd057cef7bddaa397c16777f1763c596314c2e3b4961d774b1801c89f84c79cef6dc0d1333bc99e52891f1c95cb75055c3444bb10d7638c580cd7349015eca37701850127d1b0f04bda7d118c6a11"_hex;
@@ -135,8 +218,13 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
-        // [mod = 2048]
+        //[mod = 2048]
         n = "c47abacc2a84d56f3614d92fd62ed36ddde459664b9301dcd1d61781cfcc026bcb2399bee7e75681a80b7bf500e2d08ceae1c42ec0b707927f2b2fe92ae852087d25f1d260cc74905ee5f9b254ed05494a9fe06732c3680992dd6f0dc634568d11542a705f83ae96d2a49763d5fbb24398edf3702bc94bc168190166492b8671de874bb9cecb058c6c8344aa8c93754d6effcd44a41ed7de0a9dcd9144437f212b18881d042d331a4618a9e630ef9bb66305e4fdf8f0391b3b2313fe549f0189ff968b92f33c266a4bc2cffc897d1937eeb9e406f5d0eaa7a14782e76af3fce98f54ed237b4a04a4159a5f6250a296a902880204e61d891c4da29f2d65f34cbb"_hex;
         e = "49d2a1"_hex;
         m = "95123c8d1b236540b86976a11cea31f8bd4e6c54c235147d20ce722b03a6ad756fbd918c27df8ea9ce3104444c0bbe877305bc02e35535a02a58dcda306e632ad30b3dc3ce0ba97fdf46ec192965dd9cd7f4a71b02b8cba3d442646eeec4af590824ca98d74fbca934d0b6867aa1991f3040b707e806de6e66b5934f05509bea"_hex;
@@ -144,18 +232,31 @@ namespace ck::test {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
+        e = "49d2a1"_hex;
         m = "f89fd2f6c45a8b5066a651410b8e534bfec0d9a36f3e2b887457afd44dd651d1ec79274db5a455f182572fceea5e9e39c3c7c5d9e599e4fe31c37c34d253b419c3e8fb6b916aef6563f87d4c37224a456e5952698ba3d01b38945d998a795bd285d69478e3131f55117284e27b441f16095dca7ce9c5b68890b09a2bfbb010a5"_hex;
         s = "ba48538708512d45c0edcac57a9b4fb637e9721f72003c60f13f5c9a36c968cef9be8f54665418141c3d9ecc02a5bf952cfc055fb51e18705e9d8850f4e1f5a344af550de84ffd0805e27e557f6aa50d2645314c64c1c71aa6bb44faf8f29ca6578e2441d4510e36052f46551df341b2dcf43f761f08b946ca0b7081dadbb88e955e820fd7f657c4dd9f4554d167dd7c9a487ed41ced2b40068098deedc951060faf7e15b1f0f80ae67ff2ee28a238d80bf72dd71c8d95c79bc156114ece8ec837573a4b66898d45b45a5eacd0b0e41447d8fa08a367f437645e50c9920b88a16bc0880147acfb9a79de9e351b3fa00b3f4e9f182f45553dffca55e393c5eab6"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "49d2a1"_hex;
         m = "915c5e4c16acfa0f49de43d6491f0060a944034475ba518572c08366a8d36c7f1e6afc11e5e4649757bf7b9da10a61d57f1d626847871d8a2948e551b54167c79de88d3ebd40a3e35809b996a53348f98a9918c7a7ec606896ed30c271e00c51953dd97aa6a8fe1cd423c3695c83fcf45120ec0a9cd1644642182b60e599a246"_hex;
         s = "3d57ea5961db8fc144301ca4278f799911229d865ea3e992c7fbc4d03c6551729e26034e95dd71da312340e4051c9dd9b12f7700a821fe3b7c37785d5106350b667ac255a57c13da5842d90bcadea9e6b1f720c607d6893a2caa3c5f3c4074e914451a45380a767c291a67cac3f1cab1fbd05adc37036856a8404e7cea3654019466de449ad6e92b27254f3d25949b1b860065406455a13db7c5fe25d1af7a84cddf7792c64e16260c950d60bd86d005924148ad097c126b84947ab6e89d48f61e711d62522b6e48f16186d1339e6ab3f58c359eb24cb68043737591cd7d9390a468c0022b3b253be52f1a7fc408f84e9ffb4c34fa9e01605851d6583aa13032"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "07485b"_hex;
         m = "03d2f0693517cffb2b724c1f30502c5359c051c1bcd88dc1dd54b89e6981009d275a813b2bf016b74d0f6ed0d91e62d0884785c9afd8fd1fb7e99246cd4005cdda71a39cb649197a996d8ad2d23fdfb6bb015f24ec3d7f88af64fb83b4b525eb06607d133eec834cf7d6c9ab817b4c0dda370459d9cfba05ad0c1adc86a909fe"_hex;
@@ -163,6 +264,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "49d2a1"_hex;
         m = "dffe42bfda886e1a73fe8a8dfcf71c9fb44deb054588a9bb9199d554aecce08f2ff88f2aa6f8a0fb675fb03c8e685c27432ca7c33c189bfd849d34fa7b2979ac1f57eca389632426bae0b98398ad60a3342557e14e96041c1bf4d90b46cf7ad1348322d28caf43c4f7e86c0924ae703c109ec50a84ea2a43df078c3015a52b28"_hex;
@@ -170,12 +276,23 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "49d2a1"_hex;
         m = "cfe99788f55ec6944942bd0a187d51b80fd8bd4051bd4f07c73e614eb75a8b9f997b176b2642b5f1b1877061ba9ce142c1d2a311583f072b7cbe08ed253681191c209d7b0d438fcdddc284d93d59d6dd80e48333a921dd31c9b6834f88768f8701e01102d3e8bdf074fbe0b8c93d9951f41545ef6eeb3be35530babc079f1fb3"_hex;
         s = "9fd6f6107e838107f906c26cb2910704599f175b6a84db485fbc30776eb7fd53bfe20c38c537b154a3e519b662bd9fdc8e3045e21f6e5ae97d0ff6a9d8632825544525d84f99f80e3ed4e69dc5e219d59ccfbb37c23c84fe3b3e6fb22f402f94e5225c6387fdf8bcdb3508f8832908fe05771521e92234348004e8fe19a8f24bebcab9f074327c88d066bc12081748d696be6135c6aea32220ea786ebd7800e6936365ff25831c28cb6c8a59237ff84f5cf89036cff188ee0f9a6195f2b1aca2e4442af8369f1b49322fa2f891b83a14a97b60c6aeafd6c2928047affda9c8d869ff5294bb5943ad14a6d64e784d126c469d51e292b9ce33e1d8371ba5f467b3"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "a17a08272e656cf600f4650ef0952b15d568d9fb7f1b3f3559aa3792743f7d895e4e26dec2bf09996de8a99f7c434bc25b0c7d61e83fe5647c213b19902abfa053321a16048642cd3800de26172eb39ccab029130ceb82e5c25c676e89007cb00666a2d8f64e59fea64628cbec9c361abe25841551db01f58b80ab17f02a93cbaaffc2630ffb6f56f206b8a6f8e0f1e5790652e7c7227258dbcd5924e94876f983ed02e4e82272f5d44967bc501d1515d80dc25d5c838d0357d0d1704b0253d6e78802c02931000fea2e865c90b266c8a0b472e8eb17456777973342da6978cb45d2100cf91ca6f6d69ff30ee8f3164bfb180de0b355c067bd8f1a8544b9aac9"_hex;
         e = "66a13d"_hex;
@@ -184,6 +301,7 @@ namespace ck::test {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
         e = "391c9d"_hex;
         m = "671ada018b6132b381978036f19cb9fa9cf7d07334642cbf718c59896113fe2d00d70f1c087743830a13c927be53379398abc3769bddb54772bf1c2abd3ec017a9a35939c315fe940e5fe0eb52f438e1b8307e5e94e1dc348206e203b4d77b5a8a05201e63424b30b4042f4a5786a62a25106bf3c67989d0c8ea13daefe4163c"_hex;
@@ -191,6 +309,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "66a13d"_hex;
         m = "be91864d3728f895c689f09b28484138e0afa29589bba7486a68f0bf4b2ea1e287cc11f46344c7ba9e27a2e049125798d97921847ba3b3d6a7f672b6f875e1e43b875c9ec6fa0ac40b470d3a6c18fb8e510792da78a9a7ec8dcb60a5fbfba39f014bce120851a9f9347299703961166170e25e5f2ad46bd2446e2355fbc9d05c"_hex;
@@ -198,24 +321,47 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "66a13d"_hex;
         m = "4c2d1103c36e96d179291397b1238177d4af3b6fb9dc622d23ed80258b096be020346d970d7ea100fa7aa068d5f25d02d2d94e7fb081cdde3f0fbd861f2b7092cafcc86cd4539d9d72265fe33a41fd84293805e3eaa00c51557e502537009c0f516b6ca9a355524fea149831677627a6e2b3a7c4ef9fe82d7024812b5bf0b700"_hex;
         s = "4d8b5ba1f5409f476221b3527be6389c1ca3eb50cd62113ad2f712cb2142ceff3178948670c9cb7dccd44896ddec9c0eba228370cb23919610774e9d70d6eade95865042edca6e90cdc007234400591e1cce71bfbf5a546548d483e68905113693a3d1719ce376e72b180b7f3c7ecd13469b8edd7ef95d9e330d78cb36e37b50e87d161b1abdec433421a3a65b49b39cacde0678de41df894d6a2b0f171cf91052bf0f0bb7cc89889bed7699e33540b4ec8f93ca2c690783dc5d80fa5b815aab0feb3ef4f10c0cb46496aaf6dfd2e5b3a7dd64386ab9a4da0319bd927facaea80ba5f4b1d71e16fcc7550fd8211756c35935507a32f204858e2b475d28eb56c8"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "66a13d"_hex;
         m = "e896edb0455f372c01d222d40af9298bc17fdbf450b4d0923dd7e12d4095987752cde6ef079614061d83fc805526791e81d21c7adfa52132a5c6a148ddec09c97320caad8dc352ff1ad23c3eae69c3028d867de20610469602187959dc5e6791731701b27eedd860204848d4bdccef800b2364f66cfc26067b53d326e4f39b18"_hex;
         s = "6e21208ce42d4ec6512c300f6f9c0d43163eef7e05365448380ce3fec34913a701a5e30455556335101af1ba40ea69fc17b30c4192730336e8af2094d36873cc83617a3feebd2b09dccac1b31b9352c1db3c3dbb7ea1e774578e44c92ea925dafd9de71c46d3f25eb015199150e6e8c26ee612edc3fe2f0ca6acdca9274fcaa87d97e104112b1f85d1c3f3e92f0be7932613afe5a683c0e52f9234fd9ef979844e277e31d3c2b725bbebe97a9a8e619f8308c01a9b3ee48e5dfcca5b153e4890effb297ee0fecd30fd71b6dea0694530fbad6c65abc4621f23263ceaf2cfa21fcd19cb180812667e8b1ae108323ec289826412f124547ddd92024c0ea9784654"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "66a13d"_hex;
         m = "3f49b00ac1f9255907cc03f9b45dc787c250d9d6833fb389e2f746e1ede599d390cbb45ea3b7bc1b28365f16cdc573dcb988d9d5843fa8d4877587ed57fa5b878c9423b1c7f21fbaf3e138fbcac39cf89b3ca9a84b2e0c109be82a17a89abf95b80cc4ad3390975df0365653b23e8b02f3d30ff6e0f62864a4b8f506e9ac0c25"_hex;
         s = "90ac97a93a9f6c5c6e268e3464b6d547dc29bff8797d9f776e2f56fe1c30fefbb679ca9fafba40f400f08a5163d757e638aee083084581b760ab30071e075f90183db328e1ab519fedca1ed92a1e4e473b538e2470606b5379abd2e4b73f4c132e30c115bc34c73019880571c30fa6c6c1e320c13022317cd3acea8c520f87cf054e84be89a952202fc3f8d0d707cd8806b8b22bf2c0d7bf884688607a05b635210b9a7e2e1d2a28e324c1573d363d5a76ea0aaac70480671caa4969e5177448e62e76270197697fcaab720d811588c8ab540f053c8b23b7cefad205fd4c444bd5e73d80c62451158331face2b6f7ddb034dd5e61bec444f68d0c7e39d2df940"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "c9548608087bed6be0a4623b9d849aa0b4b4b6114ad0a7d82578076ceefe26ce48d1448e16d69963510e1e5fc658f3cf8f32a489b62d93fec1cdea6e1dde3feba04bb6a034518d83fd6138ea999982ab95d6a03517688ab6f8411c4a96b3e79d4141b8f68338a9baa99f4e2c7845b573981061c5fd29d5fc21833ff1b030b2deb651e51a291168e2b45ab4202dcd97b891925c75338e0e648d9d9ad325c10884e1fcdccc1c547b4a9c36aef939e8802b62405d6e3d358ffa88f206b976b87f8b12b827b0ee7823f9d1955f47f8678f7843b4cd03777e46717060e82bf149b36d4cf3d0bc7e4d0effde51a72f4ced8e8e5b11bdb135825ff08873e2f776929abb"_hex;
         e = "3c7bf9"_hex;
@@ -224,12 +370,23 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "3c7bf9"_hex;
         m = "4c587ab2ddd6b13bf7a916b5d571d7613f24258201b1421b9de4dcfb3d8a99f7ebd5f37704024634ea38273ffab4f846be23b913634f21556dfeeea3a91779be63078d16da637990f1cf6487271ee111c9bbc483674733378483008c9171362f1db6f199464373d97334759445f8bb4acab3ebdaf4e09f494a3bb9bfdedef7d2"_hex;
         s = "052bc5efecb052b92821c405e6f22cf374dd1ce4bf691eb8abcc1cd01254a6e51fe9237cfb9cadfe32a8780135949399b048d26f5de49bb9d008d39b749527eadd13066baff87765eb255021517a2ea69e45bd35db1fba9219c94f944b2c9a33a37779505c8eae52d6061988d152f9f51f0002e545973402294dda7f7c7cc3135c37ced8cf723d4011d1ac16bc1d0bd670eb7f63f079f30dad8cf55c326a33bc1684ff17a91509f4ead4f93c3c0eb6679eab612e05fc71b936c99ca8579cdeb9f26200a4bce89e330fd5d84b1ec98cc1d758243001fb18bc325b630a58154c2d38a5a8ac2ae6cfa54a20f7580a745c206990c142e8a580eb36266a3a9602a8bf"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "b53999"_hex;
         m = "425994d102a63f542766b12d5207ace27de9207630c2fdeaf741450413f1654f7061c563d7829e6665500cd33cb4647a78a9c7c9659ff749ef1c6a6b59a99d8532ecab1885121e54517005de386947d07b923602261467888852c27be6ccd5fd71436d77741f6825d20dc5d5b0ecfdeb6fea96a9ddeaf5adac2a74bb2322b4bd"_hex;
@@ -237,6 +394,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "3c7bf9"_hex;
         m = "bf082fa4b79f32849e8fae692696fc978ccb648c6e278d9bde4338d7b4632e3228b477e6a0d2cd14c68d51abdeed7c8c577457ec9fa2eff93cbf03c019d4014e1dfb311502d82f9265689e2d19f91b61c17a701c9ef50a69a55aae4cd57e67edc763c3f987ba3e46a2a6ffb680c3c25df46716e61228c832419e9f43916a4959"_hex;
@@ -244,12 +406,19 @@ namespace ck::test {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
+        e = "3c7bf9"_hex;
         m = "bb40a410b0183b32df12f739506643bdd2fa7e6aed83974918ecda402cfb09dd1932af4fd7f3b1b5a0e8269c5da268c25e806b204dd34e28653f304cdf6545bfadbe297f6bca7493936b8e91f08bc56455059c4c8ec36626972414ee0ca04c82e1aebba953e5ab531e62d823f16b7f2a1f51b9f6979b07cb16602e309bf545ad"_hex;
         s = "3f6909f674d4c9c2c26b66d8ee3d7702c560b193a8fbfd0ddb3a9dc909a6eb7aa74d446b7993cdd5b7e272d826281e4cfa08000d2291c2ebe3ee6a77a4e03a79248385359d0885c61c8ade8cf4de7c8e51e879cc1e6089a91a56dc58d2b239e185e9afebf733e2f0fd061270eee0670122c44fd17af6860b6f59690a1b2a91e16522e6a75903bf4e6c97237825f0b01e4c236052b173a8d91f910b0c903590e16d7104609ff9c0194ffe0c09dac1969ea08b01497c8169c7357e8b1f1040604dc0f8b967bfd075284736aa22b0822d3cd13c48a8169413e0b6b26af56c577c829b38e3fb5c4ff78949634d14ff3a40d0d43584d832d6b51d4065e0900ef197a5"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "3c7bf9"_hex;
         m = "56db10c78e9fab7c1c356bf8b38e4adcc464ebd1a3cedabfe812144016baca547aea625656f0bf2e3f1dc2c9c4d310c650e01672520a4bf79aebb5d00600af805ffce9847e62b086b35270d367a3770fff33fb28047b5f888167b28fad647940cabaae3a4d1c08ea3f7d7d00e326061f9906a2d902499dda652c1263520faffb"_hex;
@@ -257,8 +426,13 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
-        // [mod = 3072]
+        //[mod = 3072]
         n = "9bbb099e1ec285594e73f9d11cbe81e7f1fa06fd34f3ec0b799394aed30fc2ed9de7b2a6866fde69846fb55a6ab98e552f9d20f05aa0d55c967817e4e04bdf9bf52fabcfcfa41265a7561b033ca3d56fb8e8a2e4de63e960cfb5a689129b188e5641f20dbf8908dab8e30e82f1d0e288e23869c7cac2b0318602610a776a19c1f93968c652b64f51406e7a4b2508d25b632606834a9638074e2633eb323324b8b30fdbd8e8fdad8602b11f25f3906439055afe947f9b9bcffb45dad88a1df5304c879bb4a6eddb4d3d1846bf907d2ca269845c790b2f0af8154aad9c4acb75e18a5d0e4f9f88137032b9964fe171dfa0d0f286090790f52157179a6734b5f9a64e3d2ed529722c3d3836d4501496f927a0f8e389ca35332b836d99e995f4a3e86f581bf9abdc7a10e06a6b31296ae3b43e6ddc9a0d9a7d0d9c4053af0875e851192d1de7b08d1beb7b857e227f8803a5620726a31920bcab922d3370a78033b315024a0fc1f6c276be565e58de77f294c8089ff4c43fb334d26006ab5757c65b"_hex;
         e = "ac6db1"_hex;
         m = "921961e184a5d9657697e3e65ceb1ed10204ec56e739df0e4f906ee194c9ed27bd9fbc0d514abe3a6e480cb3155debfcc8d9fc815719b334f7500a769488773b68e31b69cd273c824f79f58306692c0c232fc5c0c83415ef1dd59a73a063e9d7bc6ee7bf9e433c8344b3051ed616c9473a90afdde393ee88e9a5849e5f642b43"_hex;
@@ -266,6 +440,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "1ed02d"_hex;
         m = "8568ff68d40c9f240b5ff56d8919704a4819fb48b2f0741db6a3608a1aaddd861344d79813dd7f85e2f2f92bf00355adeadbc1d08b14fda5b5dd0f69c0fb37a9120e25a9ef166a0793352d9c7eb71fa3104fb11d55a38474220b205e6196ea04a94f506412be47f347b1f787dc3cb475e2fe31f6b9a6f0d026b6fd32a587dcdf"_hex;
@@ -273,6 +452,11 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         e = "ac6db1"_hex;
         m = "88902b37b0db4246c41b50f180eb1350b1b6dac0477a3dd1accb0c5f541a85fe9637ca9cba15926153ce1edacfe66f574cd4b691adbe0c90ed8563ccb401bc93288e9baa06c7b837f191f8de0a5c9b2bc0a5b730eabfe56f13d43afa142779d8e99b86abbd791e90476ec64759d30194b631c6e425053134c3c0792f9d122296"_hex;
@@ -280,24 +464,43 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "ac6db1"_hex;
         m = "973606b2c7e5658a9d8f264b8f5a266d0992cfbd6e9d3ff95c31a69a32c4f0f1cf44a5759d090d5ccf089768e6497b047a9b9f8f3786b8f82681b18b2d65500ada2217005cb06852d249ed17c9d637a9ffa7a5fc6d66882f854e8461b9983ac63c3623fa0cc4bf9530bcf0ff3ee9a086211eaaad1927f8c70300e9c5db45f54d"_hex;
         s = "355644f5a26a4ffc638c44ab4d0b7359f37845235bfb994d28e63b114c0e0f97d2e29f448da8b12eb804792ccc686dd807f44211d6af410bdca1196df84016b3cdae180bbb59133aeac5928560ad2cf6be61392dc9e28d7ada11658cf4a873bd2626ca839e697c79a5c4bb3ed4c9b8f48f83f2800e1907376f2e8874c23f1dff8bbf3b3f98bed7895d486079a92557a553a71e18cfafdc155775f39a77455b432b0c2c4f09990d130060143e7310b9d9e1ae6f2b1b83b90b36c6581473f60c3c61a10e286557f84e5d04cc36e12cbce835234d2d773221313ad7287c9957d94a1cda8c1fccd3eec45dd84a5d075d6bf823123fcdc7d549286142ab514db6d998e377429494f07041387de3ab31b02ac1606e590572bd9003e5a62b90b95b00c0eca73c744ccf4eae44374e26ba6033dd2baede95e19cecc840a045bf995a3250ce7b08e0c3267de822616f93a4dd9e629eb38b479bd31071b48976cf73ce52c3734abd93249300dd5c40635842dd2a290276190737a123008a4f0be557ca6628"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "ac6db1"_hex;
         m = "170dcd5458adfbdccc757e0b5abc19278112f24b418b995d395b46410da3624c0a8b49fc0d914fe6a02101ef6765adbfbb5e24739434be92acca9f43e19639bddbb012fef028c7c0449d52a9350b88c2f6e5e52a79648c0c931e8ace5bda5b8bd3a3afc4ca1b6e520012f99f8c57b3167bcec0d8bac30cb1367e8f4a4118d0a0"_hex;
         s = "6a4db2e6c13ee8ec6174bf57ae5bb7555e66dc2e3b618f259d913b5b8b6c16b9760290c9c576b563316f510ad2461cd5086b6d9670551ec74b8a9d15ebd43ccdfdcd74cad660a3fe3f36992c86559cd8e9e4d3568924b1f7e55bc5d8df4cf53f240fb3b945a08d24f205d5a7081410ea3e8136ca282fc99e6be0b1fa2faa742c9d682d08a77b791bb0421241e6a82f84605dda359e4f8475cef346c9f6a54a085492fc4bbb30b1047c66f5fc529ecb6aa9ece561e5a3a62f9a19eca2badbfa32a2aa205713b16081519c2cde2f8e8261726fad49145dce0d9e24f6e085e44bd86f670a114ba98d54389f0ed683d062735cd495e6a8a6eef9fd70355b92b4cf6cf0c24e898b6d3f7fe51dcd1548a1adc67ba585e2d18809ea658d6ec4bb5e33e8501d11a266f5e0928ecb58547e72c27db8b07aae31eefef865bcf6a08485675d3037f432c157e5ee428d292bfc24c654d8fca7a60107dc18461251906521e1e9965fc80c7b5f582ac3dc3798a0a2937e76d7e7fd7122d3fd9083feeb9a44ad7c"_hex;
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
+        e = "ac6db1"_hex;
         m = "b2f72cef31be4b7439191d9b342065e62513792826f950481486dd4289429b6e0ae86a05820c99e1ef0144845cfae05c0f6f144603c3ca50992387c38ab1f76120e2cdeba624cae61dc51a9f3010e76d6ab92936a77bbb34c8ffb4f9ab00f4b15badfda8834e050c292b49f398a9a39f9eb75f01f8684b7d0be10dedd576b9e8"_hex;
         s = "8ca52a9040ac49ec2415054ee86379f297832a2a33892c9dec09de778982fb1bbff68b3787ef43ad15f9aa0c518847ba1b3075613bf187a6fc8a7fd7f0b43a6a24086c1d6c5fcb1db18c93bc508e609396ba019fa43dd19f95194c47003d6092303be35477a3137aa2adaa51b22618db29fce98b5bf791ac70be7e238c558f0fb42a40bcfe0e9c07e178afe7a2db74fcb03693ed46719d54d69d5de43ad6a93b0a5b7da6e05ebf7c4b02da42c7ac1f8997da7c4de00c7747361bbef534461bebc23477e93a48558b3ade7d09dce6fa6a378e68e7204ab35283c58148df0cf9444e5f91ad31cd0474815895555cfd7f9cef9164b91db4f98816d194f85bad581f410a655273e5d14491793141f9d928cb30a322c513935dfd830dfc75030b8b2ba1f46b763ec303bef32b4dbeb01781bc1f2bf2ceba27750082661558cf3d42f03d50409b7db521299009753c25926e3e6502bb1763ab68dd5c19dc0265b16a2d438c3ed23b74e60ecff88708e5601a478986dd1b607a2db0fe049664d136517f"_hex;
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "8aa12846ecb9d8b954d2ca0fd3f60826c76d2a98ae615f38f5a662cb6158f17f29050dc6a1bc2f60f3a9db2da6c9b27b8cabe25cfc25d005ad60ce298f6da3415ee0a0a00cd2fbaf1eb67d4fffbe03b2570ab56c10dfee9f4da86c05920993c92c4ac33a246f5102113a258e17736897f981b8b29ae695802fa1bcf9b41a5f1053bd77400a153d1d6efdf4e4c14703a34380da2921deac003b4a7246568527d9e37d0da956766f155d3b9a38ddb747f2706a72268542f594c90e0d2f0ef755f4aa67aa6a25004548c73861c0333597337a944c42f762ca2b54821425477e4e0e2a9b1842ed3f16d68ed31318dc396071b90e1e514cff975d198a581723cc98cb784d18cf197a14dd7b9d5036bd7724b9301f514236bf7c8b290dc5bd93ebb6bb2d18d3fc4f4d480b8d1b62ffa3de1224607976a27d40f912e50b46b915f19556781b2ac88e16c14982a0718bdb4cec77127165bd7151f0181cf56efa1ea345fee075a7b36a02e74a6f3eb035b608cdd2ceda4d738876fbd7ffb009019581685f"_hex;
         e = "74ef0b"_hex;
@@ -306,12 +509,19 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "74ef0b"_hex;
         m = "50930141564ac38dfef23056b5cfd10efcf3bb8823fa6f5254f8ff45d4b0725a86076ac0b1b8042b0248006ed53d224cb08bd78b104f1c4b69bf9c96686118387b7c0cd193cd9028297a7cc27f4ccfb4281852b5ca7e787723d689384a68ff9437db319d86f12e2d7871ec7b3b64a2ed6b83722dd8f14b7f8a260e52022bef14"_hex;
         s = "65862ec1d10c408e4278ee1421e773f49ad426e368a48136d6f77d5a6de96ef4643ef3b8f7b451f9ef9ab4d8590752dd7adf1d78ce23411f3586564b67172ef718e8824d357b37f105dd0e38c0578df14220dbd83588c56c4cc658b5d4b07337ba3e40b40aa6d877aeb3cb95256d25e55b702bdb23026bcf05387d58ce020d359348536f9f108d111bf69c3823aca8655bd73a64789d258bc90b5006ad01c0640118e17aacedbc0545c543df8e05f254fb7d8846703723fadbd4179d4a1a5a7c371e980309d33b2d79061f741aae529d4e84c686a4077d3ffc66a8b18fab2f72ed06a3372efee4507425610d317c74d5566f4829b079012e2e066bacde53e43dd702fae3861eaf2721e3fc5818de552b5a9d084b5f03a451527fce2d3a608028163befb91ccecdcaaaf5cc357bfb698f0860350136b71b4b087b50e2d97a9a6765a6077f1b26e168b5d60b7a91330c3e1769adc479ffd866351eea4cae92609c0431511b91b6683d0d8d4d2a72be8622c7dd969d5977127ca5a6c3d0ef7ff77a"_hex;
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
         e = "f1d0f1"_hex;
         m = "b1fe0c7145b1e35a8062ed24ab82e862a0d695a53a1cc7430af1b9574bf2a40918229110dd8c6c750c295b9911034e79879bd631ac883abf1262c80a98de6923993a78ca63dcd434eb36340bbfecbbb73b39cddc008f2023a27d163ea1d64a269b1068a7bfea431f855121839c8559a2247821ae1e77a1f8210b4cfb4e226f9c"_hex;
@@ -319,6 +529,47 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "74ef0b"_hex;
+        m = "89574c2f705f32cafde26824389468218712eae98268588f02d683f17ad494df8b53457fd24651ef0561282d3e20e834960c8968f63a57342a14a6f2375bc10bef6d235fc2c4eae7d7c088985ca6bc8b1ae8c15c4ca7c5d0b1769cbae061b61fdc2e4e98e8e2e5f89c87ef2f392dcc6e3a2ff98c2bb788a9be84cd111ceb5b62"_hex;
+        s = "45c1da7fa6d790ac28f54716f23b2d594a637c5f6785e37fec8350e5d5334edceb66c263197702e5e5d543a2a9a6893cec3608512503ca26831d8847c2563c326bbdf3aa5edf7a583d8252e2cf35bb16cf30a0736ccdddd41af4b54729c843b9c675ab33d3ba1e1f7f63d2aa2ec94da2a9fe4eab9036b0561d5ddeb6d3dfecd1e243381de0eed5d41b8fd6023826d3bf4ffece8570e800c1689a57c2987a0f5629dac772c5f40b475ac61524c0308dd7de872d2f2d68c6017992ee060c607826db6f263f3276f330b7d267defe6eb91f9e9ca63e552531869f0b36784813991da6aa930736858146a42eac2b17c3ed2fac55ae3e0c6370b5302e693f84615e4174576150c6454a5c5f7a4f72d03630e899363db71eeb8e4e919ab6d15e87306c626dbcc18bfe62bfb1878a5105cef0f5b4f06cc4b6d7fc12f29e687ea9d0e16b7ca009356a2cda1f7b48b22e43883582cc770803f6c75892174168ac6954c76a475f0bdda4dce703e5d7737f7019a43ac72447b524a6132dde51f925fcbb9485"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "74ef0b"_hex;
+        m = "a8d283d3e616fcdabe06076c3368e022884108cf569bf363db860010955dafab0f4a0f54fc0c755982f87358d83e08a4136e15ea3d3b1015a87efc6e817e9908a86ed85bbf37912f827878bc56cb4e0f244b54af67530581848804e95b1954321b45c7305a1eb923658dfddfd497182a62dead66fc6b397018aa01c748b648f1"_hex;
+        s = "5961403c27cac4677ccde42cb807477e004b7cc795f8e14049e78326769803f852175ad36d6cc08232c168a34e33eeadb7aaee642b6a75928ad303fb4140eebbfc2fdff5a990f8bea12311529cc4575594a56f6d362a6cf8623cf6580eae79525e502c7be1ae71699e2b7916cde5ab5149840ce8db96e839d0d507bcc3d6184ec68a99c30a1b562959d7873027aa491a9dee9094249e7e3e1913f263e05b6d892a8787686baa7ecb9a88e3bdb52a7e45fdf49bb73588173c722c5503bb5864917410da43ff55e85e4df1af4bdd3b913ee5ef8b9f0293ef36641a775dd4f70df95f157569899df3b7f2cf54a5e34575ff9f6ef5b93d00699586a247c2b42ddccffa5c88294b7bfb686970e0fb9a1e7a823a8b16ffa9b5e45726dd3bb015c88307062aab622fcdac7ed30b7c773793d3f7ce326d30535f4bc289918aace1feaa02c620be6cdcde24d694e7936c58c83f9e4bc3dcafbc542afa4daa7be014099173708452817dc1493d3306053e97fd1c258b062a982a5333925472eb004d82d8e4"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "74ef0b"_hex;
+        m = "b2a9f33308f84f8718e860ee4e439ba1541a985f355c5dabc3a8df343660c69515ff713e5aac3ab2d10ffbf4c163d13bcecc1fed1eebd6cbbbb0f46938704be2983884c96b6063633a634d1325ee0715cb36c06f6a8f5225473bc5ad517f14a201fc34bd843d53001c8d5e34c40bc596130082ce626f582031ee58e6c7b5aa3e"_hex;
+        s = "6f443dabd187abfeb167c7a76954251cb017b40dcd3c0de81909993fbdd6c99f64613e73aecc29eeb29fc9aab9ec54b55bc3539e0d34095248b5536b35f1a079a4f09ca2e83f51b07ef005a7e0a915be137e1d94ff2b26eda29a337b5b8d8652cb9f98703648a4b0d8c759ba48c1c37b2b76c3bbe116574c1f6265cc19703ce489186e3951e97e0d26230a82cd0b2a24def62b8af8e4962cf4e1a693d0d0bebd6fe45966b3a4e890e0a6f535919661beb109eb6d11e73ee2b97a3dd20074711bd4b817f442866d11c3fbf62255e05e466b36b8ffd57c6abe5592d72061d96435dedc32a822aa342b159ab21a993703b5ee7bd6d55508800b67667188810e062be554244db902947bd2ebc7f9e6c899f6ca1d3ba3a5c2edca8bafca8a5b54426b04a5a16a3c752d18647b578904f60a5dac531c95b0bfc37b7aeddd3c3564d0581f1088e85ed85ca366ef94eeb8f8d06b060f73f20778ae83bb884527fe9bc1a04d6dca59fefdfb9e14d68f97d9fb5fb1045c9a229d3015a4867efe88791554f8"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
         n = "8c4b17ab9a0da366f67416075ce284ff69a2c1112a8b7d821f66e8bc5386cd1abfe499fb9a09523f1095729f61433cc17fed78789cde81145ba02d22ddb560332ec795ea6a764b9fb380f44ac63d64225772aa4503df2fdd20e7c1d17115d3c56176f49432b2930d417b84f997ed4e50cd557e2786e0275be8025f6f039a7a3b8ed421b4c224527c01c1a1bef6becda193eac7f484ab0a24da31d4bc8bb6f2d4a5f3817a246bd5a9c81dfbf55e8c5b18a8a63bebdcd245726ba5b6ed4f8981ab83933c00714064985d69a17ed017e3cfd7fd5d2c6e932a2e021d226013126e6272231ce8bf626121710cd19d0ff21227e4c4255be507809aeb0aa548f42749bae8e1a3e3b312d08f0226c5245c45b5d96eb8eaecd1b8a1dd3f9f908191325a02cb4ca57b25155447584749e2db23360233d9068195daebb7ca943311b58dedc6c809a5981ff1b66a803a4135fbddf1f4f2478559f9d2ba17d2da77b0f0b6b08662eb50495a16c301759cbf7281f4fa985800c14386e0db6df0422bbda9a26441"_hex;
         e = "e5a4b3"_hex;
@@ -327,13 +578,19 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
 
+        e = "e5a4b3"_hex;
         m = "77ba90225f3ba1722312f52b1a07c3f659aee2a085e939c3e5ae77a3bb0a0456d56637285f0ac93dfbdf89781479529c6e543ab1025e0daa0ab6fa4458b48b31eb29db76c4e80312f685d5e0fd5ccdbe50d544ef3ae7e7bee5db6864b853732ce28ae4d537dd37383c8b3f2b7db91ba427b96722d28baf489fa429cb83efa38f"_hex;
         s = "1f442887263f403f6ff9b20fd2780937596e99e3c9e640def7de2006f14026de1e140e0cd5d45d7fcb1f42a9127a661c87cbaa4f9b600d8ad7fde5beed5c125294ad7b211d550bc35429c71f84a837eca906a580aaf3e301b46deb59ebfa4b66323f6e136d178f7ecd8440d891eeed5c91ed785ffefcc725f2792868e296a8eb03c5683ce791b554636a787d579e3db81177b45aee1ac6bbd90d84144a706196d557b48d7fa8b551c3bf638ce93a6425eac03232256f4cca758ab2c427d996702b522eca24b0781f33aa2b61e1256fdb94b166f98cacea3d5da205f818d19b432d50309d8265eef151b0f40fceba927fd6b5ec9d1c2ba54eb9af22aa354299ffad07da5071a1fb4314c69399a5aa16c3b4ff3b61937debf6e55b5f44e91855ff0a64ab59f549c3b4dcbad5c4306b08be4b1be99d000ea52665e9bd1983fbfaecb15ba18adb3e88bb9429d6d1aa85f7f6304c253692ea0ae579123703f9d89f69669fdd4c12607d8c1b7a28f814e75a45122956c21cae47bba9e4ec1afb707e5f"_hex;
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid signature" );
+        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
 
         e = "c15efd"_hex;
         m = "34a83157520e0413bc2ec4b48034fe5cc3fd2f69fb7992f95e5437ad99d555aec606e1ee98155fb1d9faf94b175ace2b9aab8c18999a41bbada96e5e851d5ef3dc17b558a8014cd9942b3cf7b1b6396768b2225eb483d50c8e894866a800d6295d24d61ce8997295d50bb73eb612e819175818c2b4fdf7f5e93aed4f69456559"_hex;
@@ -341,9 +598,45 @@ namespace ck::test {
         r = false; // Result = F
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        REQUIRE_ASSERT( "RSA PKCS1.5 signature verification failed", [&]() {
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
             assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
-                "RSA PKCS1.5 signature verification failed"
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "e5a4b3"_hex;
+        m = "72e970c5fbeccfb254bb1313e33470e3074dd8d3fc60093fffc7c960b2a970c3c113a8fac64b71916a616844cd06486e29a1b1c5b2a02845c00c606a2f61b7a2069c040258959038688f62c1100ec05c64e9f2be929f49870dee6075eaa2a2d78aac0c457973348f966f8bf374f3df93014a2426650673ed2d9553e8a915384b"_hex;
+        s = "6ce37157a92a7eda47c16b5b2d961c564ef7df9d5886043c07abbd1e74ec7f549c78b07e2140207e6b93e89ae69a74a5a76184e00ec03f1dd36c0699535e0bedb4f28634b194fcebe13d2c4955e01e4ef459244a7497fd647d5e6dd5f7ec156929d0e2f1e146d3397d3636726bbea13b38d7d38d4a5e4ebe68df7ff86c62c3802e18250a2cab3d200363c577895a33dc69c18d15309e7117ebf47b3b98c893785c99dd0077982ee084b4ac08913de46415e5abdbd223aca6ac5574ff4a61f5fd7631b776113f12044e5e53960a5af3867c8366e3367a20de73e6c4e0f7b9075a1a79374aee0232d06280c53bc6a148026e1686059d652d96c99ac41f909e278b3c408568adfe35cc55800caa58d03ce9f1cf533018ec4fcb5d66a50758229716c2abebe4b3e3c6ac778fc008db8985e5032d7825fa333fa4d7468504cd0785000f92833d5cdd61880bf40f803ac298343d75e18c003a8471e06449406bf1bafd988e162b0b8c62eee5795d957f1fe5d7abc6e7c8b3b43759f212d01def9151dc"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "e5a4b3"_hex;
+        m = "6147121ced1b5f1d73306e4a22c31669b76c20764fa4b4467d86126a9ad283565c378ec3aad26e51aff2c4712e1e8a821559483a54a48a48efc5913752474996e6c27b56e15c44736290c6d7bd2e1d7b13a394cf277b195c6c24efa763f5a359236e419e39c2c7cbb392da4378fcb89bdbd46efc6f314bc91c2c948272e479e9"_hex;
+        s = "8b5320215e2133754a182f38444a68fe9f3cfdbb7ea9d8e55d006789fb1d75c0fbe5e94201b15c97613a35c3ab54d61dcc62b978a8fab0ae3183fb7463814ec498eb0f4b0f5403044f33368afcf692b1b3ee3ef0ec1492c5c2ec370d75163b777705a0675252908bff8010e819bbde67b86b33a35e1fc43cb8da167691b6d69ecc19ae094a5461cadb0e977ea6b7ef6f3f639e4571a073d6033cf464e5eb17323447ac079e4e69caa7966d3083ecf616394fa25d2e30ef4e5b7e558c8c46802c2e35db02b7884b53b89f041037bf10ff30f291003323112dcc6b8eeebde3bf97e373305eab433061e3a634df865642743908ef822df62cedde8f4af403e7a924e22e667734e91a29d4b6c8f1c12da7023a1b22e6a3dd33e878efbab31220f4f2c923c88f1bb0d7b7497a9c687fbf59f9eb4625e6f92d7285bca5db93ae63213e3fe1333801fc3eca1d3a1ffa75319752a5aaac461d7a799659ad31569230266c1a62e787c25fa635b0d3aa248d047d9cee43fb12342a4c066dc971b893a7dbcf"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
+            );
+        })
+
+        e = "e5a4b3"_hex;
+        m = "e9ba77e32581fb11b3d44a885ce8184207a00b5835016418cfe6e25921f4e30b26d1cd120691ac55dd711d11bec86a74f83af667972fdcab2e83d327d48055806d0900eb2b173c3f546a1e4f45788c76b7aaa27341c755771eb0567d314f39da46cad7159bfcf1f89f2516e7f9e0c671cc56d72539b218a726d535033e4ada40"_hex;
+        s = "17c273523709d84746ae546c8f58086a5ab385aade0707b5b39adbeb507670453a56bd356a9b549fb0112eb3be73466294c0180a9061b04128a001f62025867277e28508fd1c94109061184f6acac575737ec4f93c58ee452089e6714c4dd9f23833278dc66332a914ac8e1b0ec33472061bab9c29cd8d7a0c1778c71fb973c851b6c9bbb7b7dfd24a16f146eef248d1aa81e4f62cafce2ea146314b2a8d5711de6625011ee7ffe7ac49b03a5b7e2d842e9b35969a934c75d16b6cb890f8d4ebeb6f74a08059e70e90ee39816cab34c4702ccd4e14718a8ab5c981f9c8f7cb3e91bf066ba387824c1b27e33b27a06d9eb3ff3fcace0b285f51cf83b117005bcc12da946b5a36e9308ac98e9103becc8ec5dbb048df722e5c8e6cbeaad8f2e27af33648c9ce5d7940013146f5d3cb8c30849ea75b209c36b745dc3179617933e22dc25af5169f784d6128af2c8694b5caf19fbc0585ca1780181150e8f8bbd8d12ea8b0d41f86b1b3b27771b3f36d3cf5ac6a2702b8711d52edc1cc96ce071eab"_hex;
+        r = false; // Result = F
+        d = eosio::sha256( (const char*)m.data(), m.size() );
+        REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
+        REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
+            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+                "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
     EOSIO_TEST_END
