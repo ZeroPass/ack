@@ -112,31 +112,29 @@ namespace ck {
 
     // T generator - https://tools.ietf.org/html/rfc3447#section-9.2
     // @param put_hash - function should calculate hash and put the calculated digest to the buffer pointed to by it's argument
-    template<std::size_t S, typename Lambda>
-    inline void rsa_1_5_t_generator(span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, Lambda&& put_hash)
+    template<std::size_t S, typename std::size_t HS>
+    inline void rsa_1_5_t_generator(span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, const eosio::fixed_bytes<HS>& digest)
     {
         memcpy( t.data(), digest_info_prefix.data(), digest_info_prefix.size() );
-        put_hash( &t[digest_info_prefix.size()] );
+        auto hash = digest.extract_as_byte_array();
+        memcpy( &t[digest_info_prefix.size()], hash.data(), hash.size() );
     }
 
     /**
-    * Verifies a RSA PKCS1 v1.5 signed message
+    * Verifies a RSA PKCS1 v1.5 signed SHA-256 digest
     * @note function uses intrinsic __powm to decrypt signature.
     *       The decrypted signature is verified in contract following the RFC8017 spec.
     *       https://tools.ietf.org/html/rfc8017#section-8.2.2
     *
     * @param rsa_pub_key - RSA public
-    * @param message     - message buffer to verify
+    * @param digest      - SHA-256 digest to verify
     * @param signature   - signature
     *
     * @return false if verification has failed, true if succeeds
     */
     [[nodiscard]] bool verify_rsa_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha256_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
-            rsa_1_5_t_generator( t, detail::sha256_digest_info_prefix, [&]( byte_t* out_hash ) {
-                auto hash = digest.extract_as_byte_array();
-                memcpy( out_hash, hash.data(), hash.size() );
-            });
+            rsa_1_5_t_generator( t, detail::sha256_digest_info_prefix, digest );
         });
     }
 
