@@ -3,12 +3,19 @@
 #include "keccak_test.hpp"
 #include "public_key_test.hpp"
 #include "rsa_test.hpp"
+#include "sha1.hpp"
 #include "sha2.hpp"
 
 using namespace ck::test;
 
 void init_test_intrinsics() {
     using namespace eosio::native;
+
+    intrinsics::set_intrinsic<intrinsics::sha1>(
+    [](const char* data, uint32_t length, capi_checksum160* hash) {
+        sha_1::calc( data, length, hash->hash );
+    });
+
     intrinsics::set_intrinsic<intrinsics::sha256>(
     [](const char* data, uint32_t length, capi_checksum256* hash) {
         auto d =  sha256( (const uint8_t*)data, length );
@@ -18,7 +25,7 @@ void init_test_intrinsics() {
 
 int main(int argc, char** argv)
 {
-    silence_output(false);
+    silence_output(true);
     init_test_intrinsics();
 
     EOSIO_TEST( keccak_test )
