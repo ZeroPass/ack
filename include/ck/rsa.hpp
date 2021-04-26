@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <eosio/fixed_bytes.hpp>
 #include "types.hpp"
 
 namespace ck {
@@ -9,6 +10,12 @@ namespace ck {
         }
 
         // PKCS1 v1.5 - T constants of EMSA struct
+        constexpr auto sha1_digest_info_prefix = std::array<byte_t, 15> {
+            0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14
+        };
+        constexpr size_t pkcs1_v1_5_t_sha1_size = sha1_digest_info_prefix.size() + /*sha1_digest_len=*/20;
+        static_assert( pkcs1_v1_5_t_sha1_size == 35 );
+
         constexpr auto sha256_digest_info_prefix = std::array<byte_t, 19> {
             0x30, 0x31, 0x30, 0x0D, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
         };
@@ -118,6 +125,28 @@ namespace ck {
         memcpy( t.data(), digest_info_prefix.data(), digest_info_prefix.size() );
         auto hash = digest.extract_as_byte_array();
         memcpy( &t[digest_info_prefix.size()], hash.data(), hash.size() );
+    }
+
+    /**
+    * Verifies a RSA PKCS1 v1.5 signed sha-1 digest
+    * @note function uses intrinsic __powm to decrypt signature.
+    *       The decrypted signature is verified in contract following the RFC8017 spec.
+    *       https://tools.ietf.org/html/rfc8017#section-8.2.2
+    *
+    * @param rsa_pub_key - RSA public
+    * @param digest      - SHA-1 digest to verify
+    * @param signature   - signature
+    *
+    * @return false if verification has failed, true if succeeds
+    */
+    [[nodiscard]] bool verify_rsa_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
+        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha1_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
+            rsa_1_5_t_generator( t, detail::sha1_digest_info_prefix, digest );
+        });
+    }
+
+    inline void assert_rsa_sha1_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature, const char* error) {
+        eosio::check( verify_rsa_sha1( rsa_pub_key, digest, signature ), error );
     }
 
     /**
