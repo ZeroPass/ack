@@ -21,6 +21,12 @@ void init_test_intrinsics() {
         auto d =  sha256( (const uint8_t*)data, length );
         memcpy( hash->hash, d.data(), d.size() );
     });
+
+    intrinsics::set_intrinsic<intrinsics::sha512>(
+    [](const char* data, uint32_t length, capi_checksum512* hash) {
+        auto d =  sha512( (const uint8_t*)data, length );
+        memcpy( hash->hash, d.data(), d.size() );
+    });
 }
 
 int main(int argc, char** argv)
