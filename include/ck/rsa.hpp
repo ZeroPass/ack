@@ -21,6 +21,12 @@ namespace ck {
         };
         constexpr size_t pkcs1_v1_5_t_sha256_size = sha256_digest_info_prefix.size() + sizeof(eosio::checksum256);
         static_assert( pkcs1_v1_5_t_sha256_size == 51 );
+
+        constexpr auto sha512_digest_info_prefix = std::array<byte_t, 19> {
+            0x30, 0x51, 0x30, 0x0D, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40
+        };
+        constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(eosio::checksum512);
+        static_assert( pkcs1_v1_5_t_sha512_size == 83 );
     }
 
     /**
@@ -169,5 +175,27 @@ namespace ck {
 
     inline void assert_rsa_sha256_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha256( rsa_pub_key, digest, signature ), error );
+    }
+
+    /**
+    * Verifies a RSA PKCS1 v1.5 signed SHA-512 digest
+    * @note function uses intrinsic __powm to decrypt signature.
+    *       The decrypted signature is verified in contract following the RFC8017 spec.
+    *       https://tools.ietf.org/html/rfc8017#section-8.2.2
+    *
+    * @param rsa_pub_key - RSA public
+    * @param digest      - SHA-512 digest to verify
+    * @param signature   - signature
+    *
+    * @return false if verification has failed, true if succeeds
+    */
+    [[nodiscard]] bool verify_rsa_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
+        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha512_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
+            rsa_1_5_t_generator( t, detail::sha512_digest_info_prefix, digest );
+        });
+    }
+
+    inline void assert_rsa_sha512_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature, const char* error) {
+        eosio::check( verify_rsa_sha512( rsa_pub_key, digest, signature ), error );
     }
 }
