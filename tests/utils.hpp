@@ -1,3 +1,6 @@
+// Copyright © 2021 ZeroPass <zeropass@pm.me>
+// Author: Crt Vavros
+
 #pragma once
 #include <eosio/fixed_bytes.hpp>
 

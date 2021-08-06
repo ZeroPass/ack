@@ -1,3 +1,6 @@
+// Copyright © 2021 ZeroPass <zeropass@pm.me>
+// Author: Crt Vavros
+
 #pragma once
 #include <array>
 #include <cstdint>
@@ -8,9 +11,11 @@
 #include "types.hpp"
 
 namespace eosiock {
-    // Implementation taken from https://github.com/XKCP/XKCP/blob/8f447eb59d43fef72297f5f1560e2cefea093b32/Standalone/CompactFIPS202/C/TweetableFIPS202.c
 
     namespace internal_do_not_use {
+        // Implementation in this scope was taken from:
+        // https://github.com/XKCP/XKCP/blob/8f447eb59d43fef72297f5f1560e2cefea093b32/Standalone/CompactFIPS202/C/TweetableFIPS202.c
+
         typedef unsigned long long U;
         typedef byte_t C;
 

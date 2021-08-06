@@ -1,3 +1,6 @@
+// Copyright © 2021 ZeroPass <zeropass@pm.me>
+// Author: Crt Vavros
+
 #pragma once
 #include <algorithm>
 #include <array>
@@ -9,7 +12,6 @@
 #include <eosio/eosio.hpp>
 
 #include "type_traits.hpp"
-
 
 namespace eosiock {
     //!< @note When c++20 is supported, use std::span
