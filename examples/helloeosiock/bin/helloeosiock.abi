@@ -1,0 +1,176 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "bytes_view",
+            "type": "bytes"
+        },
+        {
+            "new_type_name": "size_t",
+            "type": "uint32"
+        }
+    ],
+    "structs": [
+        {
+            "name": "bt_rsa_1024_sha1",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_1024_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_1024_sha512",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_2048_sha1",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_2048_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_2048_sha512",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_rsa_4096_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "check_rsa_sha1",
+            "base": "",
+            "fields": [
+                {
+                    "name": "rsa_pubkey",
+                    "type": "rsa_public_key_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "check_rsa_sha256",
+            "base": "",
+            "fields": [
+                {
+                    "name": "rsa_pubkey",
+                    "type": "rsa_public_key_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "check_rsa_sha512",
+            "base": "",
+            "fields": [
+                {
+                    "name": "rsa_pubkey",
+                    "type": "rsa_public_key_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "rsa_public_key_view",
+            "base": "",
+            "fields": [
+                {
+                    "name": "modulus",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "exponent",
+                    "type": "bytes_view"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "btrsa1ksha1",
+            "type": "bt_rsa_1024_sha1",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa1ksha2",
+            "type": "bt_rsa_1024_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa1ksha512",
+            "type": "bt_rsa_1024_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa2ksha1",
+            "type": "bt_rsa_2048_sha1",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa2ksha2",
+            "type": "bt_rsa_2048_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa2ksha512",
+            "type": "bt_rsa_2048_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btrsa4ksha2",
+            "type": "bt_rsa_4096_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rsasha1",
+            "type": "check_rsa_sha1",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rsasha2",
+            "type": "check_rsa_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rsasha512",
+            "type": "check_rsa_sha512",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}
