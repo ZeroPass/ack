@@ -6,7 +6,7 @@
 #include "sha1.hpp"
 #include "sha2.hpp"
 
-using namespace ck::test;
+using namespace eosiock::test;
 
 void init_test_intrinsics() {
     using namespace eosio::native;

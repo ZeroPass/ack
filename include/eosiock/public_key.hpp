@@ -2,8 +2,7 @@
 #include <eosio/serialize.hpp>
 #include "types.hpp"
 
-
-namespace ck {
+namespace eosiock {
     struct rsa_public_key {
         bytes modulus;
         bytes exponent;

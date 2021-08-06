@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <cstring>
 
-namespace ck::test {
+namespace eosiock::test {
 
     template <size_t N>
     using hash_array = std::array<uint8_t, N>;

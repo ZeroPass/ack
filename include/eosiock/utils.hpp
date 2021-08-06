@@ -9,7 +9,7 @@
 #include "types.hpp"
 
 
-namespace ck {
+namespace eosiock {
     inline byte_t from_hex( char c ) {
         if( c >= '0' && c <= '9' )
         return byte_t(c - '0');

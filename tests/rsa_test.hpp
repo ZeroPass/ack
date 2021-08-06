@@ -2,12 +2,12 @@
 #include <eosio/crypto.hpp>
 #include <eosio/tester.hpp>
 
-#include <ck/rsa.hpp>
-#include <ck/utils.hpp>
+#include <eosiock/rsa.hpp>
+#include <eosiock/utils.hpp>
 
 #include "utils.hpp"
 
-namespace ck::test {
+namespace eosiock::test {
     EOSIO_TEST_BEGIN(rsa_pkcs_1_5_sha1_test)
         // NIST FIPS 186-4 test vectors
         // https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures

@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace ck {
+namespace eosiock {
     template <typename T>
     using uncvref_t =
         typename std::remove_cv<typename std::remove_reference<T>::type>::type;

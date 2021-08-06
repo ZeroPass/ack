@@ -7,7 +7,7 @@
 
 #include "types.hpp"
 
-namespace ck {
+namespace eosiock {
     // Implementation taken from https://github.com/XKCP/XKCP/blob/8f447eb59d43fef72297f5f1560e2cefea093b32/Standalone/CompactFIPS202/C/TweetableFIPS202.c
 
     namespace internal_do_not_use {

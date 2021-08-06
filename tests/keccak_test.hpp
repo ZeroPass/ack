@@ -1,12 +1,12 @@
 #pragma once
 #include <eosio/tester.hpp>
 
-#include <ck/keccak.hpp>
-#include <ck/utils.hpp>
+#include <eosiock/keccak.hpp>
+#include <eosiock/utils.hpp>
 
 #include "utils.hpp"
 
-namespace ck::test {
+namespace eosiock::test {
 
     EOSIO_TEST_BEGIN(sha3_256_test)
         // NIST CAVS 19.0

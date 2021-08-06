@@ -1,7 +1,7 @@
 #pragma once
 #include <eosio/fixed_bytes.hpp>
 
-namespace ck::test {
+namespace eosiock::test {
     template<size_t N>
     bool operator == (const eosio::fixed_bytes<N>& l, const bytes_view& r)
     {

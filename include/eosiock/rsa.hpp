@@ -1,9 +1,11 @@
 #pragma once
 #include <array>
 #include <eosio/fixed_bytes.hpp>
+
+#include "public_key.hpp"
 #include "types.hpp"
 
-namespace ck {
+namespace eosiock {
     namespace detail {
         extern "C" {
             #include "c/powm.h"

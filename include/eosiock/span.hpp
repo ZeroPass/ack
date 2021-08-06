@@ -11,7 +11,7 @@
 #include "type_traits.hpp"
 
 
-namespace ck {
+namespace eosiock {
     //!< @note When c++20 is supported, use std::span
     template <typename T>
     class span {

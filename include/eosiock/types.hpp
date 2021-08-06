@@ -6,7 +6,7 @@
 
 #include "span.hpp"
 
-namespace ck {
+namespace eosiock {
     using byte_t      = uint8_t;
     using bytes       = std::vector<byte_t>;
     using bytes_view  = span<const byte_t>;
