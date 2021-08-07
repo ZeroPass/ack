@@ -16,6 +16,7 @@ namespace eosiock::test {
         // "SHA3-256 ShortMsg" information for "SHA3AllBytes1-28-16"
         // Length values represented in bits
         // Generated on Thu Jan 28 13:32:44 2016
+        // Taken from: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss
         bytes msg;// = 00
         auto md = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a"_hex;
         REQUIRE_EQUAL( sha3_256(msg), md )
