@@ -1,5 +1,5 @@
 #include <eosio/eosio.hpp>
-#include <eosiock/rsa.hpp>
+#include <eosiock/eosiock.hpp>
 
 using namespace eosiock;
 
