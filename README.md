@@ -35,7 +35,10 @@ The validity of algorithms was tested with some of FIPS 186-3 and FIPS 202 test 
 <br><br>RSA FIPS 186-3: [https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures)
 <br>Keccak SHA-3 FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
 
-# Building
+# Use in project
+To use eosio.ck library in project it's best to make your project with [CMake](https://cmake.org/), and configure the project file to use external project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). <br>If configured correctly you should be able to add `add_library(<your_project> eosio.ck)` to your cmake project and include the `eosio.ck` library in your code directly by stating: `#include <eosiock/eosiock.hpp>`.
+
+# Building tests & examples
 The library includes tests and example [examples/helloeosiock](examples/helloeosiock) smart contract. To configure `cmake` to build example contract, define `-DEOSIO_CK_BUILD_EXAMPLES=ON`. For building tests configure `cmake` with `-DEOSIO_CK_BUILD_TESTS=ON`. Both options are enabled by default.
 
 **Example config & build:**
@@ -45,9 +48,8 @@ The library includes tests and example [examples/helloeosiock](examples/helloeos
 3.) cmake -DEOSIO_CK_BUILD_EXAMPLES=ON -DEOSIO_CK_BUILD_TESTS=OFF ../
 4.) make -j 4
 ```
-
-## Use in project
-To use eosio.ck library in project it's best to make your project with [CMake](https://cmake.org/), and configure the project file to use external project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). <br>If configured correctly you should be able to add `add_library(<your_project> eosio.ck)` to your cmake project and include the `eosio.ck` library in your code directly by stating: `#include <eosiock/eosiock.hpp>`.
+## Testnet
+The [examples/helloeosiock](examples/helloeosiock) smart contract is uploaded to the [Jungle 3](https://jungle3.bloks.io/account/helloeosiock) testnet and [CryptoKylin](https://kylin.eosq.eosnation.io/account/helloeosiock) testnet under the account `helloeosiock`.
 
 # Disclaimer
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
