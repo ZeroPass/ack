@@ -1,13 +1,13 @@
 // Copyright © 2022 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 #pragma once
+#include <eosio/datastream.hpp>
+
 #include <eosiock/span_ext.hpp>
 #include <eosiock/public_key.hpp>
 #include <eosiock/utils.hpp>
 
-#include <eosio/datastream.hpp>
-
-namespace eosiock::test {
+namespace eosiock::tests {
     using eosiock::operator ==;
 
     EOSIO_TEST_BEGIN(public_key_test)

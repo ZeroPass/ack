@@ -5,10 +5,9 @@
 
 #include <eosiock/keccak.hpp>
 #include <eosiock/utils.hpp>
+#include <eosiock/tests/utils.hpp>
 
-#include "utils.hpp"
-
-namespace eosiock::test {
+namespace eosiock::tests {
 
     EOSIO_TEST_BEGIN(sha3_256_test)
         // NIST CAVS 19.0

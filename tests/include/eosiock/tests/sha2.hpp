@@ -1,13 +1,11 @@
 // Copyright (c) 2018 Martyn Afford
 // Licensed under the MIT licence
-
 #pragma once
-
 #include <array>
 #include <cstdint>
 #include <cstring>
 
-namespace eosiock::test {
+namespace eosiock::tests {
 
     template <size_t N>
     using hash_array = std::array<uint8_t, N>;

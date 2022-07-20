@@ -2,13 +2,13 @@
 // Author: Crt Vavros
 #include <eosio/tester.hpp>
 
-#include "keccak_test.hpp"
-#include "public_key_test.hpp"
-#include "rsa_test.hpp"
-#include "sha1.hpp"
-#include "sha2.hpp"
+#include <eosiock/tests/keccak_test.hpp>
+#include <eosiock/tests/public_key_test.hpp>
+#include <eosiock/tests/rsa_test.hpp>
+#include <eosiock/tests/sha1.hpp>
+#include <eosiock/tests/sha2.hpp>
 
-using namespace eosiock::test;
+using namespace eosiock::tests;
 
 void init_test_intrinsics() {
     using namespace eosio::native;
