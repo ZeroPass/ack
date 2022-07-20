@@ -1,5 +1,6 @@
 # EOSIO Cryptography Kits
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![build](https://github.com/ZeroPass/eosio.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/eosio.ck/actions/workflows/build.yml)
 [![tests](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml)
 
 Header only cryptography library for EOSIO smart contracts.
