@@ -40,7 +40,7 @@ if ( EOSIO_CK_BUILD_TESTS )
   enable_testing()
 
   if ( EOSIO_CK_BUILD_TESTS )
-    add_test( eosio_ck_tests ${CMAKE_BINARY_DIR}/tests/ )
+    add_test( eosio_ck_tests ${CMAKE_BINARY_DIR}/tests/eosio_ck_tests )
   endif()
 endif()
 
