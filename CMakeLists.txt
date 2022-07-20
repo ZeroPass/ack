@@ -8,10 +8,10 @@ if ( EOSIO_CK_BUILD_EXAMPLES )
   add_subdirectory( examples )
 endif()
 
-# Find EOSIO.CDT
+# Find CDT
 set( EOSIO_WASM_OLD_BEHAVIOR "Off" )
-if ( EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT )
-  find_package( eosio.cdt REQUIRED )
+if ( CDT_ROOT STREQUAL "" OR NOT CDT_ROOT )
+  find_package( cdt REQUIRED )
 endif()
 
 add_library(${PROJECT_NAME} INTERFACE)
@@ -26,7 +26,7 @@ if ( EOSIO_CK_BUILD_TESTS )
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests/
     BINARY_DIR ${CMAKE_BINARY_DIR}/tests/
     CMAKE_ARGS
-      "-DCMAKE_TOOLCHAIN_FILE=${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt/EosioWasmToolchain.cmake"
+      "-DCMAKE_TOOLCHAIN_FILE=${CDT_ROOT}/lib/cmake/cdt/CDTWasmToolchain.cmake"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
