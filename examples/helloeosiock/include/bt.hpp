@@ -1,4 +1,4 @@
-// Copyright © 2021 ZeroPass <zeropass@pm.me>
+// Copyright © 2022 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 
 #include <array>

@@ -1,6 +1,5 @@
-// Copyright © 2021 ZeroPass <zeropass@pm.me>
+// Copyright © 2022 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
-
 #include <eosio/tester.hpp>
 
 #include "keccak_test.hpp"
