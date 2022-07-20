@@ -8,8 +8,7 @@
 #include <eosio/rope.hpp>
 #include <eosio/string.hpp>
 
-#include "types.hpp"
-
+#include <eosiock/types.hpp>
 
 namespace eosiock {
     inline byte_t from_hex( char c ) {

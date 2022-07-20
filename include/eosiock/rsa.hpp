@@ -3,9 +3,10 @@
 #pragma once
 #include <array>
 #include <eosio/fixed_bytes.hpp>
+#include <span>
 
-#include "public_key.hpp"
-#include "types.hpp"
+#include <eosiock/public_key.hpp>
+#include <eosiock/utils.hpp>
 
 namespace eosiock {
     namespace detail {
@@ -122,7 +123,7 @@ namespace eosiock {
         memset( &em_[2], 0xff, ps_len );
 
         em_[2 + ps_len] = 0x00;
-        gen_t( span<byte_t>{ &em_[ 3 + ps_len ], t_len });
+        gen_t( std::span<byte_t>{ &em_[ 3 + ps_len ], t_len } );
 
         return memcmp( em_, em.data(), em.size() ) == 0;
     }
@@ -130,7 +131,7 @@ namespace eosiock {
     // T generator - https://tools.ietf.org/html/rfc3447#section-9.2
     // @param put_hash - function should calculate hash and put the calculated digest to the buffer pointed to by it's argument
     template<std::size_t S, typename std::size_t HS>
-    inline void rsa_1_5_t_generator(span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, const eosio::fixed_bytes<HS>& digest)
+    inline void rsa_1_5_t_generator(std::span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, const eosio::fixed_bytes<HS>& digest)
     {
         memcpy( t.data(), digest_info_prefix.data(), digest_info_prefix.size() );
         auto hash = digest.extract_as_byte_array();
@@ -150,7 +151,7 @@ namespace eosiock {
     * @return false if verification has failed, true if succeeds
     */
     [[nodiscard]] bool verify_rsa_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
-        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha1_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
+        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha1_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha1_digest_info_prefix, digest );
         });
     }
@@ -172,7 +173,7 @@ namespace eosiock {
     * @return false if verification has failed, true if succeeds
     */
     [[nodiscard]] bool verify_rsa_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
-        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha256_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
+        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha256_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha256_digest_info_prefix, digest );
         });
     }
@@ -194,7 +195,7 @@ namespace eosiock {
     * @return false if verification has failed, true if succeeds
     */
     [[nodiscard]] bool verify_rsa_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
-        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha512_size>( rsa_pub_key, signature, [&](span<byte_t>&& t) {
+        return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha512_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha512_digest_info_prefix, digest );
         });
     }

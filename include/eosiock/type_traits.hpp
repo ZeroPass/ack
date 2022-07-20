@@ -2,6 +2,7 @@
 // Author: Crt Vavros
 #pragma once
 #include <array>
+#include <span>
 #include <type_traits>
 #include <vector>
 
@@ -21,14 +22,11 @@ namespace eosiock {
     template <typename T>
     constexpr bool has_size_and_data_v = has_size_and_data<T>::value;
 
-    template <typename ElementType>
-    class span;
-
     template <typename>
     struct is_span : std::false_type {};
 
     template <typename T>
-    struct is_span<span<T>> : std::true_type {};
+    struct is_span<std::span<T>> : std::true_type {};
 
     template <typename T>
     constexpr bool is_span_v = is_span<T>::value;

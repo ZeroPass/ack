@@ -1,12 +1,15 @@
 // Copyright © 2022 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 #pragma once
-#include "eosiock/public_key.hpp"
-#include "eosiock/utils.hpp"
+#include <eosiock/span_ext.hpp>
+#include <eosiock/public_key.hpp>
+#include <eosiock/utils.hpp>
 
 #include <eosio/datastream.hpp>
 
 namespace eosiock::test {
+    using eosiock::operator ==;
+
     EOSIO_TEST_BEGIN(public_key_test)
         const auto tv_mod = "008052A201E37AD87DD9A14E917C40F5555788D5EF8AEE7454FCB6F686E4A391450691C6AD18A33A0DD23D105C5C20B8E7DEB00FE80FEAA6F1D8B53C46CF60DF17AE9191E297349D0866375A583540167AADFE1DAE1265DF275D9E5D040A7F78DD30BF78B187CDF180527F7915D745B1882210BDF2F8908DB1871970909DA84E55"_hex;
         const auto tv_exp = "010001"_hex;

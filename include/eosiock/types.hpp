@@ -4,14 +4,13 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
-
-#include "span.hpp"
 
 namespace eosiock {
     using byte_t      = uint8_t;
     using bytes       = std::vector<byte_t>;
-    using bytes_view  = span<const byte_t>;
+    using bytes_view  = std::span<const byte_t>;
 
     // helper type for the std::visit
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -35,7 +34,7 @@ namespace eosiock {
         eosio::unsigned_int s;
         ds >> s;
         if constexpr ( !std::is_same_v<eosio::datastream<size_t>, DataStream> ) {
-            data = bytes_view{ (const byte_t*)ds.pos(), s };
+            data = bytes_view{ (const byte_t*)ds.pos(), s.value };
         }
         ds.skip( s );
         return ds;

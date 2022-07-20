@@ -2,7 +2,8 @@
 // Author: Crt Vavros
 #pragma once
 #include <eosio/serialize.hpp>
-#include "types.hpp"
+#include <eosiock/types.hpp>
+#include <eosiock/span_ext.hpp>
 
 namespace eosiock {
     struct rsa_public_key {
@@ -28,11 +29,11 @@ namespace eosiock {
         EOSLIB_SERIALIZE( rsa_public_key_view, (modulus)(exponent) )
     };
 
-    inline bool operator == (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
+    constexpr inline bool operator == (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
         return lkey.exponent == rkey.exponent && lkey.modulus == rkey.modulus;
     }
 
-    inline bool operator != (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
+    constexpr inline bool operator != (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
         return !( lkey == rkey );
     }
 }

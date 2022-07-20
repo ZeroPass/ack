@@ -7,7 +7,7 @@
 
 #include <eosio/fixed_bytes.hpp>
 
-#include "types.hpp"
+#include <eosiock/types.hpp>
 
 namespace eosiock {
 
