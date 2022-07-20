@@ -1,4 +1,7 @@
 # EOSIO Cryptography Kits
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![tests](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml)
+
 Header only cryptography library for EOSIO smart contracts.
 At the moment library implements RSA PKCS v1.5 signature verification algorithm and the Keccak hash algorithms: SHA3-256, SHA3-512, SHAKE-128 and SHAKE-256.
 
