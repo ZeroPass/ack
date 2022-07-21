@@ -3,6 +3,7 @@
 #include <eosio/tester.hpp>
 
 #include <eosiock/tests/keccak_test.hpp>
+#include <eosiock/tests/mgf1_test.hpp>
 #include <eosiock/tests/public_key_test.hpp>
 #include <eosiock/tests/rsa_test.hpp>
 #include <eosiock/tests/sha1.hpp>
@@ -39,5 +40,6 @@ int main(int argc, char** argv)
     EOSIO_TEST( keccak_test )
     EOSIO_TEST( public_key_test )
     EOSIO_TEST( rsa_pkcs_1_5_test )
+    EOSIO_TEST( mgf1_test )
     return has_failed();
 }
