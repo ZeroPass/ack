@@ -3,7 +3,7 @@
 #include <eosio/tester.hpp>
 
 #include <eosiock/tests/keccak_test.hpp>
-#include <eosiock/tests/mgf1_test.hpp>
+#include <eosiock/tests/mgf_test.hpp>
 #include <eosiock/tests/public_key_test.hpp>
 #include <eosiock/tests/rsa_test.hpp>
 #include <eosiock/tests/sha1.hpp>

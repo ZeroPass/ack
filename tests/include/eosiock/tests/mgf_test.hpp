@@ -4,7 +4,7 @@
 #include <eosio/crypto.hpp>
 #include <eosio/tester.hpp>
 
-#include <eosiock/mgf1.hpp>
+#include <eosiock/mgf.hpp>
 #include <eosiock/utils.hpp>
 #include <eosiock/tests/utils.hpp>
 
