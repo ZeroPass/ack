@@ -39,5 +39,48 @@ namespace eosiock::tests {
         mgf_mask = bytes( tv_mgf_mask.size() );
         mgf1( eosio::sha1, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        // Custom tests
+        tv_mgf_seed = "666F6F"_hex; // foo
+        tv_mgf_mask = "3bdaba83cff13337b323ac383ca3995863e922f511b931b9efd4e0118cfc70f08678390d67e3c12dbeb2d7a78bdfa597b5a3"_hex;
+        mgf_mask = bytes( tv_mgf_mask.size() );
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        tv_mgf_seed = "626172"_hex; // bar
+        tv_mgf_mask = "382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1"_hex;
+        mgf_mask = bytes( tv_mgf_mask.size() );
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        tv_mgf_seed = "666F6F626172"_hex; // foobar
+        tv_mgf_mask = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
+        mgf_mask = bytes( tv_mgf_mask.size() );
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        // XOR-ing dest. and mask
+        tv_mgf_mask = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
+        mgf_mask = bytes( tv_mgf_mask.size() );
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+            std::span<byte_t>(dst, len) ^= bytes_view(src, len);
+        });
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        tv_mgf_seed = "666F6F626172"_hex; // foobar
+        tv_mgf_mask = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"_hex;
+        mgf_mask    = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+            std::span<byte_t>(dst, len) ^= bytes_view(src, len);
+        });
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
+
+        tv_mgf_seed = "666F6F626172"_hex; // foobar
+        tv_mgf_mask = "597cb049281ec2ceeb96f425c9bb0d41bbdf9f446ed5f426f28ba8eb472e9d60fcd9b5ce8469ed96683d1798d1d862217221"_hex;
+        mgf_mask    = "382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1"_hex;
+        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+            std::span<byte_t>(dst, len) ^= bytes_view(src, len);
+        });
+        REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
     EOSIO_TEST_END
 }
