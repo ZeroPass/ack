@@ -1,8 +1,10 @@
 // Copyright © 2022 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 #pragma once
+#include <array>
 #include <cstdint>
 #include <string_view>
+#include <type_traits>
 
 #include <eosio/eosio.hpp>
 #include <eosio/rope.hpp>
@@ -73,7 +75,21 @@ namespace eosiock {
         return from_hex( hex_str.data(), hex_str.size() );
     }
 
-    inline bytes operator""_hex(const char* hex_str, std::size_t len) {
+    inline bytes operator""_hex( const char* hex_str, std::size_t len ) {
         return from_hex( std::string_view{ hex_str, len });
+    }
+
+    template<typename T, std::size_t S>
+    inline void array_memcpy(std::array<T, S>& dst, const bytes_view src)
+    {
+       static_assert( std::is_trivial<T>::value );
+       memcpy( dst.data(), src.data(), sizeof(T) * S );
+    }
+
+    template<typename T, std::size_t S>
+    inline void array_memcpy(std::span<byte_t> dst, const std::array<T, S>& src)
+    {
+       static_assert( std::is_trivial<T>::value );
+       memcpy( dst.data(), src.data(), sizeof(T) * S );
     }
 }
