@@ -9,8 +9,8 @@
 #include <eosiock/types.hpp>
 
 namespace eosiock {
-    template<typename Hash>
-    void mgf1(const Hash& hashf, const bytes_view mgf_seed, const std::span<byte_t> mask)
+    template<typename Hash, typename CopyF = void*(*)(void *, const void *, size_t) >
+    void mgf1(const Hash& hashf, const bytes_view mgf_seed, const std::span<byte_t> mask, CopyF copyf = memcpy)
     {
         eosio::check( mask.size() <= std::numeric_limits<uint32_t>::max(), "MGF1 mask too long" );
 
@@ -33,7 +33,7 @@ namespace eosiock {
                 .extract_as_byte_array();
 
             const size_t copied = std::min<std::size_t>( hash.size(), out_len );
-            memcpy( p_out_cur, hash.data(), copied );
+            copyf( p_out_cur, hash.data(), copied );
 
             p_out_cur += copied;
             out_len   -= copied;
