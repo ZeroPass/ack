@@ -80,14 +80,14 @@ namespace eosiock {
     }
 
     template<typename T, std::size_t S>
-    inline void array_memcpy(std::array<T, S>& dst, const bytes_view src)
+    inline void typecastcpy_bytes(std::array<T, S>& dst, const bytes_view src)
     {
        static_assert( std::is_trivial<T>::value );
        memcpy( dst.data(), src.data(), sizeof(T) * S );
     }
 
     template<typename T, std::size_t S>
-    inline void array_memcpy(std::span<byte_t> dst, const std::array<T, S>& src)
+    inline void typecastcpy_bytes(std::span<byte_t> dst, const std::array<T, S>& src)
     {
        static_assert( std::is_trivial<T>::value );
        memcpy( dst.data(), src.data(), sizeof(T) * S );
