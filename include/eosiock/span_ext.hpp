@@ -44,31 +44,4 @@ namespace eosiock {
     inline bool operator != (const U& lhs, const std::span<T>& rhs) {
         return !( lhs == rhs );
     }
-
-    constexpr inline void operator ^= (std::span<byte_t> lhs, const bytes_view rhs)
-    {
-        //eosio::check( rhs.size() < lhs.size(), "rhs.size() < lhs.size()" );
-        using block_t = std::array<uint32_t, 4>;
-        constexpr auto block_size = sizeof( block_t::value_type ) * block_t{}.size();
-        const size_t num_blocks   = lhs.size() - ( lhs.size() % block_size );
-
-        for ( size_t i = 0; i != num_blocks; i += block_size ) {
-            block_t x;
-            block_t y;
-            typecastcpy_bytes( x, lhs.subspan(i, block_size) );
-            typecastcpy_bytes( y, rhs.subspan(i, block_size) );
-
-            x[0] ^= y[0];
-            x[1] ^= y[1];
-            x[2] ^= y[2];
-            x[3] ^= y[3];
-
-            typecastcpy_bytes( lhs.subspan( i, block_size ), x );
-        }
-
-        // XOR remaining data
-        for ( size_t i = num_blocks; i != lhs.size(); i++ ) {
-            lhs[i] ^= rhs[i];
-        }
-    }
 }

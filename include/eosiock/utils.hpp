@@ -92,4 +92,33 @@ namespace eosiock {
        static_assert( std::is_trivial<T>::value );
        memcpy( dst.data(), src.data(), sizeof(T) * S );
     }
+
+    constexpr inline void memxor(std::span<byte_t> dst, const bytes_view src, size_t num)
+    {
+        //eosio::check( rhs.size() < lhs.size(), "rhs.size() < lhs.size()" );
+        num = std::min( std::min( num, dst.size() ), src.size() );
+
+        using block_t = std::array<uint32_t, 4>;
+        constexpr auto block_size = sizeof( block_t::value_type ) * block_t{}.size();
+        const size_t num_blocks   = num - ( num % block_size );
+
+        for ( size_t i = 0; i != num_blocks; i += block_size ) {
+            block_t x;
+            block_t y;
+            typecastcpy_bytes( x, dst.subspan(i, block_size) );
+            typecastcpy_bytes( y, src.subspan(i, block_size) );
+
+            x[0] ^= y[0];
+            x[1] ^= y[1];
+            x[2] ^= y[2];
+            x[3] ^= y[3];
+
+            typecastcpy_bytes( dst.subspan( i, block_size ), x );
+        }
+
+        // XOR remaining data
+        for ( size_t i = num_blocks; i != num; i++ ) {
+            dst[i] ^= src[i];
+        }
+    }
 }
