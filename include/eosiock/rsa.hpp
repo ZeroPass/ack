@@ -109,7 +109,7 @@ namespace eosiock {
 
         const auto em = rsavp1( rsa_pub_key, signature );
         if ( em.size() < t_len + 11 ) {
-            eosio::print( "[ERROR] rsassa_pkcs1_v1_5_verify: intended encoded message length too short" );
+            eosio::print( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
             return false;
         }
 
@@ -139,12 +139,11 @@ namespace eosiock {
     }
 
     /**
-    * Verifies a RSA PKCS1 v1.5 signed sha-1 digest
-    * @note function uses intrinsic __powm to decrypt signature.
-    *       The decrypted signature is verified in contract following the RFC8017 spec.
+    * Verifies RSA PKCS1 v1.5 SHA-1 signature.
+    * @note The decrypted signature is verified following the RFC8017 spec.
     *       https://tools.ietf.org/html/rfc8017#section-8.2.2
     *
-    * @param rsa_pub_key - RSA public
+    * @param rsa_pub_key - RSA public key
     * @param digest      - SHA-1 digest to verify
     * @param signature   - signature
     *
@@ -156,17 +155,25 @@ namespace eosiock {
         });
     }
 
-    inline void assert_rsa_sha1_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature, const char* error) {
+    /**
+    * Asserts if verification of RSA PKCS1 v1.5 SHA-1 signature fails.
+    * @note For implementation details see verify_rsa_sha1.
+    *
+    * @param rsa_pub_key - RSA public key
+    * @param digest      - SHA-1 digest to verify
+    * @param signature   - signature
+    * @param error       - error message to use when verification fails
+    */
+    inline void assert_rsa_sha1_assert(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha1( rsa_pub_key, digest, signature ), error );
     }
 
     /**
-    * Verifies a RSA PKCS1 v1.5 signed SHA-256 digest
-    * @note function uses intrinsic __powm to decrypt signature.
-    *       The decrypted signature is verified in contract following the RFC8017 spec.
+    * Verifies RSA PKCS1 v1.5 SHA-256 signature.
+    * @note The decrypted signature is verified following the RFC8017 spec.
     *       https://tools.ietf.org/html/rfc8017#section-8.2.2
     *
-    * @param rsa_pub_key - RSA public
+    * @param rsa_pub_key - RSA public key
     * @param digest      - SHA-256 digest to verify
     * @param signature   - signature
     *
@@ -178,17 +185,25 @@ namespace eosiock {
         });
     }
 
-    inline void assert_rsa_sha256_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature, const char* error) {
+    /**
+    * Asserts if verification of RSA PKCS1 v1.5 SHA-256 signature fails.
+    * @note For implementation details see verify_rsa_sha256.
+    *
+    * @param rsa_pub_key - RSA public key
+    * @param digest      - SHA-256 digest to verify
+    * @param signature   - signature
+    * @param error       - error message to use when verification fails
+    */
+    inline void assert_rsa_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha256( rsa_pub_key, digest, signature ), error );
     }
 
     /**
-    * Verifies a RSA PKCS1 v1.5 signed SHA-512 digest
-    * @note function uses intrinsic __powm to decrypt signature.
-    *       The decrypted signature is verified in contract following the RFC8017 spec.
+    * Verifies a RSA PKCS1 v1.5 SHA-512 signature.
+    * @note The decrypted signature is verified following the RFC8017 spec.
     *       https://tools.ietf.org/html/rfc8017#section-8.2.2
     *
-    * @param rsa_pub_key - RSA public
+    * @param rsa_pub_key - RSA public key
     * @param digest      - SHA-512 digest to verify
     * @param signature   - signature
     *
@@ -200,7 +215,16 @@ namespace eosiock {
         });
     }
 
-    inline void assert_rsa_sha512_signature(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature, const char* error) {
+    /**
+    * Asserts if verification of RSA PKCS1 v1.5 SHA-512 signature fails.
+    * @note For implementation details see verify_rsa_sha512.
+    *
+    * @param rsa_pub_key - RSA public key
+    * @param digest      - SHA-512 digest to verify
+    * @param signature   - signature
+    * @param error       - error message to use when verification fails
+    */
+    inline void assert_rsa_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha512( rsa_pub_key, digest, signature ), error );
     }
 }

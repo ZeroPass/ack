@@ -25,7 +25,7 @@ namespace eosiock::tests {
         auto d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA-1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA-1 signature verification failed"
             );
         })
@@ -37,7 +37,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -48,7 +48,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "fe3fa1"_hex;
         m = "de4dc041a283c488187ef9b75e701ab0a25d6ab6e5cf9cc702ccf02cec05a04e37507acbda58cec933938a8b4b75a4425ce4b82590ebf3c30cb22f982dae5fdf11152ea85a95e32a2e45885a82dc4bbd9921247ac7a2b8b37ba97e157d6c20ae738424ffaaa0cb53137b394f8c0bd7c961fcf6de135cb53e589824cb62a7a963"_hex;
@@ -57,7 +57,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -69,7 +69,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -81,7 +81,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -94,7 +94,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -106,7 +106,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -117,7 +117,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "597bdf"_hex;
         m = "c18b5b1847b7e397c39a6f90402aefc1d727f11418f31f17aca308ac3956230286c510c3e01c228fbc091baa9d1236f1382b6b13d688eefdfbb0f99645d3cbad965df12f76cbc49eb2bd33be494dc29289a0d38676ba24ee6b979aaf04773d3c3a7983c5d06bd1abefe13f360d849c8a13adb2d7be33cad1458173603deb8098"_hex;
@@ -126,7 +126,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -138,7 +138,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -150,7 +150,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -163,7 +163,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -175,7 +175,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -187,7 +187,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -198,7 +198,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "6ff82f"_hex;
         m = "f2f47bb35772361b88df3595fb27bd1c4bc66da330e8d159afcf332a8e76b4890b749c6dce22ef991b0041214c55ca2a7f16bdf18c09d60f3a2a32fbb24e64d03306c55008c60b29b7471e787c29278cf5dde9ec1fc2549b818e579aa7f0f7afd2749e65eea6b554c47a74a271ebf9ca17e3989cd25b7386eec34a1157a494ae"_hex;
@@ -207,7 +207,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -219,7 +219,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -233,7 +233,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -244,7 +244,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "748d77"_hex;
         m = "02e74a1d1d61bc6c856a20fecdd64c6a011542b3e7629c1c843e2d3ee21de557115ff5e56c8134741d95c1b4e4efeace14224df8de2b3d48d1eb68c5a2dbb6c429fb7472ad0bb1ad61fee8182eace06eb3c7d1168b10c8f8ceca4c90da6f424053a30eeb6866fbbf588ddd523573f5f1e9ec1435767a03d682c423c412435174"_hex;
@@ -253,7 +253,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -265,7 +265,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -277,7 +277,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -289,7 +289,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -301,7 +301,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "0b8f69"_hex;
         m = "e88292f68268095c2d1059d6c671ee2cc3bc8734748f97a2896ceb22d56b8ea4512beaf7640e2f9a61a6f9cf526a2df0f4ae230602d20b98b6b989c18e7ca3854c60dd654006a231c9e2e61e1aee0a193aa0005a4e19af3b1b9f994bc74dbb9edf09b4689fb72aca6dac6aeca6664e4c9d7a6456e1cd4c34bf0762e708459e97"_hex;
@@ -310,7 +310,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -322,7 +322,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -334,7 +334,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -346,7 +346,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -358,7 +358,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -371,7 +371,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -382,7 +382,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "1e5e25"_hex;
         m = "59e84c0d700305007789dd765f33fc014241ef0fa4b406befcbdfaf27175d3a4e1ce097d27caeaa39eeb3bd3e1ea22b0d5ac445aea712a439d4fe93e42df02d9003687ed1d167f737b668c9963e0cb16820afcba3167e349faeeed8957bb179abc050c86d8508d1919e316f36e7dbfdb5044605603fef878198350fb3972db8e"_hex;
@@ -391,7 +391,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -403,7 +403,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -415,7 +415,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -427,7 +427,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -441,7 +441,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -452,7 +452,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "9fbb4f"_hex;
         m = "e4bc017c194430d1ae0798c2a122b56aedab0dc4f68cb81c27911fc3dabf040778e8c362e17cd7f20ea29f29f58762c6acf69204d22a4d112be029c18ab03184f49c2b9602ea1d75872f0f9873ad115ef7de8045ea51865c6cb5e0fbc934e4b1a002c27e44350a4262d76e76e439ca1a168b61ee07aa69e53339cbd75ef32476"_hex;
@@ -461,7 +461,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -473,7 +473,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -485,7 +485,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -497,7 +497,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -510,7 +510,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -522,7 +522,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -534,7 +534,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -546,7 +546,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -558,7 +558,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -569,7 +569,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         n = "d7a6b5b175afa3bb18fffeaee645a096d8ff28cf96e13dce6d753d3eef4c0cf605dd06f0d25d208da216eba09b3e7e59b304210e63118c5fbc3185f1b845d18bdbf113c4d65ad2880bb2a5eb5b4e7210df30296a4ed6cbc637595318e72e2a6439e4d244d63defad0d2a7d5c06518b0981fef4c916c533f3495c098b40254724fc5a44b0f1d23c3a275466100eb39de3dff6dd48e8322ac2251f3b1f09ae8e6a6136645acbf358e7baa89bc515a12e78cf0f6c9e257b816be1e7a3098b9c1d3b47a4c955b390dc576cca2f9b391b61af5e0eeba21addbe728c58eceb8e018573962ae069f91c538e3161e5765db7e15b352ba3978edbab3071104353d122024e1f3e31f6337dddaae90a2a646074b5691b95b7d82429192c897598a00d67639c326922407002d49432b3cdf84c095c021c4dbe53f7fbe80a497f75991d195122fdb672c67fc973626583202c8230a506f251600ab46435acf51ef6461bd55d0c14a76bb4f1c0b7e3c1affdf21dc8e514c2e8732779e62c3f1fd8626c4b80c683"_hex;
         e = "2fda05"_hex;
@@ -579,7 +579,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -591,7 +591,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -603,7 +603,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -614,7 +614,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA1 signature" );
+        assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
         e = "2fda05"_hex;
         m = "f7653ea73a08384cd5dc0f14daf59160b94ee19eb76b83109f3db3cfb446fb0febfe04a45774adc6e5385a1149798ecf386bbd7ad8eb5b7d7566393b75f711528ecf602136da73885ba0c5ee5569888919a482d9af891a76e6feb30c46b738a446a2f825bf82b51aa1d9f7b5e50ca614c2c2d8c4248de8845accc84b0ed0988c"_hex;
@@ -623,7 +623,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -635,7 +635,7 @@ namespace eosiock::tests {
         d = eosio::sha1( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-            assert_rsa_sha1_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA1 signature verification failed"
             );
         })
@@ -657,7 +657,7 @@ namespace eosiock::tests {
         auto d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA-256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA-256 signature verification failed"
             );
         })
@@ -668,7 +668,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "eef211"_hex;
         m = "084e3b56d68ea7c99068489e2c8080b9d3eb5ffea1e67eaea9c82af33935c5b960956ac0aec4d0ef3b0b71ecea50ebe9ef89a6c18f77b743279004cd703da91e01459b6516898b9d8ff30e1d3ca9fa6b5786135252cae734d410f6a1fe811627f248166c9645a27b9506665ca7f377e713c8eed97249d628b5314894696bd47f"_hex;
@@ -677,7 +677,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -689,7 +689,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -701,7 +701,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -713,7 +713,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -726,7 +726,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -737,7 +737,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "09ffbd"_hex;
         m = "036f62daacf68776f409d0595509a596a544b085ec7649687390324e1db78538fa90ea7b1abb0d659f9d50231663bde208433e35cb0510b79ec375f1f6eda97e128f186cd5d7cee6d5d22f10b076e8339fe5251a4df005bce9da4a1b795f566b72f553778652b141be2ed5e8c84a0fcf92b1cdfc183e0fbe7a5e1b9351177248"_hex;
@@ -746,7 +746,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -758,7 +758,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -770,7 +770,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -782,7 +782,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -795,7 +795,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -807,7 +807,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -819,7 +819,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -830,7 +830,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "eefc9f"_hex;
         m = "186594f37c9ff1fe3ef55bbb511dfebdcf5b64723cacddf80f4425326e3b411c3a84aa5b4b1ead19fd8e120feb8cfce3fafd10b59a21d9f5480e6b77575d47c9f1237fc459231b617241bace853a7dc13f93200df9cf6a733de5c8ba85f13501452a5c552c14017fa7f79d1fa88f48ffa505dca1e31e581af4b382237f61d16e"_hex;
@@ -839,7 +839,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -851,7 +851,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -864,7 +864,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "49d2a1"_hex;
         m = "f89fd2f6c45a8b5066a651410b8e534bfec0d9a36f3e2b887457afd44dd651d1ec79274db5a455f182572fceea5e9e39c3c7c5d9e599e4fe31c37c34d253b419c3e8fb6b916aef6563f87d4c37224a456e5952698ba3d01b38945d998a795bd285d69478e3131f55117284e27b441f16095dca7ce9c5b68890b09a2bfbb010a5"_hex;
@@ -873,7 +873,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -885,7 +885,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -897,7 +897,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -909,7 +909,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -921,7 +921,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -933,7 +933,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "391c9d"_hex;
         m = "671ada018b6132b381978036f19cb9fa9cf7d07334642cbf718c59896113fe2d00d70f1c087743830a13c927be53379398abc3769bddb54772bf1c2abd3ec017a9a35939c315fe940e5fe0eb52f438e1b8307e5e94e1dc348206e203b4d77b5a8a05201e63424b30b4042f4a5786a62a25106bf3c67989d0c8ea13daefe4163c"_hex;
@@ -942,7 +942,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -954,7 +954,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -966,7 +966,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -978,7 +978,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -990,7 +990,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1003,7 +1003,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1015,7 +1015,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1027,7 +1027,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1038,7 +1038,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "3c7bf9"_hex;
         m = "bb40a410b0183b32df12f739506643bdd2fa7e6aed83974918ecda402cfb09dd1932af4fd7f3b1b5a0e8269c5da268c25e806b204dd34e28653f304cdf6545bfadbe297f6bca7493936b8e91f08bc56455059c4c8ec36626972414ee0ca04c82e1aebba953e5ab531e62d823f16b7f2a1f51b9f6979b07cb16602e309bf545ad"_hex;
@@ -1047,7 +1047,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1059,7 +1059,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1073,7 +1073,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1085,7 +1085,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1097,7 +1097,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1109,7 +1109,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1120,7 +1120,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "ac6db1"_hex;
         m = "b2f72cef31be4b7439191d9b342065e62513792826f950481486dd4289429b6e0ae86a05820c99e1ef0144845cfae05c0f6f144603c3ca50992387c38ab1f76120e2cdeba624cae61dc51a9f3010e76d6ab92936a77bbb34c8ffb4f9ab00f4b15badfda8834e050c292b49f398a9a39f9eb75f01f8684b7d0be10dedd576b9e8"_hex;
@@ -1129,7 +1129,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1142,7 +1142,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1153,7 +1153,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "f1d0f1"_hex;
         m = "b1fe0c7145b1e35a8062ed24ab82e862a0d695a53a1cc7430af1b9574bf2a40918229110dd8c6c750c295b9911034e79879bd631ac883abf1262c80a98de6923993a78ca63dcd434eb36340bbfecbbb73b39cddc008f2023a27d163ea1d64a269b1068a7bfea431f855121839c8559a2247821ae1e77a1f8210b4cfb4e226f9c"_hex;
@@ -1162,7 +1162,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1174,7 +1174,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1186,7 +1186,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1198,7 +1198,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1211,7 +1211,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1222,7 +1222,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA256 signature" );
+        assert_rsa_sha256( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA256 signature" );
 
         e = "c15efd"_hex;
         m = "34a83157520e0413bc2ec4b48034fe5cc3fd2f69fb7992f95e5437ad99d555aec606e1ee98155fb1d9faf94b175ace2b9aab8c18999a41bbada96e5e851d5ef3dc17b558a8014cd9942b3cf7b1b6396768b2225eb483d50c8e894866a800d6295d24d61ce8997295d50bb73eb612e819175818c2b4fdf7f5e93aed4f69456559"_hex;
@@ -1231,7 +1231,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1243,7 +1243,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1255,7 +1255,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1267,7 +1267,7 @@ namespace eosiock::tests {
         d = eosio::sha256( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha256( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA256 signature verification failed", [&]() {
-            assert_rsa_sha256_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha256( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA256 signature verification failed"
             );
         })
@@ -1288,7 +1288,7 @@ namespace eosiock::tests {
         auto r = true; // Result = P
         auto d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "83a029"_hex;
         m = "c4d94f011bee04446ce78f805d6950a9de2c6e59f7afbe1fc42ae619bec5c2c53b070614399125c0570c72e0246085ba9c26e1d8f061d45e86689e9a4127d5dd028707896f2ba26cf35d114c054828c3ae67c24e453da8a07e47b53ca32f384220429a89452441ef48c2b3ed8989ff6f1ad659e27fad048eb2ad75266b43b59d"_hex;
@@ -1297,7 +1297,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1309,7 +1309,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1321,7 +1321,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1333,7 +1333,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1345,7 +1345,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1358,7 +1358,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1370,7 +1370,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1382,7 +1382,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1394,7 +1394,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1406,7 +1406,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1417,7 +1417,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         n = "ed88e482e9d7d30dfb6ff2e20bd93b5cf028fd5e49f9415b72f77602e688e9ce0d153c5131cf1223ee78e322f207edc1eab0832efeed4146e3af7715a301fe847605e009d18c05db26b3034ad84ecbf2728a6d384694625528e1002a83f47166e46dac3d0d7d146fc06419a2d2a64a9482267bbf30d666e694e5b2180c3e8f09"_hex;
         e = "22478b"_hex;
@@ -1427,7 +1427,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1439,7 +1439,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1451,7 +1451,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1463,7 +1463,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1474,7 +1474,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "903695"_hex;
         m = "0a87d48ac27cdc05dfbd93afab38c18a339beb5055180e5a196694c0450880c22bd1ec67c6a8b5630589753e67ccb1b3c8aa54577bfd5c7b9847d45297f602571ee6e1e91828d23807028e659b365fe583879027837a2176c75ac020777ef5d88bcf9d59e184994c8c30c76c70ff31e80c3c85089617c6144da640720b29c10e"_hex;
@@ -1483,7 +1483,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1497,7 +1497,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1509,7 +1509,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1520,7 +1520,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "a3e187"_hex;
         m = "e2a14fdf10cbe13b0afa4294d073af00b19f02c2786987c9e3e80c79573e37aed1c01dfe20570f3f5225b7496c6c65fd5eaca387350c0fdf93fb6a965c17eccfb34eda8c25435b2b23f38830b698c2446ece487e9cf408e2c0d5b62745871cbe6c94b10f87586c0667aadace17bf6fdccb4a1a3013e81bd754bc19b579566f81"_hex;
@@ -1529,7 +1529,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1541,7 +1541,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1553,7 +1553,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1566,7 +1566,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1578,7 +1578,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1590,7 +1590,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1601,7 +1601,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "534f11"_hex;
         m = "dbed25e65429b89264ff6928e6ea9424b862a2df1daf870660fe8f4bbbb55b5a7604260f53bc4ee62a650fb3d18b91933e582522f068cbee8bd8f92cc2a097aa79234e052b05021c8a3d9dc4666b0fbed06b93e67f2a33ac73b88ec8d79fd92a2c742430a4abde1cccaf9cc56e33168db6c27292939ec62960c7d888c45a28c2"_hex;
@@ -1610,7 +1610,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1622,7 +1622,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1634,7 +1634,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "fd8739"_hex;
         m = "77449a132998a90b149b91bd05fb1e53c85e28d7923e16a69cf7a122111edba82a156fc297dc2a9d222ababd8fbdb6efc6eedf7f3488a6ac6edaee59170b120505ae2afd9f968ad089ec8c04847e90078f5a4068529c1947bd84270bedcc0f534f38532e076ed28e93088efaabe8b2846ccbd4fbb6217761d31dd49f5908da78"_hex;
@@ -1643,7 +1643,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1655,7 +1655,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1667,7 +1667,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1679,7 +1679,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1691,7 +1691,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1705,7 +1705,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1716,7 +1716,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "fa3751"_hex;
         m = "e4dcdd4e122e9466560370fb59ee0c4c323fca47e57772a029ff1b216f194f411f166af725ca43d0ac3d0e4029a381359c8e36f21363511b6f0a620c6aea8d6fd915e80e2fbf24e543f5707c538c9a744857775f3b9d86d539c9d0c44364120799411e3a39f77fcda2945c58dd909f2ebe005535680c58f50fa32cee026e282f"_hex;
@@ -1725,7 +1725,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1737,7 +1737,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1749,7 +1749,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1761,7 +1761,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1774,7 +1774,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1786,7 +1786,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1798,7 +1798,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1810,7 +1810,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1821,7 +1821,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
 
         e = "a1befd"_hex;
         m = "6739c2996ed518592cde7619a0a5f361c09c51c36a738c189d80af0ce964ebdd24ecea5f5f3561441814e59ab2b4ff952281828fea451c4d4b912c84b65fd39b85f54eb3e80d83e52232d9caf56d4d415a21c36c763499fcca6f82afaa289216f01e959cf1a4a5c4b002fcb2521806edd244ba63f6862bae82e25a95ab064fd6"_hex;
@@ -1830,7 +1830,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1843,7 +1843,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1855,7 +1855,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1867,7 +1867,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1879,7 +1879,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1891,7 +1891,7 @@ namespace eosiock::tests {
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
         REQUIRE_ASSERT( "RSA PKCS1.5 SHA512 signature verification failed", [&]() {
-            assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s,
+            assert_rsa_sha512( rsa_public_key_view(n, e), d, s,
                 "RSA PKCS1.5 SHA512 signature verification failed"
             );
         })
@@ -1902,7 +1902,7 @@ namespace eosiock::tests {
         r = true; // Result = P
         d = eosio::sha512( (const char*)m.data(), m.size() );
         REQUIRE_EQUAL( r, verify_rsa_sha512( rsa_public_key_view(n, e), d, s ));
-        assert_rsa_sha512_signature( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 SHA512 signature" );
+        assert_rsa_sha512( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA512 signature" );
     EOSIO_TEST_END
 
     EOSIO_TEST_BEGIN( rsa_pkcs_1_5_test )
