@@ -5,16 +5,13 @@
 #include <cstdint>
 #include <span>
 
-#include <eosio/eosio.hpp>
 #include <eosiock/types.hpp>
 
 namespace eosiock {
-    template<typename Hash, typename CopyF = void(*)(std::span<byte_t>, const bytes_view, size_t) >
-    void mgf1(const Hash& hashf, const bytes_view mgf_seed, std::span<byte_t> mask,
+    template<typename HashT, typename CopyF = void(*)(std::span<byte_t>, const bytes_view, size_t) >
+    void mgf1(HashT hash, const bytes_view mgf_seed, std::span<byte_t> mask,
               CopyF copyf = [](auto dst, auto src, auto len) { memcpy( dst.data(), src.data(), len ); })
     {
-        eosio::check( mask.size() <= std::numeric_limits<uint32_t>::max(), "MGF1 mask too long" );
-
         uint32_t counter          = 0;
         std::size_t out_len       = mask.size();
         const std::size_t buf_len = mgf_seed.size() + sizeof(counter);
@@ -29,11 +26,11 @@ namespace eosiock {
             buf[mgf_seed.size() + 2] = ((counter) >> 8) & 0xff;
             buf[mgf_seed.size() + 3] = (counter) & 0xff;
 
-            auto hash = hashf( reinterpret_cast<const char*>( buf ), buf_len )
+            auto digest = hash( reinterpret_cast<const char*>( buf ), buf_len )
                 .extract_as_byte_array();
 
-            const size_t copied = std::min<std::size_t>( hash.size(), out_len );
-            copyf( mask, hash, copied );
+            const size_t copied = std::min<std::size_t>( digest.size(), out_len );
+            copyf( mask, digest, copied );
 
             mask     = mask.subspan( copied );
             out_len -= copied;
