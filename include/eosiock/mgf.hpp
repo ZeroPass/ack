@@ -8,9 +8,17 @@
 #include <eosiock/types.hpp>
 
 namespace eosiock {
-    template<typename HashT, typename CopyF = void(*)(std::span<byte_t>, const bytes_view, size_t) >
-    void mgf1(HashT hash, const bytes_view mgf_seed, std::span<byte_t> mask,
-              CopyF copyf = [](auto dst, auto src, auto len) { memcpy( dst.data(), src.data(), len ); })
+    /**
+    * Mask generation function - MGF1.
+    * Implementation based on RFC 8017 appendix-B.2.1: https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
+    * @param hash     - ref to t the hash function to use in the process
+    * @param mgf_seed - the bytes view of MGF seed
+    * @param mask     - the output mask
+    * @param copy     - ref to the function which is used for copying final data to `mask`
+    */
+    template<typename HashF, typename CopyF = void(*)(std::span<byte_t>, const bytes_view, size_t) >
+    void mgf1(HashF&& hash, const bytes_view mgf_seed, std::span<byte_t> mask,
+              CopyF copy = [](auto dst, auto src, auto len) { memcpy( dst.data(), src.data(), len ); })
     {
         uint32_t counter          = 0;
         std::size_t out_len       = mask.size();
@@ -30,7 +38,7 @@ namespace eosiock {
                 .extract_as_byte_array();
 
             const size_t copied = std::min<std::size_t>( digest.size(), out_len );
-            copyf( mask, digest, copied );
+            copy( mask, digest, copied );
 
             mask     = mask.subspan( copied );
             out_len -= copied;
