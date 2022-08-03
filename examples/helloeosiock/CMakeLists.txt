@@ -1,7 +1,9 @@
-include(ExternalProject)
+cmake_minimum_required( VERSION 3.14 )
+include( ExternalProject )
+
 # if no cdt root is given use default path
-if(CDT_ROOT STREQUAL "" OR NOT CDT_ROOT)
-   find_package(cdt)
+if( CDT_ROOT STREQUAL "" OR NOT CDT_ROOT )
+   find_package( cdt )
 endif()
 
 ExternalProject_Add(

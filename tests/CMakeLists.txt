@@ -1,7 +1,6 @@
 cmake_minimum_required( VERSION 3.14 )
 project( eosio_ck_tests )
 
-set( EOSIO_WASM_OLD_BEHAVIOR "Off" )
 find_package( cdt REQUIRED )
 
 set( EOSIO_CK_TEST_SOURCES
