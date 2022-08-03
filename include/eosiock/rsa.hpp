@@ -103,13 +103,13 @@ namespace eosiock {
     [[nodiscard]] bool rsassa_pkcs1_v1_5_verify(const rsa_public_key_view& rsa_pub_key, const bytes_view& signature, Lambda&& gen_t)
     {
         if ( signature.size() != rsa_pub_key.modulus.size() ) {
-            eosio::print( "[ERROR] rsassa_pkcs1_v1_5_verify: invalid signature" );
+            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: invalid signature" );
             return false;
         }
 
         const auto em = rsavp1( rsa_pub_key, signature );
         if ( em.size() < t_len + 11 ) {
-            eosio::print( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
+            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
             return false;
         }
 
