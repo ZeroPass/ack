@@ -34,6 +34,7 @@ if ( EOSIO_CK_BUILD_TESTS )
       "-DCMAKE_TOOLCHAIN_FILE=${CDT_ROOT}/lib/cmake/cdt/CDTWasmToolchain.cmake"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DEOSIO_CK_ENABLE_DEBUG_LOG=${EOSIO_CK_ENABLE_DEBUG_LOG}"
+      "-DCMAKE_CXX_FLAGS_RELEASE='-O3 -g -DNDEBUG'" # -g required in order for the tests to compile in time
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
     TEST_COMMAND ""
