@@ -83,6 +83,12 @@ namespace eosiock {
     * @return result, the size of vector is the same as modulus
     */
     [[nodiscard]] inline bytes powm( const bytes_view& base, const bytes_view& exponent, const bytes_view& modulus ) {
+        if ( exponent.size() > sizeof(uint64_t) ) {
+            for (size_t i = 0; i < exponent.size()  - sizeof(uint64_t); i++) {
+                eosio::check( exponent[i] == 0x00, "exponent too big" );
+            }
+        }
+
         bytes result( modulus.size() );
         [[maybe_unused]]auto res_size = powm(
             (const char*)base.data(), base.size(),
@@ -95,7 +101,7 @@ namespace eosiock {
     }
 
     [[nodiscard]] inline bytes rsavp1(const rsa_public_key_view& rsa_pub_key, const bytes_view& signature) {
-        // Note: Missing check for signature representative, an integer between 0 and n - 1
+        // Note: Missing check for signature representative (integer between 0 and n - 1)
         return powm( signature, rsa_pub_key.exponent, rsa_pub_key.modulus );
     }
 
