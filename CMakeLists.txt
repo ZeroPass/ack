@@ -6,8 +6,8 @@ option( EOSIO_CK_BUILD_EXAMPLES   "Build examples"            ON )
 option( EOSIO_CK_ENABLE_DEBUG_LOG "Enable debug log printout" OFF )
 
 # Find CDT
-if ( CDT_ROOT STREQUAL "" OR NOT CDT_ROOT )
-  find_package( cdt REQUIRED )
+if ( EOSIO_CDT_ROOT STREQUAL "" OR NOT EOSIO_CDT_ROOT )
+  find_package( eosio.cdt REQUIRED )
 endif()
 
 # Make library interface
@@ -31,7 +31,7 @@ if ( EOSIO_CK_BUILD_TESTS )
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests/
     BINARY_DIR ${CMAKE_BINARY_DIR}/tests/
     CMAKE_ARGS
-      "-DCMAKE_TOOLCHAIN_FILE=${CDT_ROOT}/lib/cmake/cdt/CDTWasmToolchain.cmake"
+      "-DCMAKE_TOOLCHAIN_FILE=${EOSIO_CDT_ROOT}/lib/cmake/eosio.cdt/EosioCDTWasmToolchain.cmake"
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DEOSIO_CK_ENABLE_DEBUG_LOG=${EOSIO_CK_ENABLE_DEBUG_LOG}"
       "-DCMAKE_CXX_FLAGS_RELEASE='-O3 -g -DNDEBUG'" # -g required in order for the tests to compile in time
