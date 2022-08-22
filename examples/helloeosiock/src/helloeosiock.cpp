@@ -10,7 +10,16 @@ void helloeosiock::check_rsa_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg
 {
     auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha1_assert( rsa_pubkey, md, sig,
-        "verification of RSA PKCS v1.5 SHA-1 signature failed"
+        "RSA PKCS v1.5 SHA-1 signature verification failed"
+    );
+}
+
+[[eosio::action("rsapsssha1"), eosio::read_only]]
+void helloeosiock::check_rsa_pss_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+{
+    auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_rsa_pss_sha1( rsa_pubkey, md, sig,
+        "RSA PSS SHA-1 signature verification failed"
     );
 }
 
@@ -19,7 +28,16 @@ void helloeosiock::check_rsa_sha256(rsa_public_key_view rsa_pubkey, bytes_view m
 {
     auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha256( rsa_pubkey, md, sig,
-        "verification of RSA PKCS v1.5 SHA-256 signature failed"
+        "RSA PKCS v1.5 SHA-256 signature verification failed"
+    );
+}
+
+[[eosio::action("rsapsssha2")]]
+void helloeosiock::check_rsa_pss_sha256(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+{
+    auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_rsa_pss_sha256( rsa_pubkey, md, sig,
+        "RSA PSS SHA-256 signature verification failed"
     );
 }
 
@@ -28,7 +46,16 @@ void helloeosiock::check_rsa_sha512(rsa_public_key_view rsa_pubkey, bytes_view m
 {
     auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha512( rsa_pubkey, md, sig,
-        "verification of RSA PKCS v1.5 SHA-512 signature failed"
+        "RSA PKCS v1.5 SHA-512 signature verification failed"
+    );
+}
+
+[[eosio::action("rsapsssha512"), eosio::read_only]]
+void helloeosiock::check_rsa_pss_sha512(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+{
+    auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_rsa_pss_sha512( rsa_pubkey, md, sig,
+        "RSA PSS SHA-512 signature verification failed"
     );
 }
 
@@ -37,7 +64,7 @@ void helloeosiock::bt_rsa_1024_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha1::mod, rsa_1024_sha1::exp );
     assert_rsa_sha1_assert( pubkey, rsa_1024_sha1::md, rsa_1024_sha1::sig,
-        "verification of RSA 1024 PKCS v1.5 SHA-1 signature failed"
+        "RSA 1024 PKCS v1.5 SHA-1 signature verification failed"
     );
 }
 
@@ -46,7 +73,7 @@ void helloeosiock::bt_rsa_2048_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha1::mod, rsa_2048_sha1::exp );
     assert_rsa_sha1_assert( pubkey, rsa_2048_sha1::md, rsa_2048_sha1::sig,
-        "verification of RSA 2048 PKCS v1.5 SHA-1 signature failed"
+        "RSA 2048 PKCS v1.5 SHA-1 signature verification failed"
     );
 }
 
@@ -55,7 +82,7 @@ void helloeosiock::bt_rsa_1024_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha256::mod, rsa_1024_sha256::exp );
     assert_rsa_sha256( pubkey, rsa_1024_sha256::md, rsa_1024_sha256::sig,
-        "verification of RSA 1024 PKCS v1.5 SHA-256 signature failed"
+        "RSA 1024 PKCS v1.5 SHA-256 signature verification failed"
     );
 }
 
@@ -64,7 +91,7 @@ void helloeosiock::bt_rsa_2048_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha256::mod, rsa_2048_sha256::exp );
     assert_rsa_sha256( pubkey, rsa_2048_sha256::md, rsa_2048_sha256::sig,
-        "verification of RSA 2048 PKCS v1.5 SHA-256 signature failed"
+        "RSA 2048 PKCS v1.5 SHA-256 signature verification failed"
     );
 }
 
@@ -73,7 +100,7 @@ void helloeosiock::bt_rsa_4096_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_4096_sha256::mod, rsa_4096_sha256::exp );
     assert_rsa_sha256( pubkey, rsa_4096_sha256::md, rsa_4096_sha256::sig,
-        "verification of RSA 4096 PKCS v1.5 SHA-256 signature failed"
+        "RSA 4096 PKCS v1.5 SHA-256 signature verification failed"
     );
 }
 
@@ -82,7 +109,7 @@ void helloeosiock::bt_rsa_1024_sha512()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha512::mod, rsa_1024_sha512::exp );
     assert_rsa_sha512( pubkey, rsa_1024_sha512::md, rsa_1024_sha512::sig,
-        "verification of RSA 1024 PKCS v1.5 SHA-512 signature failed"
+        "RSA 1024 PKCS v1.5 SHA-512 signature verification failed"
     );
 }
 
@@ -91,6 +118,6 @@ void helloeosiock::bt_rsa_2048_sha512()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha512::mod, rsa_2048_sha512::exp );
     assert_rsa_sha512( pubkey, rsa_2048_sha512::md, rsa_2048_sha512::sig,
-        "verification of RSA 2048 PKCS v1.5 SHA-512 signature failed"
+        "RSA 2048 PKCS v1.5 SHA-512 signature verification failed"
     );
 }

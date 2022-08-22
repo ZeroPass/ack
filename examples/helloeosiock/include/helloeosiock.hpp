@@ -17,6 +17,16 @@ struct [[eosio::contract]] helloeosiock : public eosio::contract {
     void check_rsa_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
 
     /**
+     * Action verifies RSA PSS MGF1 SHA-1 signature.
+     * Action fails if signature is invalid
+     * @param rsa_pubkey - RSA public key
+     * @param msg        - signed message
+     * @param sig        - signature
+    */
+    [[eosio::action("rsapsssha1"), eosio::read_only]]
+    void check_rsa_pss_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
+
+    /**
      * Action verifies RSA PKCS v1.5 SHA-256 signature.
      * Action fails if signature is invalid
      * @param rsa_pubkey - RSA public key
@@ -27,6 +37,16 @@ struct [[eosio::contract]] helloeosiock : public eosio::contract {
     void check_rsa_sha256(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
 
     /**
+     * Action verifies RSA PSS MGF1 SHA-256 signature.
+     * Action fails if signature is invalid
+     * @param rsa_pubkey - RSA public key
+     * @param msg        - signed message
+     * @param sig        - signature
+    */
+    [[eosio::action("rsapsssha2"), eosio::read_only]]
+    void check_rsa_pss_sha256(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
+
+    /**
      * Action verifies RSA PKCS v1.5 SHA-512 signature.
      * Action fails if signature is invalid
      * @param rsa_pubkey - RSA public key
@@ -35,6 +55,16 @@ struct [[eosio::contract]] helloeosiock : public eosio::contract {
     */
     [[eosio::action("rsasha512"), eosio::read_only]]
     void check_rsa_sha512(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
+
+    /**
+     * Action verifies RSA PSS MGF1 SHA-512 signature.
+     * Action fails if signature is invalid
+     * @param rsa_pubkey - RSA public key
+     * @param msg        - signed message
+     * @param sig        - signature
+    */
+    [[eosio::action("rsapsssha512"), eosio::read_only]]
+    void check_rsa_pss_sha512(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig);
 
     /**
      * Benchmark action for testing verification of 1 RSA 1024 PKCS v1.5 SHA-1 signature.
