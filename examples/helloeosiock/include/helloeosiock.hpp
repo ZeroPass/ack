@@ -91,10 +91,22 @@ struct [[eosio::contract]] helloeosiock : public eosio::contract {
     void bt_rsa_2048_sha256();
 
     /**
+     * Benchmark action for testing verification of 1 RSA 2048 PSS MGF1 SHA-256 signature.
+     */
+    [[eosio::action("btrsapss2sha2"), eosio::read_only]]
+    void bt_rsa_pss_2048_sha256();
+
+    /**
      * Benchmark action for testing verification of 1 RSA 4096 PKCS v1.5 SHA-256 signature.
      */
     [[eosio::action("btrsa4ksha2"), eosio::read_only]]
     void bt_rsa_4096_sha256();
+
+    /**
+     * Benchmark action for testing verification of 1 RSA 4096 PSS MGF1 SHA-256 signature.
+     */
+    [[eosio::action("btrsapss4sha2"), eosio::read_only]]
+    void bt_rsa_pss_4096_sha256();
 
     /**
      * Benchmark action for testing verification of 1 RSA 1024 PKCS v1.5 SHA-512 signature.
