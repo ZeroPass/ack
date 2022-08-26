@@ -34,12 +34,12 @@ void init_test_intrinsics() {
 
 int main(int argc, char** argv)
 {
-    silence_output(true);
+    silence_output( true );
     init_test_intrinsics();
 
     EOSIO_TEST( keccak_test )
     EOSIO_TEST( public_key_test )
-    EOSIO_TEST( rsa_pkcs_1_5_test )
     EOSIO_TEST( mgf1_test )
+    EOSIO_TEST( rsa_test )
     return has_failed();
 }
