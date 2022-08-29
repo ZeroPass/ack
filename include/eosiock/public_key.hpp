@@ -41,7 +41,7 @@ namespace eosiock {
     };
 
     constexpr inline bool operator == (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
-        return lkey.exponent == rkey.exponent && lkey.modulus == rkey.modulus;
+        return lkey.exponent == rkey.exponent && lkey.modulus == rkey.modulus && lkey.pss_salt_len == rkey.pss_salt_len;
     }
 
     constexpr inline bool operator != (const rsa_public_key_view & lkey, const rsa_public_key_view& rkey) {
