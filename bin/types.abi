@@ -1,0 +1,52 @@
+{
+    "____comment": "File contains ck specific types",
+    "version": "eosio::abi/1.2",
+    "types": [
+        {
+            "new_type_name": "bytes_view",
+            "type": "bytes"
+        },
+        {
+            "new_type_name": "size_t",
+            "type": "uint32"
+        }
+    ],
+    "structs": [
+        {
+            "name": "rsa_public_key",
+            "base": "",
+            "fields": [
+                {
+                    "name": "modulus",
+                    "type": "bytes"
+                },
+                {
+                    "name": "exponent",
+                    "type": "bytes"
+                },
+                {
+                    "name": "pss_salt_len",
+                    "type": "uint8?"
+                }
+            ]
+        },
+        {
+            "name": "rsa_public_key_view",
+            "base": "",
+            "fields": [
+                {
+                    "name": "modulus",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "exponent",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "pss_salt_len",
+                    "type": "uint8?"
+                }
+            ]
+        }
+    ]
+}
