@@ -11,13 +11,13 @@ namespace eosiock {
     struct rsa_public_key {
         bytes modulus;
         bytes exponent;
-        std::optional<uint32_t> pss_salt_len;
+        std::optional<uint8_t> pss_salt_len; // TODO: Max 256 for custom salt length was selected because cdt tester fw was broken for optional<unsigned_int> and unsigned_int was not compile constructible at the time.
     };
 
     struct rsa_public_key_view {
         bytes_view modulus;
         bytes_view exponent;
-        std::optional<uint32_t> pss_salt_len;
+        std::optional<uint8_t> pss_salt_len; // TODO: Max 256 for custom salt length was selected because cdt tester fw was broken for optional<unsigned_int> and unsigned_int was not compile constructible at the time.
 
         constexpr rsa_public_key_view() {}
         constexpr rsa_public_key_view( const bytes_view& mod, const bytes_view& exp ) :
@@ -25,7 +25,7 @@ namespace eosiock {
             exponent(exp)
         {}
 
-        constexpr rsa_public_key_view( const bytes_view& mod, const bytes_view& exp, std::optional<uint32_t> salt_len ) :
+        constexpr rsa_public_key_view( const bytes_view& mod, const bytes_view& exp, std::optional<uint8_t> salt_len ) :
             modulus(mod),
             exponent(exp),
             pss_salt_len(std::move(salt_len))
