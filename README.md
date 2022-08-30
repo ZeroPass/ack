@@ -1,9 +1,9 @@
-# EOSIO Cryptography Kits
+# Antelope Cryptography Kits
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![build](https://github.com/ZeroPass/eosio.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/eosio.ck/actions/workflows/build.yml)
-[![tests](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/eosio.ck/actions/workflows/tests.yml)
+[![build](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml)
+[![tests](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml)
 
-Header only cryptography library for EOSIO smart contracts.
+Header only cryptography library for [Antelope](https://github.com/antelopeIO)  smart contracts.
 At the moment library implements RSA PKCS v1.5 signature verification algorithm and the Keccak hash algorithms: SHA3-256, SHA3-512, SHAKE-128 and SHAKE-256.
 
 Library tries to optimize the execution of algorithms by minimizing the heap allocations to bare minimum. This is achieved by allocating most of the data on the stack and pass it around by pointers and references using `std::span`. Note that some parts of the underlying algorithm implementations are taken from other libraries and was not built by the authors of this library.
@@ -49,7 +49,7 @@ The validity of algorithms was tested with some of FIPS 186-3 and FIPS 202 test 
 <br>Keccak SHA-3 FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
 
 # Use in project
-To use eosio.ck library in your project it's best to use [CMake](https://cmake.org/), and configure the project to use the external `eosio.ck` project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). <br>If configured correctly you should be able to add in your [CMake](https://cmake.org/) project `add_library(<your_project> eosio.ck)` and include the `eosio.ck` library in your code: `#include <eosiock/eosiock.hpp>`.
+To use antelope.ck library in your project it's best to use [CMake](https://cmake.org/), and configure the project to use the external `eosio.ck` project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). <br>If configured correctly you should be able to add in your [CMake](https://cmake.org/) project `add_library(<your_project> eosio.ck)` and include the `antelope.ck` library in your code: `#include <eosiock/eosiock.hpp>`.
 
 **Example:**
 ```cpp
