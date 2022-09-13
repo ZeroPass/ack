@@ -246,7 +246,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha1_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha1_digest_info_prefix, digest );
         });
@@ -276,7 +276,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha256_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha256_digest_info_prefix, digest );
         });
@@ -306,7 +306,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha512_size>( rsa_pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha512_digest_info_prefix, digest );
         });
@@ -336,7 +336,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_pss_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha1(const rsa_public_key_view& rsa_pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( rsa_pub_key, digest, signature, eosio::sha1 );
     }
 
@@ -364,7 +364,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_pss_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha256(const rsa_public_key_view& rsa_pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( rsa_pub_key, digest, signature, eosio::sha256 );
     }
 
@@ -392,7 +392,7 @@ namespace eosiock {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] bool verify_rsa_pss_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha512(const rsa_public_key_view& rsa_pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( rsa_pub_key, digest, signature, eosio::sha512 );
     }
 
