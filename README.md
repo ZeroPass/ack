@@ -43,7 +43,7 @@ Library implements 4 Keccak hashing algorithms: SHA3-256, SHA3-512, SHAKE-128 an
 
 # Algorithm testing
 The validity of algorithms was tested with some of FIPS 186-3 and FIPS 202 test vectors from the US National Institute of Standards and Technology - NIST. Additionally, validity of RSA signature verification algorithms was tested with testvectors from Google's project Wycheproof.
-<br>The tests can be found in [tests/rsa_test.hpp](tests/rsa_test.hpp) and [tests/keccak_test.hpp](tests/keccak_test.hpp) for Keccak algorithms. Tests can be compiled by configuring `cmake` with `-DEOSIO_CK_BUILD_TESTS=ON` (on by default).
+<br>The tests can be found in [tests/rsa_test.hpp](tests/include/eosiock/tests/rsa_test.hpp) and [tests/keccak_test.hpp](tests/include/eosiock/tests/keccak_test.hpp) for Keccak algorithms. Tests can be compiled by configuring `cmake` with `-DEOSIO_CK_BUILD_TESTS=ON` (on by default).
 <br><br>RSA FIPS 186-3: [https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures)
 <br>Project Wycheproof: [https://github.com/google/wycheproof](https://github.com/google/wycheproof)
 <br>Keccak SHA-3 FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
