@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <span>
 
-#include <eosiock/types.hpp>
+#include <ack/types.hpp>
 
-namespace eosiock {
+namespace ack {
     /**
     * Mask generation function - MGF1.
     * Implementation based on RFC 8017 appendix-B.2.1: https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1

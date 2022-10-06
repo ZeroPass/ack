@@ -4,10 +4,10 @@
 #include <optional>
 #include <eosio/serialize.hpp>
 
-#include <eosiock/types.hpp>
-#include <eosiock/span_ext.hpp>
+#include <ack/types.hpp>
+#include <ack/span_ext.hpp>
 
-namespace eosiock {
+namespace ack {
     struct rsa_public_key {
         bytes modulus;
         bytes exponent;

@@ -7,12 +7,13 @@ if( CDT_ROOT STREQUAL "" OR NOT CDT_ROOT )
 endif()
 
 ExternalProject_Add(
-   helloeosiock_project
+   helloack_project
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src
    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/
    CMAKE_ARGS
+      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_TOOLCHAIN_FILE=${CDT_ROOT}/lib/cmake/cdt/CDTWasmToolchain.cmake"
-      "-DEOSIO_CK_ENABLE_DEBUG_LOG=${EOSIO_CK_ENABLE_DEBUG_LOG}"
+      "-DACK_ENABLE_DEBUG_LOG=${ACK_ENABLE_DEBUG_LOG}"
    UPDATE_COMMAND ""
    PATCH_COMMAND ""
    TEST_COMMAND ""

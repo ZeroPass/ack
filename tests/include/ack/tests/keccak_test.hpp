@@ -3,11 +3,11 @@
 #pragma once
 #include <eosio/tester.hpp>
 
-#include <eosiock/keccak.hpp>
-#include <eosiock/utils.hpp>
-#include <eosiock/tests/utils.hpp>
+#include <ack/keccak.hpp>
+#include <ack/utils.hpp>
+#include <ack/tests/utils.hpp>
 
-namespace eosiock::tests {
+namespace ack::tests {
 
     EOSIO_TEST_BEGIN(sha3_256_test)
         // NIST CAVS 19.0

@@ -1,9 +1,9 @@
 #include <eosio/eosio.hpp>
-#include <eosiock/eosiock.hpp>
+#include <ack/ack.hpp>
 
-using namespace eosiock;
+using namespace ack;
 
-struct [[eosio::contract]] helloeosiock : public eosio::contract {
+struct [[eosio::contract]] helloack : public eosio::contract {
     using eosio::contract::contract;
 
     /**

@@ -7,7 +7,7 @@
 #include <span>
 #include <vector>
 
-namespace eosiock {
+namespace ack {
     using byte_t      = uint8_t;
     using bytes       = std::vector<byte_t>;
     using bytes_view  = std::span<const byte_t>;
