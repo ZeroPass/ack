@@ -8,11 +8,12 @@
 #include <eosio/crypto.hpp>
 #include <eosio/fixed_bytes.hpp>
 
-#include <eosiock/mgf.hpp>
-#include <eosiock/public_key.hpp>
-#include <eosiock/utils.hpp>
+#include <ack/mgf.hpp>
+#include <ack/bigint.hpp>
+#include <ack/public_key.hpp>
+#include <ack/utils.hpp>
 
-namespace eosiock {
+namespace ack {
     namespace detail {
         extern "C" {
             #include "c/powm.h"
@@ -37,6 +38,26 @@ namespace eosiock {
         constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(eosio::checksum512);
         static_assert( pkcs1_v1_5_t_sha512_size == 83 );
     }
+
+
+    void uECC_vli_clear(uint32_t *vli, uint32_t num_words) {
+        uint32_t i;
+        for (i = 0; i < num_words; ++i) {
+            vli[i] = 0;
+        }
+    }
+    void uECC_vli_bytesToNative(uint32_t *native,
+                                             const uint8_t *bytes,
+                                             int num_bytes) {
+        int i;
+        uECC_vli_clear(native, (num_bytes + (sizeof(uint32_t) - 1)) / sizeof(uint32_t));
+        for (i = 0; i < num_bytes; ++i) {
+            unsigned b = num_bytes - 1 - i;
+            native[b / sizeof(uint32_t)] |=
+                (uint32_t)bytes[i] << (8 * (b % sizeof(uint32_t)));
+        }
+    }
+
 
     /**
     * Returns result of modular exponentiation.
@@ -75,7 +96,7 @@ namespace eosiock {
 
         auto res = rsa_mod_exp_sw( (const uint8_t*)base, base_len, prop, (uint8_t *)out );
         rsa_free_key_prop( prop );
-        return res == 0 ? modulus_len : 0;
+        return res == 0 ? base_len : 0;
     }
 
     /**
@@ -113,13 +134,13 @@ namespace eosiock {
     [[nodiscard]] bool rsassa_pkcs1_v1_5_verify(const rsa_public_key_view& rsa_pub_key, const bytes_view& signature, Lambda&& gen_t)
     {
         if ( signature.size() != rsa_pub_key.modulus.size() ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: invalid signature" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: invalid signature" );
             return false;
         }
 
         const auto em = rsavp1( rsa_pub_key, signature );
         if ( em.size() < t_len + 11 ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
             return false;
         }
 
@@ -171,7 +192,7 @@ namespace eosiock {
 
         // 1. Length check
         if ( signature.size() != rsa_pub_key.modulus.size() ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: invalid signature" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: invalid signature" );
             return false;
         }
 
@@ -183,19 +204,19 @@ namespace eosiock {
         // Check the correctness of EM
         size_t slen = rsa_pub_key.pss_salt_len.value_or( HLen ); // If salt length is not provided the HLen is used
         if ( em.size() < HLen + slen + 2 ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
             return false;
         }
 
         if ( em.back() != 0xbc ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
             return false;
         }
 
         const size_t embits = rsa_pub_key.modulus.size() * 8 - 1;
         const unsigned int top_bitmask = 0xff >> ( (em.size() * 8) - embits );
         if ((em[0] & 0xff) != (em[0] & top_bitmask)) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
             return false;
         }
 
@@ -213,13 +234,13 @@ namespace eosiock {
         db[0] &= top_bitmask;
         for ( size_t i = 0; i != em.size() - HLen - slen - 2; i++ ) {
             if ( em[i] != 0 ) {
-                EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
+                ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
                 return false;
             }
         }
 
         if ( em[em.size() - HLen - slen - 2] != 0x01 ) {
-            EOSIO_CK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pss_mgf1_verify: inconsistent" );
             return false;
         }
 

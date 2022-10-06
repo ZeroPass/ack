@@ -4,11 +4,11 @@
 #include <iterator>
 #include <span>
 
-#include <eosiock/type_traits.hpp>
-#include <eosiock/types.hpp>
-#include <eosiock/utils.hpp>
+#include <ack/type_traits.hpp>
+#include <ack/types.hpp>
+#include <ack/utils.hpp>
 
-namespace eosiock {
+namespace ack {
     template <typename T>
     constexpr inline bool operator == (const std::span<T>& lhs, const std::span<T>& rhs) {
         if ( lhs.data() == rhs.data() ) {

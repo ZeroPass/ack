@@ -27,10 +27,25 @@
 
 #include <stdlib.h> // calloc
 
-extern "C"
-{
-    #define EINVAL 22
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    #ifndef EBADF
+    #define	EBADF 9	/* Bad file number */
+    #endif
+
+    #ifndef ENOMEM
     #define ENOMEM 12 /* Out of memory */
+    #endif
+
+    #ifndef EFAULT
+    #define	EFAULT  14	/* Bad address */
+    #endif
+
+    #ifndef EINVAL
+    #define EINVAL 22
+    #endif
 
     // #define EXTRACT_BYTE(x, n) ((unsigned long long)((uint8_t *)&x)[n])
     // #define CPU_TO_FDT64(x) ((EXTRACT_BYTE(x, 0) << 56) | (EXTRACT_BYTE(x, 1) << 48) | \
@@ -758,7 +773,7 @@ extern "C"
         uint32_t *n = NULL, *rr = NULL, *rrtmp = NULL;
         int rlen, i, ret = 0;
 
-        *prop = (key_prop*)calloc(sizeof(**prop), 1);
+        *prop = (struct key_prop*)calloc(sizeof(**prop), 1);
         if (!(*prop))
         {
             ret = -ENOMEM;
@@ -918,20 +933,19 @@ extern "C"
     }
 
     /**
- * montgomery_mul() - Perform montgomery mutitply
- *
- * Operation: montgomery result[] = a[] * b[] / n0inv % modulus
- *
- * @key:	RSA key
- * @result:	Place to put result, as little endian word array
- * @a:		Multiplier, as little endian word array
- * @b:		Multiplicand, as little endian word array
- */
+     * montgomery_mul() - Perform montgomery mutitply
+     *
+     * Operation: montgomery result[] = a[] * b[] / n0inv % modulus
+     *
+     * @key:	RSA key
+     * @result:	Place to put result, as little endian word array
+     * @a:		Multiplier, as little endian word array
+     * @b:		Multiplicand, as little endian word array
+     */
     static void montgomery_mul(const struct rsa_public_key *key,
-                               uint32_t result[], uint32_t a[], const uint32_t b[])
+                               uint32_t result[], const uint32_t a[], const uint32_t b[])
     {
         uint i;
-
         for (i = 0; i < key->len; ++i)
             result[i] = 0;
         for (i = 0; i < key->len; ++i)
@@ -939,11 +953,11 @@ extern "C"
     }
 
     /**
- * num_pub_exponent_bits() - Number of bits in the public exponent
- *
- * @key:	RSA key
- * @num_bits:	Storage for the number of public exponent bits
- */
+     * num_pub_exponent_bits() - Number of bits in the public exponent
+     *
+     * @key:	RSA key
+     * @num_bits:	Storage for the number of public exponent bits
+     */
     static int num_public_exponent_bits(const struct rsa_public_key *key,
                                         int *num_bits)
     {
@@ -971,11 +985,11 @@ extern "C"
     }
 
     /**
- * is_public_exponent_bit_set() - Check if a bit in the public exponent is set
- *
- * @key:	RSA key
- * @pos:	The bit position to check
- */
+     * is_public_exponent_bit_set() - Check if a bit in the public exponent is set
+     *
+     * @key:	RSA key
+     * @pos:	The bit position to check
+     */
     static int is_public_exponent_bit_set(const struct rsa_public_key *key,
                                           int pos)
     {
@@ -983,11 +997,11 @@ extern "C"
     }
 
     /**
- * pow_mod() - in-place public exponentiation
- *
- * @key:	RSA key
- * @inout:	Big-endian word array containing value and result
- */
+     * pow_mod() - in-place public exponentiation
+     *
+     * @key:	RSA key
+     * @inout:	Big-endian word array containing value and result
+     */
     static int pow_mod(const struct rsa_public_key *key, uint32_t *inout)
     {
         uint32_t *result, *ptr;
@@ -1129,67 +1143,60 @@ extern "C"
     }
 
     /**
-     * rsa_gen_key_prop() - Generate key properties of RSA public key
-     * @key:	Specifies key data in DER format
-     * @keylen:	Length of @key
-     * @prop:	Generated key property
      *
-     * This function takes a blob of encoded RSA public key data in DER
-     * format, parse it and generate all the relevant properties
-     * in key_prop structure.
-     * Return a pointer to struct key_prop in @prop on success.
-     *
-     * Return:	0 on success, negative on error
-     */
-    static int pow_mod(const uint8_t* base, uint32_t base_len, const uint8_t* mod, uint32_t mod_len, const uint8_t* exp, uint32_t exp_len, uint8_t* out, uint32_t out_len)
-    {
-        struct key_prop prop;
-        memset(&prop, 0, sizeof(key_prop));
+    */
+    // static int pow_mod(const uint8_t* base, uint32_t base_len, const uint8_t* mod, uint32_t mod_len, const uint8_t* exp, uint32_t exp_len, uint8_t* out, uint32_t out_len)
+    // {
+    //     struct key_prop prop;
+    //     memset(&prop, 0, sizeof(struct key_prop));
 
-        //struct rsa_key rsa_key;
-        int rlen, i, ret = 0;
+    //     //struct rsa_key rsa_key;
+    //     int rlen, i, ret = 0;
 
-        uint32_t n_len = sizeof(uint32_t) * (1 + (prop.num_bits >> 5));
-        uint32_t lll =  (1 + (prop.num_bits >> 5));
+    //     uint32_t n_len = sizeof(uint32_t) * (1 + (prop.num_bits >> 5));
+    //     uint32_t lll =  (1 + (prop.num_bits >> 5));
 
-        /* modulus */
-        /* removing leading 0's */
-        for (i = 0; i < mod_len && !mod[i]; i++)
-            ;
+    //     /* modulus */
+    //     /* removing leading 0's */
+    //     for (i = 0; i < mod_len && !mod[i]; i++)
+    //         ;
 
-        prop.num_bits = (mod_len - i) * 8;
-        prop.modulus = mod + i;
+    //     prop.num_bits = (mod_len - i) * 8;
+    //     prop.modulus = mod + i;
 
-        uint32_t n[sizeof(uint32_t) * (1 + (prop.num_bits >> 5))];
-        uint32_t rr[sizeof(uint32_t) * (1 + ((prop.num_bits * 2) >> 5))];
-        uint32_t rrtmp[sizeof(uint32_t) * (2 + ((prop.num_bits * 2) >> 5))];
+    //     uint32_t n[sizeof(uint32_t) * (1 + (prop.num_bits >> 5))];
+    //     uint32_t rr[sizeof(uint32_t) * (1 + ((prop.num_bits * 2) >> 5))];
+    //     uint32_t rrtmp[sizeof(uint32_t) * (2 + ((prop.num_bits * 2) >> 5))];
 
-        /* exponent */
-        uint64_t ui64_exp = 0;
-        prop.public_exponent = (uint8_t*)&ui64_exp;
+    //     /* exponent */
+    //     uint64_t ui64_exp = 0;
+    //     prop.public_exponent = (uint8_t*)&ui64_exp;
 
-        // TODO: verify exp_len not greater than sizeof(uint64_t)
-        memcpy((void *)(prop.public_exponent + sizeof(uint64_t) - exp_len), exp, exp_len);
-        prop.exp_len = sizeof(uint64_t);
+    //     // TODO: verify exp_len not greater than sizeof(uint64_t)
+    //     memcpy((void *)(prop.public_exponent + sizeof(uint64_t) - exp_len), exp, exp_len);
+    //     prop.exp_len = sizeof(uint64_t);
 
-        /* n0 inverse */
-        br_i32_decode(n, &mod[i], mod_len - i);
-        prop.n0inv = br_i32_ninv32(n[1]);
+    //     /* n0 inverse */
+    //     br_i32_decode(n, &mod[i], mod_len - i);
+    //     prop.n0inv = br_i32_ninv32(n[1]);
 
-        /* R^2 mod n; R = 2^(num_bits) */
-        rlen = prop.num_bits * 2; /* #bits of R^2 = (2^num_bits)^2 */
-        rr[0] = 0;
-        *(uint8_t *)&rr[0] = (1 << (rlen % 8));
-        for (i = 1; i < (((rlen + 31) >> 5) + 1); i++)
-            rr[i] = 0;
-        br_i32_decode(rrtmp, (uint8_t*)rr, ((rlen + 7) >> 3) + 1);
-        br_i32_reduce(rr, rrtmp, n);
+    //     /* R^2 mod n; R = 2^(num_bits) */
+    //     rlen = prop.num_bits * 2; /* #bits of R^2 = (2^num_bits)^2 */
+    //     rr[0] = 0;
+    //     *(uint8_t *)&rr[0] = (1 << (rlen % 8));
+    //     for (i = 1; i < (((rlen + 31) >> 5) + 1); i++)
+    //         rr[i] = 0;
+    //     br_i32_decode(rrtmp, (uint8_t*)rr, ((rlen + 7) >> 3) + 1);
+    //     br_i32_reduce(rr, rrtmp, n);
 
-        rlen = (prop.num_bits + 7) >> 3; /* #bytes of R^2 mod n */
-        uint8_t byte_rr[rlen];
-        prop.rr = byte_rr;
-        br_i32_encode((uint8_t *)prop.rr, rlen, rr);
+    //     rlen = (prop.num_bits + 7) >> 3; /* #bytes of R^2 mod n */
+    //     uint8_t byte_rr[rlen];
+    //     prop.rr = byte_rr;
+    //     br_i32_encode((uint8_t *)prop.rr, rlen, rr);
 
-        return rsa_mod_exp_sw(base, base_len, &prop, out);
-    }
+    //     return rsa_mod_exp_sw(base, base_len, &prop, out);
+    // }
+
+#ifdef __cplusplus
 }
+#endif

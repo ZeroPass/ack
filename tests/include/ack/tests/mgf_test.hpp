@@ -4,11 +4,11 @@
 #include <eosio/crypto.hpp>
 #include <eosio/tester.hpp>
 
-#include <eosiock/mgf.hpp>
-#include <eosiock/utils.hpp>
-#include <eosiock/tests/utils.hpp>
+#include <ack/mgf.hpp>
+#include <ack/utils.hpp>
+#include <ack/tests/utils.hpp>
 
-namespace eosiock::tests {
+namespace ack::tests {
     EOSIO_TEST_BEGIN( mgf1_test )
         // Test vector taken from bc-java
         // Note: the tv_mgf_mask vas modified to contain full SHA-256 hash

@@ -2,14 +2,14 @@
 // Author: Crt Vavros
 #include <eosio/tester.hpp>
 
-#include <eosiock/tests/keccak_test.hpp>
-#include <eosiock/tests/mgf_test.hpp>
-#include <eosiock/tests/public_key_test.hpp>
-#include <eosiock/tests/rsa_test.hpp>
-#include <eosiock/tests/sha1.hpp>
-#include <eosiock/tests/sha2.hpp>
+#include <ack/tests/keccak_test.hpp>
+#include <ack/tests/mgf_test.hpp>
+#include <ack/tests/public_key_test.hpp>
+#include <ack/tests/rsa_test.hpp>
+#include <ack/tests/sha1.hpp>
+#include <ack/tests/sha2.hpp>
 
-using namespace eosiock::tests;
+using namespace ack::tests;
 
 void init_test_intrinsics() {
     using namespace eosio::native;

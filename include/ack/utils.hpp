@@ -10,15 +10,15 @@
 #include <eosio/rope.hpp>
 #include <eosio/string.hpp>
 
-#include <eosiock/types.hpp>
+#include <ack/types.hpp>
 
-#if defined(EOSIO_CK_ENABLE_DEBUG_LOG) && EOSIO_CK_ENABLE_DEBUG_LOG == 1
-#  define EOSIO_CK_LOG_DEBUG(...) eosio::print_f( __VA_ARGS__ )
+#if defined(ACK_ENABLE_DEBUG_LOG) && ACK_ENABLE_DEBUG_LOG == 1
+#  define ACK_LOG_DEBUG(...) eosio::print_f( __VA_ARGS__ )
 #else
-#  define EOSIO_CK_LOG_DEBUG(...)
+#  define ACK_LOG_DEBUG(...)
 #endif
 
-namespace eosiock {
+namespace ack {
 
     inline byte_t from_hex( char c ) {
         if( c >= '0' && c <= '9' )

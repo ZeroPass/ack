@@ -7,9 +7,9 @@
 
 #include <eosio/fixed_bytes.hpp>
 
-#include <eosiock/types.hpp>
+#include <ack/types.hpp>
 
-namespace eosiock {
+namespace ack {
 
     namespace internal_do_not_use {
         // Implementation in this scope was taken from:
