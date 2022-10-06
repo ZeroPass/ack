@@ -1,9 +1,9 @@
-# Antelope Cryptography Kits
+# AntelopeIO Cryptography Kits
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![build](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml)
 [![tests](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml)
 
-Header only cryptography library for [Antelope](https://github.com/antelopeIO)  smart contracts.
+Header only cryptography library for [AntelopeIO](https://github.com/antelopeIO)  smart contracts.
 Library currently implements RSA PKCS v1.5 & RSASSA-PSS signature verification algorithms and Keccak hash algorithms: SHA3-256, SHA3-512, SHAKE-128 and SHAKE-256.
 
 Library tries to optimize the execution of algorithms by minimizing the heap allocations to bare minimum. This is achieved by allocating most of the data on the stack and pass it around by pointers and references using `std::span`. Note that some parts of the underlying algorithm implementations are taken from other libraries and was not built by the authors of this library.
