@@ -6,55 +6,55 @@
 #include <eosio/crypto.hpp>
 
 [[eosio::action("rsasha1"), eosio::read_only]]
-void helloack::check_rsa_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_sha1_assert( rsa_pubkey, md, sig,
+    assert_rsa_sha1_assert( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-1 signature verification failed"
     );
 }
 
 [[eosio::action("rsapsssha1"), eosio::read_only]]
-void helloack::check_rsa_pss_sha1(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_pss_sha1(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_pss_sha1( rsa_pubkey, md, sig,
+    assert_rsa_pss_sha1( pubkey, md, sig,
         "RSA PSS SHA-1 signature verification failed"
     );
 }
 
 [[eosio::action("rsasha2")]]
-void helloack::check_rsa_sha256(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_sha256(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_sha256( rsa_pubkey, md, sig,
+    assert_rsa_sha256( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-256 signature verification failed"
     );
 }
 
 [[eosio::action("rsapsssha2")]]
-void helloack::check_rsa_pss_sha256(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_pss_sha256(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_pss_sha256( rsa_pubkey, md, sig,
+    assert_rsa_pss_sha256( pubkey, md, sig,
         "RSA PSS SHA-256 signature verification failed"
     );
 }
 
 [[eosio::action("rsasha512"), eosio::read_only]]
-void helloack::check_rsa_sha512(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_sha512(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_sha512( rsa_pubkey, md, sig,
+    assert_rsa_sha512( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-512 signature verification failed"
     );
 }
 
 [[eosio::action("rsapsssha512"), eosio::read_only]]
-void helloack::check_rsa_pss_sha512(rsa_public_key_view rsa_pubkey, bytes_view msg, bytes_view sig)
+void helloack::check_rsa_pss_sha512(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_pss_sha512( rsa_pubkey, md, sig,
+    assert_rsa_pss_sha512( pubkey, md, sig,
         "RSA PSS SHA-512 signature verification failed"
     );
 }
@@ -98,7 +98,7 @@ void helloack::bt_rsa_2048_sha256()
 [[eosio::action("btrsapss2sha2"), eosio::read_only]]
 void helloack::bt_rsa_pss_2048_sha256()
 {
-    constexpr auto pubkey = rsa_public_key_view( rsa_pss_mgf1_sha256_2048::mod, rsa_pss_mgf1_sha256_2048::exp, rsa_pss_mgf1_sha256_2048::salt_len );
+    constexpr auto pubkey = rsa_pss_public_key_view( rsa_pss_mgf1_sha256_2048::mod, rsa_pss_mgf1_sha256_2048::exp, rsa_pss_mgf1_sha256_2048::salt_len );
     assert_rsa_pss_sha256( pubkey, rsa_pss_mgf1_sha256_2048::md, rsa_pss_mgf1_sha256_2048::sig,
         "RSA PSS 2048 SHA-256 signature verification failed"
     );
@@ -116,7 +116,7 @@ void helloack::bt_rsa_4096_sha256()
 [[eosio::action("btrsapss4sha2"), eosio::read_only]]
 void helloack::bt_rsa_pss_4096_sha256()
 {
-    constexpr auto pubkey = rsa_public_key_view( rsa_pss_mgf1_sha256_4096::mod, rsa_pss_mgf1_sha256_4096::exp, rsa_pss_mgf1_sha256_4096::salt_len );
+    constexpr auto pubkey = rsa_pss_public_key_view( rsa_pss_mgf1_sha256_4096::mod, rsa_pss_mgf1_sha256_4096::exp, rsa_pss_mgf1_sha256_4096::salt_len );
     assert_rsa_pss_sha256( pubkey, rsa_pss_mgf1_sha256_4096::md, rsa_pss_mgf1_sha256_4096::sig,
         "RSA PSS 4096 SHA-256 signature verification failed"
     );
