@@ -23,10 +23,16 @@
                 {
                     "name": "exponent",
                     "type": "bytes"
-                },
+                }
+            ]
+        },
+        {
+            "name": "rsa_pss_public_key",
+            "base": "rsa_public_key",
+            "fields": [
                 {
                     "name": "pss_salt_len",
-                    "type": "uint8?"
+                    "type": "varuint32?"
                 }
             ]
         },
@@ -41,10 +47,16 @@
                 {
                     "name": "exponent",
                     "type": "bytes_view"
-                },
+                }
+            ]
+        },
+        {
+            "name": "rsa_pss_public_key_view",
+            "base": "rsa_public_key_view",
+            "fields": [
                 {
                     "name": "pss_salt_len",
-                    "type": "uint8?"
+                    "type": "varuint32?"
                 }
             ]
         }
