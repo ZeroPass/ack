@@ -29,7 +29,8 @@ the RSASSA-PSS signature verification functions for *SHA-1*, *SHA-256* and *SHA-
 - `assert_rsa_pss_sha512` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-512 hash.
 
 and modular exponentiation function:
-- `powm` - computes modular exponentiation for base and exponent over modulus
+- `powm` - computes modular exponentiation for base and exponent over modulus.  
+   By default `eosio::mod_exp` intrinsic is used if macro `ACK_NO_INTRINSICS=1` is not defined.
 
 ## Keccak hash algorithms
 Library implements 4 Keccak hashing algorithms: SHA3-256, SHA3-512, SHAKE-128 and SHAKE-256. The underlying base implementation was copied from the original authors. The code is hosted at [https://github.com/XKCP/XKCP](https://github.com/XKCP/XKCP)
@@ -49,7 +50,10 @@ The validity of algorithms was tested with some of FIPS 186-3 and FIPS 202 test 
 <br>Keccak SHA-3 FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
 
 # Use in project
-To use antelope.ck library in your project it's best to use [CMake](https://cmake.org/), and configure the project to use the external `ack` project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). <br>If configured correctly you should be able to add in your [CMake](https://cmake.org/) project `add_library(<your_project> ack)` and include the `antelope.ck` library in your code: `#include <ack/ack.hpp>`.
+To use antelope.ck library in your project it's best to use [CMake](https://cmake.org/), and configure the project to use the external `ack` project. e.g.: via [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html). If only WASM implementation is desired configure your CMake project with `ACK_NO_INTRINSICS=ON` option before including ack library. This will omit specialized intrinsics (e.g. `eosio::mod_exp`) to be used by the library and software implementation will be used instead.
+
+If configured correctly you should be able to add in your [CMake](https://cmake.org/) project `add_library(<your_project> ack)` and include the `antelope.ck` library in your code: `#include <ack/ack.hpp>`.  
+
 
 **Example:**
 ```cpp
@@ -68,7 +72,7 @@ To use antelope.ck library in your project it's best to use [CMake](https://cmak
   }
 
   // Verify RSASSA-PSS MGF1 SHA-256 signature
-  auto pubkey = rsa_public_key( ras_modulus, rsa_exponent, pss_salt_len ); // or rsa_public_key_view(...)
+  auto pubkey = rsa_pss_public_key( ras_modulus, rsa_exponent, pss_salt_len ); // or rsa_pss_public_key_view(...)
   auto md     = eosio::sha256( msg, msg_len );
   assert_rsa_pss_sha256( pubkey, md, rsapss_sig,
       "Failed to verify RSASSA-PSS MGF1 SHA-256 signature"

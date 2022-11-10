@@ -8,9 +8,10 @@ set( ACK_TEST_SOURCES
 )
 
 add_native_executable( ${PROJECT_NAME} ${ACK_TEST_SOURCES} )
-target_include_directories( ${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include )
-target_include_directories( ${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/../include )
+target_include_directories( ${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include )
+target_include_directories( ${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../include )
 
-target_compile_definitions( ${PROJECT_NAME} PUBLIC
+target_compile_definitions( ${PROJECT_NAME} PRIVATE
+  ACK_NO_INTRINSICS=1
   $<$<BOOL:${ACK_ENABLE_DEBUG_LOG}>:ACK_ENABLE_DEBUG_LOG=1>
 )
