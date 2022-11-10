@@ -1,9 +1,10 @@
 cmake_minimum_required( VERSION 3.14 )
 project( ack )
 
-option( ACK_BUILD_TESTS      "Build tests"               ON  )
-option( ACK_BUILD_EXAMPLES   "Build examples"            ON  )
-option( ACK_ENABLE_DEBUG_LOG "Enable debug log printout" OFF )
+option( ACK_NO_INTRINSICS     "Don't use intrinsics"      OFF )
+option( ACK_BUILD_TESTS       "Build tests"               ON  )
+option( ACK_BUILD_EXAMPLES    "Build examples"            ON  )
+option( ACK_ENABLE_DEBUG_LOG  "Enable debug log printout" OFF )
 
 # Find CDT
 if ( CDT_ROOT STREQUAL "" OR NOT CDT_ROOT )
@@ -15,6 +16,7 @@ add_library( ${PROJECT_NAME} INTERFACE )
 target_include_directories( ${PROJECT_NAME} INTERFACE "${CMAKE_SOURCE_DIR}/include" )
 target_compile_definitions( ${PROJECT_NAME} INTERFACE
   $<$<BOOL:${ACK_ENABLE_DEBUG_LOG}>:ACK_ENABLE_DEBUG_LOG=1>
+  $<$<BOOL:${ACK_NO_INTRINSICS}>:ACK_NO_INTRINSICS=1>
 )
 
 # Include examples
@@ -47,6 +49,8 @@ if ( ACK_BUILD_TESTS )
   add_test( ack_tests ${CMAKE_BINARY_DIR}/tests/ack_tests )
 endif( ACK_BUILD_TESTS )
 
-message( "Building examples............${ACK_BUILD_EXAMPLES}" )
-message( "Building tests...............${ACK_BUILD_TESTS}" )
+
+message( "No intrinsics................${ACK_NO_INTRINSICS}"    )
+message( "Building examples............${ACK_BUILD_EXAMPLES}"   )
+message( "Building tests...............${ACK_BUILD_TESTS}"      )
 message( "Debug log enabled............${ACK_ENABLE_DEBUG_LOG}" )

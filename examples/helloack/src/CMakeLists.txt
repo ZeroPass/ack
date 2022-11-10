@@ -8,6 +8,7 @@ target_include_directories( helloack PUBLIC
     ${PROJECT_SOURCE_DIR}/../../../include
 )
 
-target_compile_definitions( ${PROJECT_NAME} INTERFACE
+target_compile_definitions( ${PROJECT_NAME} PRIVATE
   $<$<BOOL:${ACK_ENABLE_DEBUG_LOG}>:ACK_ENABLE_DEBUG_LOG=1>
+  $<$<BOOL:${ACK_NO_INTRINSICS}>:ACK_NO_INTRINSICS=1>
 )

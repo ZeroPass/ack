@@ -13,11 +13,17 @@
 #include <ack/public_key.hpp>
 #include <ack/utils.hpp>
 
+#if ACK_NO_INTRINSICS == 0
+#  include <eosio/crypto_ext.hpp>
+#endif
+
 namespace ack {
     namespace detail {
+    #if defined(ACK_NO_INTRINSICS) && ACK_NO_INTRINSICS == 1
         extern "C" {
             #include "c/powm.h"
         }
+    #endif
 
         // PKCS1 v1.5 - T constants of EMSA struct
         constexpr auto sha1_digest_info_prefix = std::array<byte_t, 15> {
@@ -38,26 +44,6 @@ namespace ack {
         constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(eosio::checksum512);
         static_assert( pkcs1_v1_5_t_sha512_size == 83 );
     }
-
-
-    void uECC_vli_clear(uint32_t *vli, uint32_t num_words) {
-        uint32_t i;
-        for (i = 0; i < num_words; ++i) {
-            vli[i] = 0;
-        }
-    }
-    void uECC_vli_bytesToNative(uint32_t *native,
-                                             const uint8_t *bytes,
-                                             int num_bytes) {
-        int i;
-        uECC_vli_clear(native, (num_bytes + (sizeof(uint32_t) - 1)) / sizeof(uint32_t));
-        for (i = 0; i < num_bytes; ++i) {
-            unsigned b = num_bytes - 1 - i;
-            native[b / sizeof(uint32_t)] |=
-                (uint32_t)bytes[i] << (8 * (b % sizeof(uint32_t)));
-        }
-    }
-
 
     /**
     * Returns result of modular exponentiation.
@@ -88,6 +74,9 @@ namespace ack {
         if ( out_len == 0 ) return base_len;
         eosio::check( out_len >= base_len, "powm error, out_len too small" );
 
+    #if ACK_NO_INTRINSICS == 0
+        auto res = eosio::mod_exp( base, base_len, exponent, exponent_len, modulus, modulus_len, out, out_len );
+    #else
         detail::key_prop* prop;
         eosio::check(
             rsa_gen_key_prop( (const uint8_t*)modulus, modulus_len, (const uint8_t*)exponent, exponent_len, &prop ) == 0,
