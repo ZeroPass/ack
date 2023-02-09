@@ -9,7 +9,6 @@
 #include <eosio/fixed_bytes.hpp>
 
 #include <ack/mgf.hpp>
-#include <ack/bigint.hpp>
 #include <ack/public_key.hpp>
 #include <ack/utils.hpp>
 

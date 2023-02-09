@@ -25,8 +25,8 @@ jobs:
       # Install cdt
       run: |
         sudo apt install ninja-build
-        wget https://github.com/eosnetworkfoundation/mandel.cdt/releases/download/v3.0.0-rc1/cdt_3.0.0-rc1_amd64.deb
-        sudo apt install ./cdt_3.0.0-rc1_amd64.deb
+        wget https://github.com/AntelopeIO/cdt/releases/download/v3.1.0/cdt_3.1.0_amd64.deb
+        sudo apt install ./cdt_3.1.0_amd64.deb
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
