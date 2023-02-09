@@ -84,6 +84,7 @@ namespace ack {
 
         auto res = rsa_mod_exp_sw( (const uint8_t*)base, base_len, prop, (uint8_t *)out );
         rsa_free_key_prop( prop );
+    #endif
         return res == 0 ? base_len : 0;
     }
 
