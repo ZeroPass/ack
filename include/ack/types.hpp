@@ -7,11 +7,16 @@
 #include <span>
 #include <vector>
 
+#include <eosio/datastream.hpp>
+#include <eosio/varint.hpp>
+
 namespace ack {
     using byte_t      = uint8_t;
     using bytes       = std::vector<byte_t>;
     using bytes_view  = std::span<const byte_t>;
 
+    template<std::size_t N>
+    using fixed_bytes = std::array<byte_t, N>;
     // helper type for the std::visit
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     // explicit deduction guide (not needed as of C++20)
