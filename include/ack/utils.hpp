@@ -19,24 +19,38 @@
 #endif
 
 namespace ack {
+    namespace detail {
+        void cx_assert_failed(){} // Dummy function to cause compilation failure in constant evaluated context
+    }
 
-    inline byte_t from_hex( char c ) {
+    /** constexpr eosio::check */
+    inline constexpr void check(const bool expr, const char* msg)
+    {
+        if (std::is_constant_evaluated()) {
+            if (!expr) detail::cx_assert_failed();
+        }
+        else {
+            eosio::check(expr, msg);
+        }
+    }
+
+    constexpr inline byte_t from_hex( char c ) {
         if( c >= '0' && c <= '9' )
-        return byte_t(c - '0');
+            return byte_t(c - '0');
         if( c >= 'a' && c <= 'f' )
             return byte_t(c - 'a' + 10);
         if( c >= 'A' && c <= 'F' )
             return byte_t(c - 'A' + 10);
-        eosio::check( false, eosio::rope("Invalid hex character '" + eosio::rope(std::string_view(&c, 1)) + "'").c_str() );
+        check( false, eosio::rope( "Invalid hex character '" + eosio::rope(std::string_view(&c, 1)) + "'" ).c_str() );
         return 0;
     }
 
-    [[maybe_unused]] static size_t from_hex( const char* hex_str, size_t hex_str_len, byte_t* out_data, size_t out_data_len ) {
+    [[maybe_unused]] static constexpr std::size_t from_hex( const char* hex_str, size_t hex_str_len, byte_t* out_data, size_t out_data_len ) {
         if( hex_str_len == 0 ) {
             return 0;
         }
 
-        eosio::check( hex_str != nullptr && hex_str_len % 2 == 0, "Invalid hex string" );
+        check( hex_str != nullptr && hex_str_len % 2 == 0, "Invalid hex string" );
         if ( out_data == nullptr || out_data_len == 0) {
             return hex_str_len / 2; // return required out data size
         }
@@ -55,23 +69,26 @@ namespace ack {
             }
             ++out_pos;
         }
-        return size_t(out_pos - (byte_t*)out_data);
+
+        return std::distance( out_data, out_pos );
     }
 
     inline size_t from_hex( const eosio::string& hex_str, byte_t* out_data, size_t out_data_len ) {
         eosio::check( hex_str.size() % 2 == 0, "invalid hex string length" );
+        eosio::check( out_data_len >= hex_str.size() % 2, "invalid out data length" );
         return from_hex( hex_str.data(), hex_str.size(), out_data, out_data_len );
     }
 
-    inline size_t from_hex( const std::string_view& hex_str, byte_t* out_data, size_t out_data_len ) {
-        eosio::check( hex_str.size() % 2 == 0, "invalid hex string length" );
+    inline constexpr size_t from_hex( const std::string_view hex_str, byte_t* out_data, size_t out_data_len ) {
+        check( hex_str.size() % 2 == 0, "invalid hex string length" );
+        check( out_data_len >= hex_str.size() % 2, "invalid out data length" );
         return from_hex( hex_str.data(), hex_str.size(), out_data, out_data_len );
     }
 
     inline bytes from_hex( const char* hex_str, size_t hex_str_len ) {
-        bytes r( from_hex( hex_str, hex_str_len, nullptr, 0 ));
-        eosio::check( from_hex( hex_str, hex_str_len, r.data(), r.size() ) == r.size(), "failed to parse hex string");
-        return r;
+        bytes data( from_hex( hex_str, hex_str_len, nullptr, 0 ));
+        eosio::check( from_hex( hex_str, hex_str_len, data.data(), data.size() ) == data.size(), "failed to parse hex string");
+        return data;
     }
 
     inline bytes from_hex( const eosio::string& hex_str ) {
@@ -80,6 +97,27 @@ namespace ack {
 
     inline bytes from_hex( const std::string_view& hex_str ) {
         return from_hex( hex_str.data(), hex_str.size() );
+    }
+
+    template<std::size_t N>
+    inline constexpr fixed_bytes<N> from_hex( const std::string_view& hex_str ) {
+        check( hex_str.size() % 2 == 0, "invalid hex string length" );
+
+        std::size_t dsize = hex_str.size() / 2;
+        check( N >= hex_str.size() / 2, "invalid out data length" );
+
+        fixed_bytes<N> data{};
+        if ( hex_str.size() == 0 ) {
+            return data;
+        }
+
+        check( from_hex( hex_str, data.data(), data.size() ) == dsize, "failed to parse hex string");
+        return data;
+    }
+
+    template<std::size_t N, std::size_t dsize = (N - 1) / 2>
+    constexpr fixed_bytes<dsize> from_hex(const char (&hex_str)[N] ) {
+        return from_hex<dsize>( std::string_view{ hex_str, N - 1 } );
     }
 
     inline bytes operator""_hex( const char* hex_str, std::size_t len ) {
