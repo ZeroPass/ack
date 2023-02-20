@@ -6,6 +6,7 @@
 #include <ack/tests/mgf_test.hpp>
 #include <ack/tests/public_key_test.hpp>
 #include <ack/tests/rsa_test.hpp>
+#include <ack/tests/utils_test.hpp>
 #include <ack/tests/sha1.hpp>
 #include <ack/tests/sha2.hpp>
 
@@ -37,9 +38,10 @@ int main(int argc, char** argv)
     silence_output( true );
     init_test_intrinsics();
 
-    EOSIO_TEST( keccak_test )
+    EOSIO_TEST( utils_test      )
+    EOSIO_TEST( keccak_test     )
     EOSIO_TEST( public_key_test )
-    EOSIO_TEST( mgf1_test )
-    EOSIO_TEST( rsa_test )
+    EOSIO_TEST( mgf1_test       )
+    EOSIO_TEST( rsa_test        )
     return has_failed();
 }

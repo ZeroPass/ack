@@ -41,7 +41,7 @@ namespace ack {
             return byte_t(c - 'a' + 10);
         if( c >= 'A' && c <= 'F' )
             return byte_t(c - 'A' + 10);
-        check( false, eosio::rope( "Invalid hex character '" + eosio::rope(std::string_view(&c, 1)) + "'" ).c_str() );
+        check( false, eosio::rope( "Invalid hex character '" + ( c ? eosio::rope(std::string_view(&c, 1)) : "<null>" ) + "'" ).c_str() );
         return 0;
     }
 
@@ -50,16 +50,24 @@ namespace ack {
             return 0;
         }
 
-        check( hex_str != nullptr && hex_str_len % 2 == 0, "Invalid hex string" );
+        check( hex_str != nullptr, "Invalid hex string" );
         if ( out_data == nullptr || out_data_len == 0) {
-            return hex_str_len / 2; // return required out data size
+            return ( hex_str_len + 1 ) / 2; // return required out data size
+        }
+
+        check( out_data_len >= (( hex_str_len + 1) / 2 ), "Invalid out data size" );
+
+        auto i = hex_str;
+        auto i_end = hex_str + hex_str_len;
+        byte_t* out_pos = out_data;
+        byte_t* out_end = out_pos + out_data_len;
+        if ( ( hex_str_len % 2 ) != 0 ) {
+            *out_data = from_hex( *i );
+            i++;
+            out_pos++;
         }
 
         // from eosio/fc
-        auto i = hex_str;
-        auto i_end = hex_str + hex_str_len;
-        byte_t* out_pos = (byte_t*)out_data;
-        byte_t* out_end = out_pos + out_data_len;
         while ( i != i_end && out_end != out_pos ) {
             *out_pos = byte_t( from_hex( *i ) << 4 );
             ++i;
@@ -74,20 +82,16 @@ namespace ack {
     }
 
     inline size_t from_hex( const eosio::string& hex_str, byte_t* out_data, size_t out_data_len ) {
-        eosio::check( hex_str.size() % 2 == 0, "invalid hex string length" );
-        eosio::check( out_data_len >= hex_str.size() % 2, "invalid out data length" );
         return from_hex( hex_str.data(), hex_str.size(), out_data, out_data_len );
     }
 
     inline constexpr size_t from_hex( const std::string_view hex_str, byte_t* out_data, size_t out_data_len ) {
-        check( hex_str.size() % 2 == 0, "invalid hex string length" );
-        check( out_data_len >= hex_str.size() % 2, "invalid out data length" );
         return from_hex( hex_str.data(), hex_str.size(), out_data, out_data_len );
     }
 
     inline bytes from_hex( const char* hex_str, size_t hex_str_len ) {
         bytes data( from_hex( hex_str, hex_str_len, nullptr, 0 ));
-        eosio::check( from_hex( hex_str, hex_str_len, data.data(), data.size() ) == data.size(), "failed to parse hex string");
+        eosio::check( from_hex( hex_str, hex_str_len, data.data(), data.size() ) == data.size(), "Failed to parse hex string");
         return data;
     }
 
@@ -101,21 +105,18 @@ namespace ack {
 
     template<std::size_t N>
     inline constexpr fixed_bytes<N> from_hex( const std::string_view& hex_str ) {
-        check( hex_str.size() % 2 == 0, "invalid hex string length" );
-
-        std::size_t dsize = hex_str.size() / 2;
-        check( N >= hex_str.size() / 2, "invalid out data length" );
-
         fixed_bytes<N> data{};
         if ( hex_str.size() == 0 ) {
             return data;
         }
 
-        check( from_hex( hex_str, data.data(), data.size() ) == dsize, "failed to parse hex string");
+        std::size_t dsize = (hex_str.size() + 1) / 2;
+        check( N >= dsize, "Invalid out data size" );
+        check( from_hex( hex_str, data.data(), data.size() ) == dsize, "Failed to parse hex string");
         return data;
     }
 
-    template<std::size_t N, std::size_t dsize = (N - 1) / 2>
+    template<std::size_t N, std::size_t dsize = N / 2>
     constexpr fixed_bytes<dsize> from_hex(const char (&hex_str)[N] ) {
         return from_hex<dsize>( std::string_view{ hex_str, N - 1 } );
     }
