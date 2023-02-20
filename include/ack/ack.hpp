@@ -2,4 +2,6 @@
 // Author: Crt Vavros
 #pragma once
 #include <ack/keccak.hpp>
+#include <ack/mgf.hpp>
+#include <ack/public_key.hpp>
 #include <ack/rsa.hpp>
