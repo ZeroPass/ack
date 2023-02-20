@@ -174,7 +174,7 @@ namespace ack {
     * @return true if signature is valid, else false.
     */
     template<size_t HLen, typename HashT>
-    [[nodiscard]] bool rsassa_pss_mgf1_verify(const rsa_pss_public_key_view& pub_key, const eosio::fixed_bytes<HLen>& digest, const bytes_view& signature, HashT&& hash)
+    [[nodiscard]] static bool rsassa_pss_mgf1_verify(const rsa_pss_public_key_view& pub_key, const eosio::fixed_bytes<HLen>& digest, const bytes_view& signature, HashT&& hash)
     {
         using HDT = typename std::invoke_result_t<HashT, const char*, size_t>;
         static_assert( std::is_same_v<eosio::fixed_bytes<HLen>, HDT> );
