@@ -116,6 +116,14 @@ namespace ack {
     } // internal_use_do_not_use
 
 
+    /**
+     * SHA3-256 hash function.
+     * @note Implementation parameters are based on the NIST FIPS 202 standard.
+     *       https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+     *
+     * @param data - data to hash
+     * @return 256-bit hash
+    */
     inline eosio::checksum256 sha3_256(const bytes_view& data)
     {
         std::array<byte_t, 32> h;
@@ -128,11 +136,39 @@ namespace ack {
         return h;
     }
 
+    /**
+     * SHA3-384 hash function.
+     * @note Implementation parameters are based on the NIST FIPS 202 standard.
+     *      https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+     *
+     * @param data - data to hash
+     * @return 384-bit hash
+    */
+    inline eosio::fixed_bytes<48> sha3_384(const bytes_view& data)
+    {
+        std::array<byte_t, 48> h;
+        internal_do_not_use::keccak<13 * 8, 6>(
+            reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
+            data.size(),
+            h.data(),
+            h.size()
+        );
+        return h;
+    }
+
+    /**
+     * SHA3-512 hash function.
+     * @note Implementation parameters are based on the NIST FIPS 202 standard.
+     *      https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+     *
+     * @param data - data to hash
+     * @return 512-bit hash
+    */
     inline eosio::checksum512 sha3_512(const bytes_view& data)
     {
         std::array<byte_t, 64> h;
         internal_do_not_use::keccak<9 * 8, 6>(
-            reinterpret_cast<const internal_do_not_use::C*>(data.size()),
+            reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
             h.data(),
             h.size()
@@ -151,7 +187,7 @@ namespace ack {
 
         eosio::fixed_bytes<Size> h;
         internal_do_not_use::keccak<21 * 8, 31>(
-            reinterpret_cast<const internal_do_not_use::C*>(data.data()),
+            reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
             h.data(),
             Size
@@ -163,7 +199,7 @@ namespace ack {
     {
         bytes h( out_len );
         internal_do_not_use::keccak<21 * 8, 31>(
-            reinterpret_cast<const internal_do_not_use::C*>(data.data()),
+            reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
             h.data(),
             h.size()
@@ -182,7 +218,7 @@ namespace ack {
 
         std::array<uint8_t, Size> h;
         internal_do_not_use::keccak<17 * 8, 31>(
-            reinterpret_cast<const internal_do_not_use::C*>(data.data()),
+            reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
             h.data(),
             h.size()
