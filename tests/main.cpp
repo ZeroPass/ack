@@ -3,6 +3,7 @@
 #include <eosio/tester.hpp>
 
 #include <ack/tests/bigint_test.hpp>
+#include <ack/tests/ec_test.hpp>
 #include <ack/tests/keccak_test.hpp>
 #include <ack/tests/mgf_test.hpp>
 #include <ack/tests/public_key_test.hpp>
@@ -45,5 +46,6 @@ int main(int argc, char** argv)
     EOSIO_TEST( public_key_test )
     EOSIO_TEST( mgf1_test       )
     EOSIO_TEST( rsa_test        )
+    EOSIO_TEST( ec_test         )
     return has_failed();
 }
