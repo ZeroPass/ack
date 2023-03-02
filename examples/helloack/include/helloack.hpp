@@ -119,4 +119,16 @@ struct [[eosio::contract]] helloack : public eosio::contract {
      */
     [[eosio::action("btrsa2ksha512"), eosio::read_only]]
     void bt_rsa_2048_sha512();
+
+    /**
+     * Benchmark action for testing verification of 1 secp256k1 ECDSA signature.
+     */
+    [[eosio::action("btecck1"), eosio::read_only]]
+    void bt_ecc_secp256k1_sha256();
+
+    /**
+     * Benchmark action for testing verification of 1 secp256r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr1"), eosio::read_only]]
+    void bt_ecc_secp256r1_sha256();
 };

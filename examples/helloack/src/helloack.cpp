@@ -1,6 +1,11 @@
 // Copyright © 2023 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 
+#include <ack/bigint.hpp>
+#include <ack/ec.hpp>
+#include <ack/ec_curve.hpp>
+#include <ack/ecdsa.hpp>
+
 #include <helloack.hpp>
 #include <bt.hpp>
 #include <eosio/crypto.hpp>
@@ -138,4 +143,22 @@ void helloack::bt_rsa_2048_sha512()
     assert_rsa_sha512( pubkey, rsa_2048_sha512::md, rsa_2048_sha512::sig,
         "RSA 2048 PKCS v1.5 SHA-512 signature verification failed"
     );
+}
+
+[[eosio::action("btecck1"), eosio::read_only]]
+void helloack::bt_ecc_secp256k1_sha256()
+{
+   using tv = secp256k1_sha256_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s, tv::curve,
+      "ECDSA secp256k1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccr1"), eosio::read_only]]
+void helloack::bt_ecc_secp256r1_sha256()
+{
+   using tv = secp256r1_sha256_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s, tv::curve,
+      "ECDSA secp256r1 signature verification failed!"
+   );
 }

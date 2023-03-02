@@ -13,6 +13,16 @@
     ],
     "structs": [
         {
+            "name": "bt_ecc_secp256k1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecc_secp256r1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "bt_rsa_1024_sha1",
             "base": "",
             "fields": []
@@ -185,6 +195,16 @@
         }
     ],
     "actions": [
+        {
+            "name": "btecck1",
+            "type": "bt_ecc_secp256k1_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccr1",
+            "type": "bt_ecc_secp256r1_sha256",
+            "ricardian_contract": ""
+        },
         {
             "name": "btrsa1ksha1",
             "type": "bt_rsa_1024_sha1",

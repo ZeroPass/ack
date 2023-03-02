@@ -838,6 +838,7 @@ namespace ack {
                             ec_point_fp<BigNumT, ec_curve_fp<BigNumT, CurveTag>>>;
 
         using curve_tag          = CurveTag;
+        using int_type           = BigNumT;
         using field_element_type = typename base_type::field_element_type;
         using point_type         = typename base_type::point_type;
 
