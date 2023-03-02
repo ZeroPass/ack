@@ -1,3 +1,7 @@
+#!/bin/python
+# Test case generator for RSA PCKS#1 v1.5 and RSASSA-PSS signature verification test vectors from NIST FIPS 186-4 standard
+# Author: Crt Vavros
+
 import collections, enum, os, sys
 
 class TestType(enum.Enum):
@@ -168,11 +172,11 @@ def indent(text:str, amount, ch=' '):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage:\n    rsp_parser.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_fle>")
         return 0
     elif os.path.splitext(sys.argv[1])[1].lower() != '.rsp':
         print("Invalid file!", file=sys.stderr)
-        print("Usage:\n    rsp_parser.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_fle>")
         return 1
 
     tests = parse_rsp(sys.argv[1])
@@ -212,6 +216,8 @@ def main():
             print(indent('}', 4), file=f)
             print(f'EOSIO_TEST_END // {tname}\n', file=f)
 
+    print(f"Generated test(s) written to file: '{out_file}'" )
+    return 0
 
 if __name__ == "__main__":
     exit(main())
