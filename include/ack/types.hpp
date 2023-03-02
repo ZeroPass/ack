@@ -12,11 +12,15 @@
 
 namespace ack {
     using byte_t      = uint8_t;
+    using word_t      = uint32_t;
     using bytes       = std::vector<byte_t>;
     using bytes_view  = std::span<const byte_t>;
 
     template<std::size_t N>
     using fixed_bytes = std::array<byte_t, N>;
+
+    static constexpr size_t word_bit_size = sizeof(word_t) * 8;
+
     // helper type for the std::visit
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     // explicit deduction guide (not needed as of C++20)
