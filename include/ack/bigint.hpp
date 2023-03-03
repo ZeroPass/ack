@@ -595,7 +595,6 @@ namespace ack {
         {
             assert(xn > 0);
             assert(q == 0 || qn >= xn);
-            check( y[0] != 0, "division by zero" ); // Note, this check can be expensive for multiple calls
             xn = get_real_size(x, xn);
 
             word_t t = 0;
@@ -857,7 +856,7 @@ namespace ack {
                 word_t* dst = &z.buf_[0];
                 const word_t* src = &x[0];
                 if (dst != src) detail::copy_n(dst, src, xn);
-                word_t c = detail::sub_word(dst, xn, y);
+                [[maybe_unused]] const word_t c = detail::sub_word(dst, xn, y);
                 assert(!c);
 
                 z.trim(zn);
@@ -1368,7 +1367,7 @@ namespace ack {
 
                 // In constant evaluation we can't use reinterpret_cast
                 // fallback to set_array
-                if (std::is_constant_evaluated()) {
+                if (std::is_constant_evaluated()) { // TODO: When c++23 is available, replace with 'if consteval'
                     return set_array( data.data(), data.size(), /*bigendian=*/true );
                 }
 
@@ -1509,6 +1508,10 @@ namespace ack {
                 }
                 else {
                     // same sign
+                    if( x.is_one() && y.is_one() ) {
+                        return 0;
+                    }
+
                     int c = ucompare(x.buf_, x.size(), y.buf_, y.size());
                     if (x.is_neg_) {
                         return -c;
@@ -1528,6 +1531,11 @@ namespace ack {
                 }
                 else {
                     // same sign
+                    if (x.is_one() && y == 1) {
+                        return 0;
+                    }
+
+                    static_assert( sizeof(word_t) == sizeof(uint32_t) );
                     word_t y0 = detail::cabs(y);
                     int c = (x.size() > 1) ? 1 : detail::cmp_t<1>(&x.buf_[0], &y0);
                     if (x.is_neg_) {
@@ -1541,6 +1549,8 @@ namespace ack {
             {
                 if (x.is_neg_) return -1;
                 if (x.size() > 1) return 1;
+
+                static_assert( sizeof(word_t) == sizeof(uint32_t) );
                 word_t x0 = x.buf_[0];
                 return x0 > y ? 1 : x0 == y ? 0 : -1;
             }
@@ -1553,6 +1563,11 @@ namespace ack {
             constexpr bool is_zero() const
             {
                 return size() == 1 && buf_[0] == 0;
+            }
+
+            constexpr bool is_one() const
+            {
+                return size() == 1 && !is_neg_ && buf_[0] == 1;
             }
 
             constexpr bool is_negative() const
@@ -2006,7 +2021,7 @@ namespace ack {
             */
             // TODO: make constexpr when _pow is constexpr
             template<typename UBuffer>
-            static bool mod_exp(bigint& z, const bigint& x, const bigint<UBuffer>& y, const bigint& m)
+            static bool modexp(bigint& z, const bigint& x, const bigint<UBuffer>& y, const bigint& m)
             {
                 assert(!y.is_neg_);
                 if (y.is_neg_) {
@@ -2026,7 +2041,7 @@ namespace ack {
                 Note: Very slow function
             */
             // TODO: make constexpr when _pow is constexpr
-            static bool mod_exp(bigint& z, const bigint& x, const word_t y, const bigint& m)
+            static bool modexp(bigint& z, const bigint& x, const word_t y, const bigint& m)
             {
                 mod_mul_t mm;
                 mod_sqr_t sm;
@@ -2041,12 +2056,25 @@ namespace ack {
                 REMARK x != 0 and m != 0;
             */
             // TODO: make constexpr when div_mod is constexpr
-            static bool mod_inv(bigint& y, const bigint& x, const bigint& m)
+            static bool modinv(bigint& y, const bigint& x, const bigint& m)
             {
-                assert(!x.is_zero() && !m.is_zero());
-                //check( !m.is_zero(), "mod_inv: m is zero" );
-                //TODO: add check that x is not zero aka division by 0
-        #if 0
+                //assert(!x.is_zero() && !m.is_zero());
+                check( !m.is_zero(), "division by zero" );
+                if ( x.is_zero() ) {
+                    y = 0;
+                    return m.is_one();
+                }
+
+                if ( x.is_one() ) {
+                    if ( m.is_one() ) {
+                        y = 0;
+                    }
+                    else {
+                        y = 1;
+                    }
+                    return true;
+                }
+            #if 0
                 bigint u = x;
                 bigint v = m;
                 bigint x1 = 1, x2 = 0;
@@ -2085,17 +2113,16 @@ namespace ack {
                 } else {
                     y = x2;
                 }
-        #else
-                if (x == 1) {
-                    y = 1;
-                    return true;
-                }
-
+            #else
                 bigint a = 1;
                 bigint t;
                 bigint q;
                 if (!div_mod(&q, t, m, x)) {
                     return false;
+                }
+
+                if (t.is_zero()) {
+                    return false; // inverse doesn't exist
                 }
 
                 bigint s = x;
@@ -2107,12 +2134,16 @@ namespace ack {
                     }
 
                     if (s.is_zero()) {
+                        if (!t.is_one()) { // gcd != 1
+                            return false;
+                        }
                         if (b.is_neg_) {
                             b += m;
                         }
                         y = b;
                         return true;
                     }
+
                     a -= b * q;
 
                     if (!div_mod(&q, t, t, s)) {
@@ -2120,24 +2151,28 @@ namespace ack {
                     }
 
                     if (t.is_zero()) {
+                        if (!s.is_one()) { // gcd != 1
+                            return false;
+                        }
                         if (a.is_neg_) {
                             a += m;
                         }
                         y = a;
                         return true;
                     }
+
                     b -= a * q;
                 }
 
                 return true;
-        #endif
+            #endif
             }
 
-            [[maybe_unused]] inline bigint mod_inv(const bigint& m) const
+            [[maybe_unused]] inline bigint modinv(const bigint& m) const
             {
                 bigint r;
-                bool ret = mod_inv(r, *this, m);
-                assert(ret); // TODO: add some proper check
+                const bool ret = modinv(r, *this, m);
+                check( ret, "modular inverse failed" ); // Either because inverse doesn't exist for the given modulus & base or buffer allocation failed
                 return r;
             }
 
@@ -2164,6 +2199,14 @@ namespace ack {
                 return z;
             }
 
+            // TODO: make constexpr when gcd is constexpr
+            bigint gcd(const bigint& y)
+            {
+                bigint z;
+                gcd(z, *this, y);
+                return z;
+            }
+
             // TODO: make constexpr when gcd & mul are constexpr
             static void lcm(bigint& z, const bigint& x, const bigint& y)
             {
@@ -2174,10 +2217,10 @@ namespace ack {
             }
 
             // TODO: make constexpr when lcm is constexpr
-            static bigint lcm(const bigint& x, const bigint& y)
+            bigint lcm(const bigint& y)
             {
                 bigint z;
-                lcm(z, x, y);
+                lcm(z, *this, y);
                 return z;
             }
 
@@ -2191,13 +2234,13 @@ namespace ack {
             static int jacobi(bigint m, bigint n)
             {
                 assert(n.is_odd());
-                if (n == 1) return 1;
+                if ( n.is_one() ) return 1;
                 if (m < 0 || m > n) {
                     quot_rem(0, m, m, n); // m = m mod n
                 }
-                if (m.is_zero()) return 0;
-                if (m == 1) return 1;
-                if (gcd(m, n) != 1) return 0;
+                if ( m.is_zero() ) return 0;
+                if ( m.is_one() )  return 1;
+                if ( gcd(m, n) != 1 ) return 0;
 
                 int j = 1;
                 bigint t;
@@ -2249,36 +2292,60 @@ namespace ack {
             constexpr friend bool operator == (const bigint& x, int64_t y) { return compare(x, bigint(y)) == 0; }
             constexpr friend bool operator == (const bigint& x, uint64_t y) { return compare(x, bigint(y)) == 0; }
             constexpr friend bool operator == (const bigint& x, const bigint& y) { return compare(x, y) == 0; }
+            constexpr friend bool operator == (int x, const bigint& y) { return compares1(y, x) == 0; }
+            constexpr friend bool operator == (uint32_t x, const bigint& y) { return compareu1(y, x) == 0; }
+            constexpr friend bool operator == (int64_t x, const bigint& y) { return compare(y, bigint(x)) == 0; }
+            constexpr friend bool operator == (uint64_t x, const bigint& y) { return compare(y, bigint(x)) == 0; }
 
             constexpr friend bool operator != (const bigint& x, int y) { return !operator==(x, y); }
             constexpr friend bool operator != (const bigint& x, uint32_t y) { return !operator==(x, y); }
             constexpr friend bool operator != (const bigint& x, int64_t y) { return !operator==(x, y); }
             constexpr friend bool operator != (const bigint& x, uint64_t y) { return !operator==(x, y); }
             constexpr friend bool operator != (const bigint& x, const bigint& y) { return !operator==(x, y); }
+            constexpr friend bool operator != (int x, const bigint& y) { return !operator==(x, y); }
+            constexpr friend bool operator != (uint32_t x, const bigint& y) { return !operator==(x, y); }
+            constexpr friend bool operator != (int64_t x, const bigint& y) { return !operator==(x, y); }
+            constexpr friend bool operator != (uint64_t x, const bigint& y) { return !operator==(x, y); }
 
             constexpr friend bool operator < (const bigint& x, int y) { return compares1(x, y) < 0; }
             constexpr friend bool operator < (const bigint& x, uint32_t y) { return compareu1(x, y) < 0; }
             constexpr friend bool operator < (const bigint& x, int64_t y) { return compare(x, bigint(y)) < 0; }
             constexpr friend bool operator < (const bigint& x, uint64_t y) { return compare(x, bigint(y)) < 0; }
             constexpr friend bool operator < (const bigint& x, const bigint& y) { return compare(x, y) < 0; }
+            constexpr friend bool operator < (int x, const bigint& y) { return compares1(y, x) > 0; }
+            constexpr friend bool operator < (uint32_t x, const bigint& y) { return compareu1(y, x) > 0; }
+            constexpr friend bool operator < (int64_t x, const bigint& y) { return compare(y, bigint(x)) > 0; }
+            constexpr friend bool operator < (uint64_t x, const bigint& y) { return compare(y, bigint(x)) > 0; }
 
             constexpr friend bool operator <= (const bigint& x, int y) { return !operator>(x, y); }
             constexpr friend bool operator <= (const bigint& x, uint32_t y) { return !operator>(x, y); }
             constexpr friend bool operator <= (const bigint& x, int64_t y) { return !operator>(x, y); }
             constexpr friend bool operator <= (const bigint& x, uint64_t y) { return !operator>(x, y); }
             constexpr friend bool operator <= (const bigint& x, const bigint& y) { return !operator>(x, y); }
+            constexpr friend bool operator <= (int x, const bigint& y) { return !operator>(x, y); }
+            constexpr friend bool operator <= (uint32_t x, const bigint& y) { return !operator>(x, y); }
+            constexpr friend bool operator <= (int64_t x, const bigint& y) { return !operator>(x, y); }
+            constexpr friend bool operator <= (uint64_t x, const bigint& y) { return !operator>(x, y); }
 
             constexpr friend bool operator > (const bigint& x, int y) { return compares1(x, y) > 0; }
             constexpr friend bool operator > (const bigint& x, uint32_t y) { return compareu1(x, y) > 0; }
             constexpr friend bool operator > (const bigint& x, int64_t y) { return compare(x, bigint(y)) > 0; }
             constexpr friend bool operator > (const bigint& x, uint64_t y) { return compare(x, bigint(y)) > 0; }
             constexpr friend bool operator > (const bigint& x, const bigint& y) { return compare(x, y) > 0; }
+            constexpr friend bool operator > (int x, const bigint& y) { return compares1(y, x) < 0; }
+            constexpr friend bool operator > (uint32_t x, const bigint& y) { return compareu1(y, x) < 0; }
+            constexpr friend bool operator > (int64_t x, const bigint& y) { return compare(y, bigint(x)) < 0; }
+            constexpr friend bool operator > (uint64_t x, const bigint& y) { return compare(y, bigint(x)) < 0; }
 
             constexpr friend bool operator >= (const bigint& x, int y) { return !operator<(x, y); }
             constexpr friend bool operator >= (const bigint& x, uint32_t y) { return !operator<(x, y); }
             constexpr friend bool operator >= (const bigint& x, int64_t y) { return !operator<(x, y); }
             constexpr friend bool operator >= (const bigint& x, uint64_t y) { return !operator<(x, y); }
             constexpr friend bool operator >= (const bigint& x, const bigint& y) { return !operator<(x, y); }
+            constexpr friend bool operator >= (int x, const bigint& y) { return !operator<(x, y); }
+            constexpr friend bool operator >= (uint32_t x, const bigint& y) { return !operator<(x, y); }
+            constexpr friend bool operator >= (int64_t x, const bigint& y) { return !operator<(x, y); }
+            constexpr friend bool operator >= (uint64_t x, const bigint& y) { return !operator<(x, y); }
 
             constexpr friend bigint operator + (const bigint& a, int b) { bigint c; adds1(c, a, b); return c; }
             constexpr friend bigint operator + (const bigint& a, word_t b) { bigint c; addu1(c, a, b); return c; }

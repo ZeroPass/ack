@@ -157,7 +157,7 @@ namespace ack {
     template<typename BigNumT>
     [[maybe_unused]] inline BigNumT fp_div(const BigNumT& a, const BigNumT& b, const BigNumT& p)
     {
-        return (a * b.mod_inv(p)) % p;
+        return (a * b.modinv(p)) % p;
     }
 
 
@@ -363,7 +363,7 @@ namespace ack {
             */
             [[nodiscard]] fp_element inv() const
             {
-                return fp_element( v_.mod_inv( *pm_ ), *pm_ );
+                return fp_element( v_.modinv( *pm_ ), *pm_ );
             }
 
             /**

@@ -29,7 +29,7 @@ namespace ack{
             e -= curve.n;
         }
 
-        BigNumT w = s.mod_inv( curve.n );
+        BigNumT w = s.modinv( curve.n );
         auto u1 = ( e * w ) % curve.n;
         auto u2 = ( r * w ) % curve.n;
 
