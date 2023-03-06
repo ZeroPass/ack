@@ -422,7 +422,7 @@ def main():
     in_path = sys.argv[1]
     if not is_url(in_path) and os.path.splitext(in_path)[1].lower() != '.json':
         print("Invalid file or URL!", file=sys.stderr)
-        print(f"Usage:\n    {os.path.basename(__file__)} <path_to_rsp_fle>")
+        print(f"Usage:\n    {os.path.basename(__file__)} <path_to_json_file>")
         return 1
 
     wp_json = None

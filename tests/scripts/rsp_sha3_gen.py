@@ -124,17 +124,17 @@ def format_var(var: str, decl: bool, indent_size: int = 0, var_type = 'auto') ->
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_file>")
         return 0
     elif os.path.splitext(sys.argv[1])[1].lower() != '.rsp':
         print("Invalid file!", file=sys.stderr)
-        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_file>")
         return 1
 
     tests = parse_rsp(sys.argv[1])
     if tests is None or len(tests.entries) == 0:
         print("Invalid file or unsupported SHA3 RSP test vector file!", file=sys.stderr)
-        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_sha3_gen.py <path_to_rsp_file>")
         return 1
 
     indent_size = 4

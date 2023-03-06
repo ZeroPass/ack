@@ -172,11 +172,11 @@ def indent(text:str, amount, ch=' '):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_file>")
         return 0
     elif os.path.splitext(sys.argv[1])[1].lower() != '.rsp':
         print("Invalid file!", file=sys.stderr)
-        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_rsa_gen.py <path_to_rsp_file>")
         return 1
 
     tests = parse_rsp(sys.argv[1])

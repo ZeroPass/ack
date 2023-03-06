@@ -154,11 +154,11 @@ def indent(text:str, amount, ch=' '):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage:\n    rsp_ec_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_ec_gen.py <path_to_rsp_file>")
         return 0
     elif os.path.splitext(sys.argv[1])[1].lower() != '.rsp':
         print("Invalid file!", file=sys.stderr)
-        print("Usage:\n    rsp_ec_gen.py <path_to_rsp_fle>")
+        print("Usage:\n    rsp_ec_gen.py <path_to_rsp_file>")
         return 1
 
     tests = parse_rsp(sys.argv[1])
@@ -197,8 +197,8 @@ def main():
             tname = f'{test_type}_{curve_var[curve_name]}_test'
             print(f'EOSIO_TEST_BEGIN({tname})', file=f)
             print(indent('{', indent_size), file=f)
-            print(indent(f'using bn_t = ec_fixed_bigint<{ curve_sizes[curve_name] }>;', indent_size*2), file=f)
-            print(indent(f'const auto& curve = { curve_var[curve_name] };', indent_size*2), file=f)
+            print(indent(f'using bn_t = ack::ec_fixed_bigint<{ curve_sizes[curve_name] }>;', indent_size*2), file=f)
+            print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size*2), file=f)
             for curve_hash, tests in testsd.items():
                 # Each test vector set is wrapped in {}
                 print(indent( f'// {curve_hash}', indent_size*2), file=f )
