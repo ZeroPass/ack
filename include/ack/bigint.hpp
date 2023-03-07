@@ -537,7 +537,9 @@ namespace ack {
                 clear_n(q, qn);
             }
 
-            word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
+            //word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
+            word_t t[sizeof(word_t) * yn];
+            //word_t* t = (word_t*)alloca(sizeof(word_t) * yn);
             word_t rev = 0;
             // rev = M/2 M / yTop where M = 1 << word_bit_size
             if (yTop != word_t(-1)) {
@@ -636,9 +638,13 @@ namespace ack {
             const size_t yTopBit = detail::bsr(y[yn - 1]);
             const size_t shift = word_bit_size - 1 - yTopBit;
             if (shift) {
-                word_t* yShift = (word_t* )__builtin_alloca(sizeof(word_t) * yn);
+                //word_t* yShift = (word_t* )__builtin_alloca(sizeof(word_t) * yn);
+                word_t yShift[sizeof(word_t) * yn];
+                //word_t* yShift = (word_t* )alloca(sizeof(word_t) * yn);
                 shl_n(yShift, y, shift, yn);
-                word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * (xn + 1));
+                //word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * (xn + 1));
+                word_t xx[sizeof(word_t) * (xn + 1)];
+                //word_t* xx = (word_t*)alloca(sizeof(word_t) * (xn + 1));
                 word_t v = shl_n(xx, x, shift, xn);
                 if (v) {
                     xx[xn] = v;
@@ -669,13 +675,17 @@ namespace ack {
             }
 
             if (z == x) {
-                word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
+                //word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
+                word_t p[sizeof(word_t) * xn];
+                //word_t* p = (word_t*)alloca(sizeof(word_t) * xn);
                 copy_n(p, x, xn);
                 x = p;
             }
 
             if (z == y) {
-                word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
+                //word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
+                word_t p[sizeof(word_t) * yn];
+                //word_t* p = (word_t*)alloca(sizeof(word_t) * yn);
                 copy_n(p, y, yn);
                 y = p;
             }
@@ -754,7 +764,14 @@ namespace ack {
      *
      * @tparam Buffer - buffer type
      *
+     * NOTE: Due to stack frame size limitation the fixed_buffer is bound by this size.
+     *       Also all  calls to __builtin_alloca / alloca calls & VLA are limited to stack frame size.
+     *       In case of antelopeIO the stack frame size is 512B, with some testing it was found that
+     *       max size of fixed_buffer can be 128 bytes (1024 bits) for all ECC or RSA operations.
+     *
      * TODO: Replace std::enable_if_t with buffer concept when clang 10 is supported.
+     * TODO: All __builtin_alloca / alloca calls and VLA are limited to stack frame size
+     *       find a way to replace them with heap allocation or static buffer.
      **/
     template<typename Buffer,
         typename = std::enable_if_t<std::is_base_of_v<buffer_base<Buffer, word_t>, Buffer>>>
@@ -1069,6 +1086,7 @@ namespace ack {
                 word_t* yy = 0;
                 if (y == &z.buf_[0]) { // keep original y(=z)
                     yy = (word_t*)__builtin_alloca(sizeof(word_t) * n);
+                    //yy = (word_t*)alloca(sizeof(word_t) * n);
                     detail::copy_n(yy, y, n);
                     y = yy;
                 }
@@ -2074,11 +2092,10 @@ namespace ack {
                     }
                     return true;
                 }
-            #if 0
+            #if 0 // can be slower
                 bigint u = x;
                 bigint v = m;
                 bigint x1 = 1, x2 = 0;
-                bigint t;
                 while (u != 1 && v != 1) {
                     while (u.is_even()) {
                         u >>= 1;
@@ -2113,6 +2130,7 @@ namespace ack {
                 } else {
                     y = x2;
                 }
+                return true;
             #else
                 bigint a = 1;
                 bigint t;
@@ -2438,6 +2456,9 @@ namespace ack {
      * @tparam MaxBitSize - the maximum number of bits that can be stored in the bigint
      *         Internal the actual size will be rounded up to the nearest word size
      *         (e.g. 1 bit will be 32 bits, since 1 word is 32 bits)
+     *
+     * NOTE: Due to antelopeIO wasm stack frame size limitations (512B), through some testing
+     *       The maximum size of a fixed_bigint can be 512 bits for all ECC & RSA operations.
      */
     template<std::size_t MaxBitSize>
     using fixed_bigint = bigint<fixed_word_buffer<get_word_size_from_bitsize(MaxBitSize)>>;

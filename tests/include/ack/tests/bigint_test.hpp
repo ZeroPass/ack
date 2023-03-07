@@ -5782,7 +5782,6 @@ namespace ack::tests {
                 bn_t( 0 ).modinv( "359334085968622831041960188598043661065388726959079837" );
             })
 
-
             REQUIRE_EQUAL( bn_t::modinv( r, 2, 10 ), false )
             REQUIRE_ASSERT( "modular inverse failed", [&]() {
                 bn_t( 2 ).modinv( 10 );
