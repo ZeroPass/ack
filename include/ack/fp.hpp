@@ -290,7 +290,7 @@ namespace ack {
              *
              * @return Reference to this.
             */
-            constexpr fp_element& operator=(BigNumT value)
+            constexpr fp_element& operator = (BigNumT value)
             {
                 if (pm_ == nullptr) {
                     return *this;
@@ -340,12 +340,21 @@ namespace ack {
             }
 
             /**
-             * Returns true if the finite field element is zero or modulus is null.
+             * Returns true if the finite field element is zero or modulus is null or modulus is either zero or 1.
              * @return True if the finite field element is zero.
              */
             constexpr bool is_zero() const
             {
-                return pm_ == nullptr || pm_->is_zero() || v_.is_zero();
+                return !v_.is_one()  && ( pm_ == nullptr || pm_->is_zero() || pm_->is_one() || v_.is_zero() );
+            }
+
+            /**
+             * Returns true if the finite field element is 1.
+             * @return True if the finite field element is 1.
+             */
+            constexpr bool is_one() const
+            {
+                return v_.is_one();
             }
 
             /**

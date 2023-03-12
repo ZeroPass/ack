@@ -64,6 +64,15 @@ namespace ack {
         }
 
         /**
+         * Checks if this element is 1.
+         * @return True if this element is 1, false otherwise.
+        */
+        constexpr bool is_one() const
+        {
+            return underlying().is_zero();
+        }
+
+        /**
          * Checks if this element is negative.
          * @return True if this element is negative, false otherwise.
         */

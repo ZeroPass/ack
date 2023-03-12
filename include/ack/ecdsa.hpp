@@ -9,7 +9,7 @@ namespace ack{
      * Function verifies ECDSA signature.
      * @note msg is truncated to curve.n byte length.
      *
-     * @param q     - public key point
+     * @param q     - public key point. Note: point validity should be checked before calling this function.
      * @param msg   - message to verify
      * @param r     - signature r value
      * @param s     - signature s value
@@ -52,7 +52,7 @@ namespace ack{
      * Function verifies ECDSA signature.
      * @note digest is truncated to curve.n byte length.
      *
-     * @param q      - public key point
+     * @param q      - public key point. Note: point validity should be checked before calling this function.
      * @param digest - message digest to verify
      * @param r      - signature r value
      * @param s      - signature s value
@@ -72,7 +72,7 @@ namespace ack{
      * Asserts that ECDSA signature is valid.
      * @note msg is truncated to curve.n byte length.
      *
-     * @param q      - public key point
+     * @param q      - public key point. Note: point validity should be checked before calling this function.
      * @param msg    - message to verify
      * @param r      - signature r value
      * @param s      - signature s value
@@ -90,7 +90,7 @@ namespace ack{
      * Asserts that ECDSA signature is valid.
      * @note digest is truncated to curve.n byte length.
      *
-     * @param q      - public key point
+     * @param q      - public key point. Note: point validity should be checked before calling this function.
      * @param digest - message digest to verify
      * @param r      - signature r value
      * @param s      - signature s value

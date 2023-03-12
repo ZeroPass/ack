@@ -18,9 +18,13 @@ curve_sizes = {
     'P-256' : 256,
 }
 
+curve_primes = {
+    'P-256' : 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f,
+}
+
 class TestType(enum.Enum):
     Unknown      = -1,
-    ECPKV          = 1,
+    ECPKV        = 1,
     SigVer_ECDSA = 2
 
 class TestVectors:
@@ -134,7 +138,33 @@ def format_var(var: str, decl: bool, indent_size: int = 0, var_type = 'auto') ->
     return str
 
 def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
-    raise NotImplementedError("tvecpkv2str not implemented")
+    test_str = ''
+    indent_size = 4
+    test_str += indent(f'// Result = { tv.result }\n', indent_size)
+    if tv.result == 'P' or tv.result[0] == 'P':
+        test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ true )', decl_vars, indent_size) + '\n'
+        test_str += indent('REQUIRE_EQUAL( q.is_valid(), true )', indent_size) + '\n'
+        test_str += indent('REQUIRE_EQUAL( make_ec_point_fp_proj( q ).is_valid(), true )', indent_size) + '\n'
+    else:
+        if '1 - Q_x or Q_y out of range' in tv.result:
+            p = curve_primes[tv.curve_name]
+            error = "Invalid point x coordinate" if int(tv.Qx, 16) >= p else "Invalid point y coordinate"
+            test_str += indent(f'REQUIRE_ASSERT( "{error}", [&]() {{\n', indent_size)
+            test_str += format_var(f' qi = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ false )', True, indent_size * 2) + '\n'
+            test_str += indent('})\n\n', indent_size)
+
+            test_str += indent(f'REQUIRE_ASSERT( "{error}", [&]() {{\n', indent_size)
+            test_str += format_var(f' qi = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ true )', True, indent_size * 2) + '\n'
+            test_str += indent('})\n', indent_size)
+        else:
+            test_str += indent(f'REQUIRE_ASSERT( "Invalid point", [&]() {{\n', indent_size)
+            test_str += format_var(f' qi = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ true )', True, indent_size * 2) + '\n'
+            test_str += indent('})\n\n', indent_size)
+
+            test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ false )', decl_vars, indent_size) + '\n'
+            test_str += indent('REQUIRE_EQUAL( q.is_valid(), false )', indent_size) + '\n'
+            test_str += indent('REQUIRE_EQUAL( make_ec_point_fp_proj( q ).is_valid(), false )', indent_size) + '\n'
+    return test_str
 
 def tvecdsa2str(tv: EcTestVector, decl_vars: bool) -> str:
     test_str = ''
@@ -171,7 +201,10 @@ def main():
         test_cases = collections.defaultdict(dict)
         for key, entries in tests.entries.items():
             for tv in entries:
-                if tv.curve_name in supported_curves and tv.hash_algo in supported_hashes:
+                if tv.curve_name in supported_curves:
+                    if tests.type == TestType.SigVer_ECDSA and tv.hash_algo not in supported_hashes:
+                        continue
+
                     decl_vars = False
                     # if tv.curve_name not in test_cases:
                     #     decl_vars = True

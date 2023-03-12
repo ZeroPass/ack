@@ -115,10 +115,11 @@ namespace ack {
 
         check( out_data_len >= (( hex_str_len + 1) / 2 ), "Invalid out data size" );
 
-        auto i = hex_str;
-        auto i_end = hex_str + hex_str_len;
-        byte_t* out_pos = out_data;
-        byte_t* out_end = out_pos + out_data_len;
+        auto i                = hex_str;
+        const auto i_end      = hex_str + hex_str_len;
+        byte_t* out_pos       = out_data;
+        const byte_t* out_end = out_pos + out_data_len;
+
         if ( ( hex_str_len % 2 ) != 0 ) {
             *out_data = from_hex( *i );
             i++;
