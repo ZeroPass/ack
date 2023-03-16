@@ -10,6 +10,29 @@
 #include <bt.hpp>
 #include <eosio/crypto.hpp>
 
+using namespace ack::ec_curve;
+[[eosio::action("ecdsak1"), eosio::read_only]]
+void helloack::check_ecdsa_secp256k1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp256k1)::int_type;
+    const auto pub_point = secp256k1.make_point( qx, qy );
+    const auto h = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ), secp256k1,
+      "ECDSA secp256k1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsar1"), eosio::read_only]]
+void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp256r1)::int_type;
+    const auto pub_point = secp256r1.make_point( qx, qy );
+    const auto h = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ), secp256r1,
+      "ECDSA secp256r1 signature verification failed!"
+    );
+}
+
 [[eosio::action("rsasha1"), eosio::read_only]]
 void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
