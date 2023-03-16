@@ -43,6 +43,11 @@ namespace ack {
                 return static_cast<const derived_type&>(*this).size();
             }
 
+            constexpr std::size_t max_size() const
+            {
+                return static_cast<const derived_type&>(*this).max_size();
+            }
+
             constexpr const value_type& operator[](size_t n) const
             {
                 return static_cast<const derived_type&>(*this).operator[](n);
@@ -63,7 +68,6 @@ namespace ack {
     class fixed_buffer : public buffer_base<fixed_buffer<T, N>, T> {
         public:
             using value_type = T;
-            static constexpr size_t max_size = N;
 
             constexpr fixed_buffer() = default;
             constexpr fixed_buffer(const fixed_buffer& rhs) = default;
@@ -73,7 +77,7 @@ namespace ack {
 
             constexpr bool alloc(size_t n)
             {
-                if (n > max_size) {
+                if (n > N) {
                     return false;
                 }
                 size_ = n;
@@ -98,6 +102,11 @@ namespace ack {
             constexpr std::size_t size() const
             {
                 return size_;
+            }
+
+            constexpr std::size_t max_size() const
+            {
+                return N;
             }
 
             constexpr void swap(fixed_buffer& rhs)

@@ -1000,6 +1000,101 @@ namespace ack::tests {
         static_assert( std::is_same_v< bigint<fixed_word_buffer<8>>, fixed_bigint<225> > );
         static_assert( std::is_same_v< bigint<fixed_word_buffer<8>>, fixed_bigint<256> > );
 
+        // Size tests
+        {
+            REQUIRE_EQUAL( fixed_bigint<1>().size()         , 1  )
+            REQUIRE_EQUAL( fixed_bigint<1>().max_size()     , 1  )
+            REQUIRE_EQUAL( fixed_bigint<1>().max_byte_size(), 4  )
+
+            REQUIRE_EQUAL( fixed_bigint<8>().size()         , 1  )
+            REQUIRE_EQUAL( fixed_bigint<8>().max_size()     , 1  )
+            REQUIRE_EQUAL( fixed_bigint<8>().max_byte_size(), 4  )
+
+            REQUIRE_EQUAL( fixed_bigint<16>().size()         , 1  )
+            REQUIRE_EQUAL( fixed_bigint<16>().max_size()     , 1  )
+            REQUIRE_EQUAL( fixed_bigint<16>().max_byte_size(), 4  )
+
+            REQUIRE_EQUAL( fixed_bigint<32>().size()         , 1  )
+            REQUIRE_EQUAL( fixed_bigint<32>().max_size()     , 1  )
+            REQUIRE_EQUAL( fixed_bigint<32>().max_byte_size(), 4  )
+
+            REQUIRE_EQUAL( fixed_bigint<64>().size()         , 1  )
+            REQUIRE_EQUAL( fixed_bigint<64>().max_size()     , 2  )
+            REQUIRE_EQUAL( fixed_bigint<64>().max_byte_size(), 8  )
+
+            REQUIRE_EQUAL( fixed_bigint<96>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<96>().max_size()     , 3   )
+            REQUIRE_EQUAL( fixed_bigint<96>().max_byte_size(), 12  )
+
+            REQUIRE_EQUAL( fixed_bigint<128>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<128>().max_size()     , 4   )
+            REQUIRE_EQUAL( fixed_bigint<128>().max_byte_size(), 16  )
+
+            REQUIRE_EQUAL( fixed_bigint<160>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<160>().max_size()     , 5   )
+            REQUIRE_EQUAL( fixed_bigint<160>().max_byte_size(), 20  )
+
+            REQUIRE_EQUAL( fixed_bigint<192>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<192>().max_size()     , 6   )
+            REQUIRE_EQUAL( fixed_bigint<192>().max_byte_size(), 24  )
+
+            REQUIRE_EQUAL( fixed_bigint<224>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<224>().max_size()     , 7   )
+            REQUIRE_EQUAL( fixed_bigint<224>().max_byte_size(), 28  )
+
+            REQUIRE_EQUAL( fixed_bigint<256>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<256>().max_size()     , 8   )
+            REQUIRE_EQUAL( fixed_bigint<256>().max_byte_size(), 32  )
+
+            REQUIRE_EQUAL( fixed_bigint<288>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<288>().max_size()     , 9   )
+            REQUIRE_EQUAL( fixed_bigint<288>().max_byte_size(), 36  )
+
+            REQUIRE_EQUAL( fixed_bigint<320>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<320>().max_size()     , 10  )
+            REQUIRE_EQUAL( fixed_bigint<320>().max_byte_size(), 40  )
+
+            REQUIRE_EQUAL( fixed_bigint<352>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<352>().max_size()     , 11  )
+            REQUIRE_EQUAL( fixed_bigint<352>().max_byte_size(), 44  )
+
+            REQUIRE_EQUAL( fixed_bigint<384>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<384>().max_size()     , 12  )
+            REQUIRE_EQUAL( fixed_bigint<384>().max_byte_size(), 48  )
+
+            REQUIRE_EQUAL( fixed_bigint<416>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<416>().max_size()     , 13  )
+            REQUIRE_EQUAL( fixed_bigint<416>().max_byte_size(), 52  )
+
+            REQUIRE_EQUAL( fixed_bigint<448>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<448>().max_size()     , 14  )
+            REQUIRE_EQUAL( fixed_bigint<448>().max_byte_size(), 56  )
+
+            REQUIRE_EQUAL( fixed_bigint<480>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<480>().max_size()     , 15  )
+            REQUIRE_EQUAL( fixed_bigint<480>().max_byte_size(), 60  )
+
+            REQUIRE_EQUAL( fixed_bigint<512>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<512>().max_size()     , 16  )
+            REQUIRE_EQUAL( fixed_bigint<512>().max_byte_size(), 64  )
+
+            REQUIRE_EQUAL( fixed_bigint<544>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<544>().max_size()     , 17  )
+            REQUIRE_EQUAL( fixed_bigint<544>().max_byte_size(), 68  )
+
+            REQUIRE_EQUAL( fixed_bigint<576>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<576>().max_size()     , 18  )
+            REQUIRE_EQUAL( fixed_bigint<576>().max_byte_size(), 72  )
+
+            REQUIRE_EQUAL( fixed_bigint<608>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<608>().max_size()     , 19  )
+            REQUIRE_EQUAL( fixed_bigint<608>().max_byte_size(), 76  )
+
+            REQUIRE_EQUAL( fixed_bigint<640>().size()         , 1   )
+            REQUIRE_EQUAL( fixed_bigint<640>().max_size()     , 20  )
+            REQUIRE_EQUAL( fixed_bigint<640>().max_byte_size(), 80  )
+        }
+
         // Test construction from 32 bit ints
         // Note, the correctness of conversion from hex is tested lower down in this test scope
         {
@@ -1007,18 +1102,22 @@ namespace ack::tests {
             static_assert( bigint_t() == 0 );
             static_assert( bigint_t() == bigint_t(0) );
             static_assert( bigint_t() == bigint_t()  );
-            static_assert( bigint_t().is_zero()     == true  );
-            static_assert( bigint_t().is_negative() == false );
-            static_assert( bigint_t().is_one()      == false );
-            static_assert( bigint_t().size()        == 1     );
+            static_assert( bigint_t().is_zero()       == true  );
+            static_assert( bigint_t().is_negative()   == false );
+            static_assert( bigint_t().is_one()        == false );
+            static_assert( bigint_t().size()          == 1     );
+            static_assert( bigint_t().max_size()      == 1     );
+            static_assert( bigint_t().max_byte_size() == 4     );
 
-            REQUIRE_EQUAL( bigint_t() == 0          , true  )
-            REQUIRE_EQUAL( bigint_t() == bigint_t(0), true  )
-            REQUIRE_EQUAL( bigint_t() == bigint_t() , true  )
-            REQUIRE_EQUAL( bigint_t().is_zero()     , true  )
-            REQUIRE_EQUAL( bigint_t().is_negative() , false )
-            REQUIRE_EQUAL( bigint_t().is_one()      , false )
-            REQUIRE_EQUAL( bigint_t().size()        , 1     )
+            REQUIRE_EQUAL( bigint_t() == 0           , true  )
+            REQUIRE_EQUAL( bigint_t() == bigint_t(0) , true  )
+            REQUIRE_EQUAL( bigint_t() == bigint_t()  , true  )
+            REQUIRE_EQUAL( bigint_t().is_zero()      , true  )
+            REQUIRE_EQUAL( bigint_t().is_negative()  , false )
+            REQUIRE_EQUAL( bigint_t().is_one()       , false )
+            REQUIRE_EQUAL( bigint_t().size()         , 1     )
+            REQUIRE_EQUAL( bigint_t().max_size()     , 1     )
+            REQUIRE_EQUAL( bigint_t().max_byte_size(), 4     )
 
             static_assert( bigint_t(0) ==  0 );
             static_assert( bigint_t(0) ==  bigint_t(0) );
@@ -2333,36 +2432,40 @@ namespace ack::tests {
 
         // Test sizes, set bits, parity etc...
         {
-            static_assert( fixed_bigint<32>().is_negative() == false );
-            static_assert( fixed_bigint<32>().bit_length()  == 1     );
-            static_assert( fixed_bigint<32>().byte_length() == 1     );
-            static_assert( fixed_bigint<32>().word_length() == 1     );
-            static_assert( fixed_bigint<32>().size()        == 1     );
-            static_assert( fixed_bigint<32>().test_bit(0)   == false );
-            static_assert( fixed_bigint<32>().test_bit(1)   == false );
-            static_assert( fixed_bigint<32>().test_bit(2)   == false );
-            static_assert( fixed_bigint<32>().test_bit(3)   == false );
-            static_assert( fixed_bigint<32>().test_bit(4)   == false );
-            static_assert( fixed_bigint<32>().test_bit(5)   == false );
-            static_assert( fixed_bigint<32>().test_bit(6)   == false );
-            static_assert( fixed_bigint<32>().test_bit(7)   == false );
-            static_assert( fixed_bigint<32>().test_bit(8)   == false );
-            static_assert( fixed_bigint<32>().is_zero()     == true  );
-            static_assert( fixed_bigint<32>().is_one()      == false );
-            static_assert( fixed_bigint<32>().is_odd()      == false );
-            static_assert( fixed_bigint<32>().is_even()     == true  );
+            static_assert( fixed_bigint<32>().is_negative()   == false );
+            static_assert( fixed_bigint<32>().bit_length()    == 1     );
+            static_assert( fixed_bigint<32>().byte_length()   == 1     );
+            static_assert( fixed_bigint<32>().word_length()   == 1     );
+            static_assert( fixed_bigint<32>().size()          == 1     );
+            static_assert( fixed_bigint<32>().max_size()      == 1     );
+            static_assert( fixed_bigint<32>().max_byte_size() == 4    );
+            static_assert( fixed_bigint<32>().test_bit(0)     == false );
+            static_assert( fixed_bigint<32>().test_bit(1)     == false );
+            static_assert( fixed_bigint<32>().test_bit(2)     == false );
+            static_assert( fixed_bigint<32>().test_bit(3)     == false );
+            static_assert( fixed_bigint<32>().test_bit(4)     == false );
+            static_assert( fixed_bigint<32>().test_bit(5)     == false );
+            static_assert( fixed_bigint<32>().test_bit(6)     == false );
+            static_assert( fixed_bigint<32>().test_bit(7)     == false );
+            static_assert( fixed_bigint<32>().test_bit(8)     == false );
+            static_assert( fixed_bigint<32>().is_zero()       == true  );
+            static_assert( fixed_bigint<32>().is_one()        == false );
+            static_assert( fixed_bigint<32>().is_odd()        == false );
+            static_assert( fixed_bigint<32>().is_even()       == true  );
 
-            REQUIRE_EQUAL( fixed_bigint<32>().is_negative() , false );
-            REQUIRE_EQUAL( fixed_bigint<32>().bit_length()  , 1     );
-            REQUIRE_EQUAL( fixed_bigint<32>().byte_length() , 1     );
-            REQUIRE_EQUAL( fixed_bigint<32>().word_length() , 1     );
-            REQUIRE_EQUAL( fixed_bigint<32>().size()        , 1     );
-            REQUIRE_EQUAL( fixed_bigint<32>().test_bit(0)   , false );
-            REQUIRE_EQUAL( fixed_bigint<32>().test_bit(1)   , false );
-            REQUIRE_EQUAL( fixed_bigint<32>().is_zero()     , true  );
-            REQUIRE_EQUAL( fixed_bigint<32>().is_one()      , false );
-            REQUIRE_EQUAL( fixed_bigint<32>().is_odd()      , false );
-            REQUIRE_EQUAL( fixed_bigint<32>().is_even()     , true  );
+            REQUIRE_EQUAL( fixed_bigint<32>().is_negative()  , false );
+            REQUIRE_EQUAL( fixed_bigint<32>().bit_length()   , 1     );
+            REQUIRE_EQUAL( fixed_bigint<32>().byte_length()  , 1     );
+            REQUIRE_EQUAL( fixed_bigint<32>().word_length()  , 1     );
+            REQUIRE_EQUAL( fixed_bigint<32>().size()         , 1     );
+            REQUIRE_EQUAL( fixed_bigint<32>().max_size()     , 1     );
+            REQUIRE_EQUAL( fixed_bigint<32>().max_byte_size(), 4     );
+            REQUIRE_EQUAL( fixed_bigint<32>().test_bit(0)    , false );
+            REQUIRE_EQUAL( fixed_bigint<32>().test_bit(1)    , false );
+            REQUIRE_EQUAL( fixed_bigint<32>().is_zero()      , true  );
+            REQUIRE_EQUAL( fixed_bigint<32>().is_one()       , false );
+            REQUIRE_EQUAL( fixed_bigint<32>().is_odd()       , false );
+            REQUIRE_EQUAL( fixed_bigint<32>().is_even()      , true  );
 
             static_assert( fixed_bigint<32>(0).is_negative() == false );
             static_assert( fixed_bigint<32>(0).bit_length()  == 1     );
@@ -2457,36 +2560,40 @@ namespace ack::tests {
             REQUIRE_EQUAL( fixed_bigint<32>(-0).is_odd()     , false );
             REQUIRE_EQUAL( fixed_bigint<32>(-0).is_even()    , true  );
 
-            static_assert( fixed_bigint<64>(0LL).is_negative() == false );
-            static_assert( fixed_bigint<64>(0LL).bit_length()  == 1     );
-            static_assert( fixed_bigint<64>(0LL).byte_length() == 1     );
-            static_assert( fixed_bigint<64>(0LL).word_length() == 1     );
-            static_assert( fixed_bigint<64>(0LL).size()        == 1     );
-            static_assert( fixed_bigint<64>(0LL).test_bit(0)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(1)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(2)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(3)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(4)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(5)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(6)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(7)   == false );
-            static_assert( fixed_bigint<64>(0LL).test_bit(8)   == false );
-            static_assert( fixed_bigint<64>(0LL).is_zero()     == true  );
-            static_assert( fixed_bigint<64>(0LL).is_one()      == false );
-            static_assert( fixed_bigint<64>(0LL).is_odd()      == false );
-            static_assert( fixed_bigint<64>(0LL).is_even()     == true  );
+            static_assert( fixed_bigint<64>(0LL).is_negative()   == false );
+            static_assert( fixed_bigint<64>(0LL).bit_length()    == 1     );
+            static_assert( fixed_bigint<64>(0LL).byte_length()   == 1     );
+            static_assert( fixed_bigint<64>(0LL).word_length()   == 1     );
+            static_assert( fixed_bigint<64>(0LL).size()          == 1     );
+            static_assert( fixed_bigint<64>(0LL).max_size()      == 2     );
+            static_assert( fixed_bigint<64>(0LL).max_byte_size() == 8     );
+            static_assert( fixed_bigint<64>(0LL).test_bit(0)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(1)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(2)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(3)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(4)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(5)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(6)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(7)     == false );
+            static_assert( fixed_bigint<64>(0LL).test_bit(8)     == false );
+            static_assert( fixed_bigint<64>(0LL).is_zero()       == true  );
+            static_assert( fixed_bigint<64>(0LL).is_one()        == false );
+            static_assert( fixed_bigint<64>(0LL).is_odd()        == false );
+            static_assert( fixed_bigint<64>(0LL).is_even()       == true  );
 
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_negative(), false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).bit_length() , 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).byte_length(), 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).word_length(), 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).size()       , 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).test_bit(0)  , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).test_bit(1)  , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_zero()    , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_one()     , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_odd()     , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_even()    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_negative()  , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).bit_length()   , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).byte_length()  , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).word_length()  , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).size()         , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).max_size()     , 2     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).max_byte_size(), 8     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).test_bit(0)    , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).test_bit(1)    , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_zero()      , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_one()       , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_odd()       , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0LL).is_even()      , true  );
 
             static_assert( fixed_bigint<64>(0ULL).is_negative() == false );
             static_assert( fixed_bigint<64>(0ULL).bit_length()  == 1     );
@@ -3572,93 +3679,97 @@ namespace ack::tests {
             REQUIRE_EQUAL( fixed_bigint<32>(65536U).is_odd()     , false );
             REQUIRE_EQUAL( fixed_bigint<32>(65536U).is_even()    , true  );
 
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_negative() ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).bit_length()  ==  32    );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).byte_length() ==  4     );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).word_length() ==  1     );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).size()        ==  1     );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(0)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(1)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(2)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(3)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(4)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(5)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(6)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(7)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(8)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(9)   ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(10)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(11)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(12)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(13)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(14)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(15)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(16)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(18)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(19)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(20)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(21)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(22)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(23)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(24)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(25)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(26)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(27)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(28)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(29)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(30)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(31)  ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(32)  ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(33)  ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(34)  ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_zero()     ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_one()      ==  false );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_odd()      ==  true  );
-            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_even()     ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_negative()   ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).bit_length()    ==  32    );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).byte_length()   ==  4     );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).word_length()   ==  1     );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).size()          ==  1     );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).max_size()      ==  2     );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).max_byte_size() ==  8     );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(0)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(1)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(2)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(3)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(4)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(5)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(6)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(7)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(8)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(9)     ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(10)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(11)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(12)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(13)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(14)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(15)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(16)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(18)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(19)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(20)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(21)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(22)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(23)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(24)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(25)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(26)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(27)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(28)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(29)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(30)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(31)    ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(32)    ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(33)    ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).test_bit(34)    ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_zero()       ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_one()        ==  false );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_odd()        ==  true  );
+            static_assert( fixed_bigint<64>(0xFFFFFFFF).is_even()       ==  false );
 
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_negative(), false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).bit_length() , 32    );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).byte_length(), 4     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).word_length(), 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).size()       , 1     );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(0)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(1)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(2)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(3)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(4)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(5)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(6)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(7)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(8)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(9)  , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(10) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(11) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(12) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(13) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(14) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(15) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(16) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(18) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(19) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(20) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(21) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(22) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(23) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(24) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(25) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(26) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(27) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(28) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(29) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(30) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(31) , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(32) , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(33) , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(34) , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_zero()    , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_one()     , false );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_odd()     , true  );
-            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_even()    , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_negative()  , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).bit_length()   , 32    );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).byte_length()  , 4     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).word_length()  , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).size()         , 1     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).max_size()     , 2     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).max_byte_size(), 8     );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(0)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(1)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(2)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(3)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(4)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(5)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(6)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(7)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(8)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(9)    , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(10)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(11)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(12)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(13)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(14)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(15)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(16)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(18)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(19)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(20)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(21)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(22)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(23)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(24)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(25)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(26)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(27)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(28)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(29)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(30)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(31)   , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(32)   , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(33)   , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).test_bit(34)   , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_zero()      , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_one()       , false );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_odd()       , true  );
+            REQUIRE_EQUAL( fixed_bigint<64>(0xFFFFFFFF).is_even()      , false );
 
             static_assert( fixed_bigint<64>(0xFFFFFFFFU).is_negative() ==  false );
             static_assert( fixed_bigint<64>(0xFFFFFFFFU).bit_length()  ==  32    );

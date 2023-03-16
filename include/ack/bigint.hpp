@@ -1457,7 +1457,7 @@ namespace ack {
                 return bit_size(abs(*this))
                 @note return 1 if zero
             */
-            constexpr size_t bit_length() const
+            constexpr std::size_t bit_length() const
             {
                 if (is_zero()) {
                     return 1;
@@ -1571,9 +1571,19 @@ namespace ack {
                 return x0 > y ? 1 : x0 == y ? 0 : -1;
             }
 
-            constexpr size_t size() const
+            constexpr std::size_t size() const
             {
                 return word_length();
+            }
+
+            constexpr std::size_t max_size() const
+            {
+                return buf_.max_size();
+            }
+
+            constexpr std::size_t max_byte_size() const
+            {
+                return max_size() * sizeof(word_t);
             }
 
             constexpr bool is_zero() const
@@ -1611,12 +1621,12 @@ namespace ack {
                 return &buf_[0];
             }
 
-            constexpr size_t word_length() const
+            constexpr std::size_t word_length() const
             {
                 return size_;
             }
 
-            constexpr size_t byte_length() const
+            constexpr std::size_t byte_length() const
             {
                 return (bit_length() + 7) / 8;
             }
