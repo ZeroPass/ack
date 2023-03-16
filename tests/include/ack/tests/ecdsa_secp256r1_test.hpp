@@ -94,17 +94,32 @@ namespace ack::tests {
 
         // https://github.com/kmackay/micro-ecc/issues/196
         {
-            constexpr auto pubkey_point = curve.make_point(
-                "7CF27B188D034F7E8A52380304B51AC3C08969E277F21B35A60B48FC47669978",
-                "07775510DB8ED040293D9AC69F7430DBBA7DADE63CE982299E04B79D227873D1"
-            );
+            {
+                constexpr auto pubkey_point = curve.make_point(
+                    "7CF27B188D034F7E8A52380304B51AC3C08969E277F21B35A60B48FC47669978",
+                    "07775510DB8ED040293D9AC69F7430DBBA7DADE63CE982299E04B79D227873D1"
+                );
 
-            constexpr bn_t sig_r = "56CD9CF152BCCC3A64E41E2B2BF91ED0661E0821B14B50ABE93C05EA889AFED3";
-            constexpr bn_t sig_s = "F93452957106BAB410617E306D876BB58FA7D7B5A515AC6B6181D8D638651FC7";
+                constexpr bn_t sig_r = "56CD9CF152BCCC3A64E41E2B2BF91ED0661E0821B14B50ABE93C05EA889AFED3";
+                constexpr bn_t sig_s = "F93452957106BAB410617E306D876BB58FA7D7B5A515AC6B6181D8D638651FC7";
 
-            auto digest = eosio::checksum256( from_hex( "797601B76D29603D167FA1062CC27B00BB0E39493BF3B7BBAFA610C2B24F4A20" ) );
-            bool result = true; // Signature is valid
-            test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
+                auto digest = eosio::checksum256( from_hex( "797601B76D29603D167FA1062CC27B00BB0E39493BF3B7BBAFA610C2B24F4A20" ) );
+                bool result = true; // Signature is valid
+                test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
+            }
+            {
+                constexpr auto pubkey_point = curve.make_point(
+                    "495D1499B6626EA994AF768FF960ACFAC3AF290F8C9816A158A7EE71BE895E79",
+                    "2A168AAEB797EA665786966356715BCB44CC51D792F4BCD6320C370A73871F69"
+                );
+
+                constexpr bn_t sig_r = "495D1499B6626EA994AF768FF960ACFAC3AF290F8C9816A158A7EE71BE895E79";
+                constexpr bn_t sig_s = "06783594BFE892D4C1DAA797F9B49D4C29B9F5131F9A203C717C0224329B18F9";
+
+                auto digest = eosio::checksum256( from_hex( "EF798CFF4C935DCA6CC19338F48FFD6185A7EB461216985FC3D72552F5B91836" ) );
+                bool result = true; // Signature is valid
+                test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
+            }
         }
 
         // NIST FIPS 186-4 test vectors
