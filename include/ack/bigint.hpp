@@ -675,16 +675,14 @@ namespace ack {
             }
 
             if (z == x) {
-                //word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
-                word_t p[sizeof(word_t) * xn];
+                word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
                 //word_t* p = (word_t*)alloca(sizeof(word_t) * xn);
                 copy_n(p, x, xn);
                 x = p;
             }
 
             if (z == y) {
-                //word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
-                word_t p[sizeof(word_t) * yn];
+                word_t* p = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
                 //word_t* p = (word_t*)alloca(sizeof(word_t) * yn);
                 copy_n(p, y, yn);
                 y = p;
