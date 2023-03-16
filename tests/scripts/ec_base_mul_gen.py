@@ -153,10 +153,10 @@ def main():
         for curve_name, tcs in test_cases.items():
             tname = f'ec_mul_{ curve_var[curve_name] }_test'
             print(f'EOSIO_TEST_BEGIN({tname})', file=f)
-            print(indent(f'using { curve_var[curve_name] }_t = decltype( ack::ec_curve::{ curve_var[curve_name] });', indent_size), file=f)
+            print(indent(f'using { curve_var[curve_name] }_t = std::remove_cv_t<decltype( ack::ec_curve::{ curve_var[curve_name] })>;', indent_size), file=f)
             print(indent(f'using bn_t = typename { curve_var[curve_name] }_t::int_type;', indent_size), file=f)
             print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size), file=f)
-            print(indent(f'using point_proj_type = ack::ec_point_fp_proj_t<bn_t, typename { curve_var[curve_name] }_t::curve_tag>;', indent_size), file=f)
+            print(indent(f'using point_proj_type = ack::ec_point_fp_proj<{ curve_var[curve_name] }_t>;', indent_size), file=f)
             print(indent( '{', indent_size), file=f )
             print(indent( f'{ tcs.rstrip() }', indent_size), file=f )
             print(indent( '}', indent_size), file=f )

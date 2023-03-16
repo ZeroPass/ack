@@ -3,6 +3,7 @@
 #pragma once
 #include <cstdint>
 #include <span>
+#include <type_traits>
 
 #include <ack/bigint.hpp>
 #include <ack/fp.hpp>
@@ -17,6 +18,8 @@ namespace ack {
     template<typename PointT, typename CurveT>
     struct ec_point_base
     {
+        using int_type = typename CurveT::int_type;
+
         constexpr ec_point_base() : // represents point at infinity
             curve_( nullptr )
         {}
@@ -103,7 +106,7 @@ namespace ack {
          * R = 2 * this
          *
          * @return the double of this point
-         */
+        */
         [[nodiscard]] PointT doubled() const
         {
             return underlying().doubled();
@@ -140,8 +143,7 @@ namespace ack {
          * @param scalar - the scalar to multiply this point by
          * @return the resulting point
         */
-        template<typename BigNumT>
-        [[nodiscard]] PointT mul(const BigNumT& scalar) const
+        [[nodiscard]] PointT mul(const int_type& scalar) const
         {
             return underlying().mul( scalar );
         }
@@ -226,7 +228,7 @@ namespace ack {
             return underlying() = sub( a );
         }
 
-         /**
+        /**
          * Subtracts the given point from this point.
          * this = this - a
          *
@@ -246,8 +248,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        template<typename BigNumT>
-        [[nodiscard]] friend PointT operator * (const PointT& p, const BigNumT& s)
+        [[nodiscard]] friend PointT operator * (const PointT& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -260,8 +261,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        template<typename BigNumT>
-        [[nodiscard]] friend PointT operator * (const ec_point_base& p, const BigNumT& s)
+        [[nodiscard]] friend PointT operator * (const ec_point_base& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -274,8 +274,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        template<typename BigNumT>
-        [[nodiscard]] friend PointT operator * (const BigNumT& s, const PointT& p)
+        [[nodiscard]] friend PointT operator * (const int_type& s, const PointT& p)
         {
             return p.mul( s );
         }
@@ -288,8 +287,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        template<typename BigNumT>
-        [[nodiscard]] friend PointT operator * (const BigNumT& s, const ec_point_base& p)
+        [[nodiscard]] friend PointT operator * (const int_type& s, const ec_point_base& p)
         {
             return p.mul( s );
         }
@@ -301,8 +299,7 @@ namespace ack {
          * @param s - the scalar to multiply this point by.
          * @return reference to this point
         */
-        template<typename BigNumT>
-        PointT& operator *= (const BigNumT& s)
+        PointT& operator *= (const int_type& s)
         {
             return underlying() = mul( s );
         }
@@ -339,6 +336,16 @@ namespace ack {
             const CurveT* curve_;
     };
 
+    // Forward declaration of ec_curve_fp
+    template<typename BigNumT, typename CurveTag>
+    struct ec_curve_fp;
+
+    /**
+     * Type trait to check if the given curve type is derived from ec_curve_fp
+     * @tparam CurveT - the curve type to check.
+    */
+    template<typename CurveT>
+    constexpr bool is_ec_curve_fp = std::is_same_v<CurveT, ec_curve_fp<typename CurveT::int_type, typename CurveT::curve_tag>>;
 
     /**
      * Struct represents a affine point on an elliptic curve
@@ -352,12 +359,17 @@ namespace ack {
      *
      * @warning The point's curve is stored as a pointer to the curve object.
      *          The curve object must outlive the point object.
+     *
+     * @tparam CurveT - the curve type. Required to be an instance of ec_curve_fp.
     */
-    template<typename BigNumT, typename CurveT>
-    struct ec_point_fp : ec_point_base<ec_point_fp<BigNumT, CurveT>, CurveT>
+    template<typename CurveT>
+    struct ec_point_fp : ec_point_base<ec_point_fp<CurveT>, CurveT>
     {
-        using base_type          = ec_point_base<ec_point_fp<BigNumT, CurveT>, CurveT>;
-        using field_element_type = typename  CurveT::field_element_type;
+        static_assert( is_ec_curve_fp<CurveT> );
+
+        using base_type          = ec_point_base<ec_point_fp<CurveT>, CurveT>;
+        using int_type           = typename CurveT::int_type;
+        using field_element_type = typename CurveT::field_element_type;
         using base_type::base_type;
 
         field_element_type x;
@@ -381,7 +393,7 @@ namespace ack {
             return ( x.is_zero() && y.is_zero() ) || this->curve_ == nullptr;
         }
 
-         /**
+        /**
          * Checks if this point is on the curve by calculating
          * the left and right hand side of the equation:  y^2 = x^3 + ax + b
          *
@@ -473,12 +485,12 @@ namespace ack {
             return ec_point_fp( this->curve(), x3, y3 );
         }
 
-         /**
+        /**
          * Returns the double of this point.
          * R = 2 * this
          *
          * @return the double of this point
-         */
+        */
         [[nodiscard]] ec_point_fp doubled() const
         {
             if ( is_identity() || y.is_zero() ) { // check for y == 0 handles division by zero issue
@@ -514,7 +526,7 @@ namespace ack {
          * @param scalar - the scalar to multiply this point by
          * @return the resulting point
         */
-        [[nodiscard]] ec_point_fp mul(const BigNumT& scalar) const
+        [[nodiscard]] ec_point_fp mul(const int_type& scalar) const
         {
             if ( scalar.is_one() || is_identity() ) {
                 return *this;
@@ -572,7 +584,7 @@ namespace ack {
 
         private:
             friend CurveT;
-            template<typename, typename>
+            template<typename>
             friend struct ec_point_fp_proj;
             constexpr ec_point_fp( const CurveT& curve, field_element_type x, field_element_type y ) :
                 base_type( curve ),
@@ -592,13 +604,17 @@ namespace ack {
      * @warning The point's curve is stored as a pointer to the curve object.
      *          The curve object must outlive the point object.
      *
+     * @tparam CurveT - the curve type. Required to be an instance of ec_curve_fp.
     */
-    template<typename BigNumT, typename CurveT>
-    struct ec_point_fp_proj : ec_point_base<ec_point_fp_proj<BigNumT, CurveT>, CurveT>
+    template<typename CurveT>
+    struct ec_point_fp_proj : ec_point_base<ec_point_fp_proj<CurveT>, CurveT>
     {
-        using base_type          = ec_point_base<ec_point_fp_proj<BigNumT, CurveT>, CurveT>;
+        static_assert( is_ec_curve_fp<CurveT> );
+
+        using base_type          = ec_point_base<ec_point_fp_proj<CurveT>, CurveT>;
+        using int_type           = typename CurveT::int_type;
         using field_element_type = typename CurveT::field_element_type;
-        using affine_point_type  = typename CurveT::point_type;
+        using affine_point_type  = ec_point_fp<CurveT>;
         using base_type::base_type;
 
         field_element_type x;
@@ -694,7 +710,7 @@ namespace ack {
             return this->curve_ == nullptr ||( z.is_zero() );
         }
 
-         /**
+        /**
          * Checks if this point is on the curve by calculating
          * the left and right hand side of the equation:  y^2 * z = x^3 + ax * z^2 + b * z^3
          *
@@ -798,12 +814,12 @@ namespace ack {
             return make_point( std::move(rx), std::move(ry), std::move(rz) );
         }
 
-         /**
+        /**
          * Returns the double of this point.
          * R = 2 * this
          *
          * @return the double of this point
-         */
+        */
         [[nodiscard]] ec_point_fp_proj doubled() const
         {
             const auto& p = *this;
@@ -848,7 +864,7 @@ namespace ack {
          * @param scalar - the scalar to multiply this point by
          * @return the resulting point
         */
-        [[nodiscard]] ec_point_fp_proj mul(const BigNumT& scalar) const
+        [[nodiscard]] ec_point_fp_proj mul(const int_type& scalar) const
         {
             if ( scalar.is_one() || is_identity() ) {
                 return *this;
@@ -924,8 +940,12 @@ namespace ack {
             }
     };
 
+    /**
+     * Base struct for representing elliptic curve.
+    */
     template<typename CurveT, typename FieldElementT, typename PointT>
     struct ec_curve_base {
+        using int_type           = typename FieldElementT::int_type;
         using field_element_type = FieldElementT;
         using point_type         = PointT;
 
@@ -934,7 +954,7 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = typename field_element_type::bignum_type>
+        template<typename BigNumT = int_type>
         [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x) const
         {
             return static_cast<const CurveT&>(*this)
@@ -946,7 +966,7 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = typename field_element_type::bignum_type>
+        template<typename BigNumT = int_type>
         [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x) const
         {
             return static_cast<const CurveT&>(*this)
@@ -960,7 +980,7 @@ namespace ack {
          * @param verify if true, the point is verified to be valid point on the curve created by the curve generator point g.
          * @return curve point
         */
-        template<typename BigNumT = typename field_element_type::bignum_type>
+        template<typename BigNumT = int_type>
         [[nodiscard]] constexpr point_type make_point(BigNumT x, BigNumT y, bool verify = false) const
         {
             return static_cast<const CurveT&>(*this)
@@ -978,23 +998,23 @@ namespace ack {
     };
 
     /**
-     * Defines curve over a prime field GF(p)
+     * Struct defines curve over a prime finite field GF(p)
      * with Weierstrass equation y^2 = x^3 + ax + b.
      *
      * @tparam BigNumT  - big number type
-     * @tparam CurveTag - The curve tag
+     * @tparam CurveTag - the curve tag
     */
     template<typename BigNumT, typename CurveTag>
     struct ec_curve_fp :
         ec_curve_base<
             ec_curve_fp<BigNumT, CurveTag>,
             fp_element<BigNumT, CurveTag>,
-            ec_point_fp<BigNumT, ec_curve_fp<BigNumT, CurveTag>>
+            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>
         >
     {
         using base_type = ec_curve_base<ec_curve_fp<BigNumT, CurveTag>,
                             fp_element<BigNumT, CurveTag>,
-                            ec_point_fp<BigNumT, ec_curve_fp<BigNumT, CurveTag>>>;
+                            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>>;
 
         using curve_tag          = CurveTag;
         using int_type           = BigNumT;
@@ -1221,41 +1241,13 @@ namespace ack {
             }
     };
 
-    // Type aliases for convenience
-    template<typename PointT, typename BigNumT, typename CurveTag>
-    using ec_point_fp_base_t = ec_point_base<PointT, ec_curve_fp<BigNumT, CurveTag>>;
-
-    template<typename BigNumT, typename CurveTag>
-    using ec_point_fp_t = ec_point_fp<BigNumT, ec_curve_fp<BigNumT, CurveTag>>;
-
-    template<typename BigNumT, typename CurveTag>
-    using ec_point_fp_proj_t = ec_point_fp_proj<BigNumT, ec_curve_fp<BigNumT, CurveTag>>;
-
-    // helper functions
-    /**
-     * Creates a point in homogeneous coordinates from affine point.
-     * @warning Returned point stores pointer to curve.
-     *         The curve must outlive the point.
-     *
-     * @tparam BigNumT  - Big number type
-     * @tparam CurveTag - Curve tag
-     * @param p - Affine point
-     * @return ec_point_fp_proj_t<BigNumT, CurveTag> - Point in homogeneous coordinates
-    */
-    template<typename BigNumT, typename CurveTag>
-    [[nodiscard]] inline auto make_ec_point_fp_proj(ec_point_fp_t<BigNumT, CurveTag> p) ->
-        ec_point_fp_proj_t<BigNumT, CurveTag>
-    {
-        return ec_point_fp_proj_t<BigNumT, CurveTag>( std::move(p) );
-    }
-
     /**
      * Fast multiplication of points and addition of points, i.e. a*P + b*Q
      * Function uses Shamir's trick to calculate a*P + b*Q in one batch,
      * thus the speedup shoule be ~2x.
      *
-     * @tparam PointT  - Point type
-     * @tparam BigNumT - Big number type
+     * @tparam PointT - point type
+     * @tparam CurveT - curve type
      *
      * @param a - First multiplier
      * @param p - First point
@@ -1263,11 +1255,11 @@ namespace ack {
      * @param q - Second point
      * @return PointT - Result of a*P + b*Q
     */
-    template<typename PointT, typename BigNumT, typename CurveTag>
-    [[nodiscard]] PointT ec_mul_add_fast(const BigNumT& a, const ec_point_fp_base_t<PointT, BigNumT, CurveTag>& p,
-                           const BigNumT& b, const ec_point_fp_base_t<PointT, BigNumT, CurveTag>& q)
+    template<typename PointT, typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]] PointT ec_mul_add_fast(const IntT& a, const ec_point_base<PointT, CurveT>& p,
+                                         const IntT& b, const ec_point_base<PointT, CurveT>& q)
     {
-        using bpt = ec_point_fp_base_t<PointT, BigNumT, CurveTag>;
+        using bpt = ec_point_base<PointT, CurveT>;
 
         auto s1_bits = a.bit_length();
         auto s2_bits = b.bit_length();

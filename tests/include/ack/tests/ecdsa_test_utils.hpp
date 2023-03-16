@@ -10,8 +10,8 @@
 
 namespace ack::tests {
 
-    template<typename BigNumT, std::size_t HLen, typename CurveTag>
-    inline void test_ecdsa_verification(bool sig_valid, const ec_point_fp_t<BigNumT, CurveTag>& q, const eosio::fixed_bytes<HLen>& digest, const BigNumT& r, const BigNumT& s, const ec_curve_fp<BigNumT, CurveTag>& curve)
+    template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
+    inline void test_ecdsa_verification(bool sig_valid, const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest, const IntT& r, const IntT& s, const CurveT& curve)
     {
         const auto hb = digest.extract_as_byte_array();
         REQUIRE_EQUAL( ecdsa_verify( q, bytes_view( (const byte_t*)hb.data(), HLen ), r, s, curve ), sig_valid )

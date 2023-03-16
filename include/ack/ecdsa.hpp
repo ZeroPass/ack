@@ -16,25 +16,25 @@ namespace ack{
      * @param curve - elliptic curve
      * @return true if signature is valid, false otherwise.
     */
-    template<typename BigNumT, typename CurveTag>
-    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp_t<BigNumT, CurveTag>& q, const bytes_view msg, const BigNumT& r, const BigNumT& s,
-                             const ec_curve_fp<BigNumT, CurveTag>& curve)
+    template<typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp<CurveT>& q, const bytes_view msg, const IntT& r, const IntT& s,
+                             const CurveT& curve)
     {
         if ( r < 1 || r >= curve.n || s < 1 || s >= curve.n ) {
             return false;
         }
 
-        auto e = BigNumT( msg.subspan( 0, std::min( curve.n.byte_length(), msg.size() )));
+        auto e = IntT( msg.subspan( 0, std::min( curve.n.byte_length(), msg.size() )));
         if ( e > curve.n ) {
             e -= curve.n;
         }
 
-        BigNumT w = s.modinv( curve.n );
+        IntT w = s.modinv( curve.n );
         auto u1 = ( e * w ) % curve.n;
         auto u2 = ( r * w ) % curve.n;
 
-        //auto rr = ( u1*make_ec_point_fp_proj(curve.g) + u2*make_ec_point_fp_proj(q) ).to_affine();
-        auto rr = ec_mul_add_fast( u1, make_ec_point_fp_proj( curve.g ), u2, make_ec_point_fp_proj( q ) )
+        //auto rr = ( u1*ec_point_fp_proj(curve.g) + u2*ec_point_fp_proj(q) ).to_affine();
+        auto rr = ec_mul_add_fast( u1, ec_point_fp_proj( curve.g ), u2, ec_point_fp_proj( q ) )
             .to_affine();
 
         if ( rr.is_identity() ) {
@@ -59,9 +59,9 @@ namespace ack{
      * @param curve  - elliptic curve
      * @return true if signature is valid, false otherwise.
     */
-    template<typename BigNumT, std::size_t HLen, typename CurveTag>
-    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp_t<BigNumT, CurveTag>& q, const eosio::fixed_bytes<HLen>& digest, const BigNumT& r, const BigNumT& s,
-                             const ec_curve_fp<BigNumT, CurveTag>& curve)
+    template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+                                           const IntT& r, const IntT& s, const CurveT& curve)
     {
         const auto bd = digest.extract_as_byte_array();
         const auto m  = bytes_view( reinterpret_cast<const byte_t*>( bd.data() ), HLen );
@@ -79,9 +79,8 @@ namespace ack{
      * @param curve  - elliptic curve
      * @param error  - error message when verification fails
     */
-    template<typename BigNumT, typename CurveTag>
-    inline void assert_ecdsa(const ec_point_fp_t<BigNumT, CurveTag>& q, const bytes_view msg, const BigNumT& r, const BigNumT& s,
-                             const ec_curve_fp<BigNumT, CurveTag>& curve, const char* error)
+    template<typename CurveT, typename IntT = typename CurveT::int_type>
+    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const bytes_view msg, const IntT& r, const IntT& s, const CurveT& curve, const char* error)
     {
         check( ecdsa_verify( q, msg, r, s, curve ), error );
     }
@@ -97,9 +96,9 @@ namespace ack{
      * @param curve  - elliptic curve
      * @param error  - error message when verification fails
     */
-    template<typename BigNumT, std::size_t HLen, typename CurveTag>
-    inline void assert_ecdsa(const ec_point_fp_t<BigNumT, CurveTag>& q, const eosio::fixed_bytes<HLen>& digest, const BigNumT& r, const BigNumT& s,
-                             const ec_curve_fp<BigNumT, CurveTag>& curve, const char* error)
+    template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
+    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+                             const IntT& r, const IntT& s, const CurveT& curve, const char* error)
     {
         check( ecdsa_verify( q, digest, r, s, curve ), error );
     }

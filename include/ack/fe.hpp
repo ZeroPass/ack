@@ -9,7 +9,7 @@ namespace ack {
     template<typename Derived, typename BigNumT, typename FieldTagT>
     struct field_element
     {
-        using bignum_type = BigNumT;
+        using int_type = BigNumT;
 
         // Delete constructors and assignment operators from derived class.
         // This is to prevent object slicing.
@@ -481,7 +481,8 @@ namespace ack {
         }
 
         /**
-         * Prints this element. EOSIO helper function.
+         * Prints this element.
+         * @note EOSIO helper function.
         */
         void print() const
         {

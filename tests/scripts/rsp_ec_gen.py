@@ -144,7 +144,7 @@ def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
     if tv.result == 'P' or tv.result[0] == 'P':
         test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ true )', decl_vars, indent_size) + '\n'
         test_str += indent('REQUIRE_EQUAL( q.is_valid(), true )', indent_size) + '\n'
-        test_str += indent('REQUIRE_EQUAL( make_ec_point_fp_proj( q ).is_valid(), true )', indent_size) + '\n'
+        test_str += indent('REQUIRE_EQUAL( ec_point_fp_proj( q ).is_valid(), true )', indent_size) + '\n'
     else:
         if '1 - Q_x or Q_y out of range' in tv.result:
             p = curve_primes[tv.curve_name]
@@ -163,7 +163,7 @@ def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
 
             test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ false )', decl_vars, indent_size) + '\n'
             test_str += indent('REQUIRE_EQUAL( q.is_valid(), false )', indent_size) + '\n'
-            test_str += indent('REQUIRE_EQUAL( make_ec_point_fp_proj( q ).is_valid(), false )', indent_size) + '\n'
+            test_str += indent('REQUIRE_EQUAL( ec_point_fp_proj( q ).is_valid(), false )', indent_size) + '\n'
     return test_str
 
 def tvecdsa2str(tv: EcTestVector, decl_vars: bool) -> str:
