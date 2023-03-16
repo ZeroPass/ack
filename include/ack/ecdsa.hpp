@@ -7,18 +7,25 @@
 namespace ack{
     /**
      * Function verifies ECDSA signature.
-     * @note msg is truncated to curve.n byte length.
+     * 
+     * The implementation follows the NIST FIPS 186-5, section 6.4.2: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
+     * and cross-checked against:
+     *  - SECG SEC1 v2.0, section 4.1.4: https://www.secg.org/sec1-v2.pdf#page=52
+     *  - BSI TR-03111 v2.10, section 4.2.1.2.: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR03111/BSI-TR-03111_pdf.pdf
+     *
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
      *
      * @param q     - public key point. Note: point validity should be checked before calling this function.
-     * @param msg   - message to verify
+     * @param msg   - message to verify. Note: msg is truncated to curve.n byte length.
      * @param r     - signature r value
      * @param s     - signature s value
      * @param curve - elliptic curve
      * @return true if signature is valid, false otherwise.
     */
     template<typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp<CurveT>& q, const bytes_view msg, const IntT& r, const IntT& s,
-                             const CurveT& curve)
+    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp<CurveT>& q, const bytes_view msg,
+                                           const IntT& r, const IntT& s, const CurveT& curve)
     {
         if ( r < 1 || r >= curve.n || s < 1 || s >= curve.n ) {
             return false;
@@ -29,11 +36,9 @@ namespace ack{
             e -= curve.n;
         }
 
-        IntT w = s.modinv( curve.n );
+        IntT w  = s.modinv( curve.n );
         auto u1 = ( e * w ) % curve.n;
         auto u2 = ( r * w ) % curve.n;
-
-        //auto rr = ( u1*ec_point_fp_proj(curve.g) + u2*ec_point_fp_proj(q) ).to_affine();
         auto rr = ec_mul_add_fast( u1, ec_point_fp_proj( curve.g ), u2, ec_point_fp_proj( q ) )
             .to_affine();
 
@@ -50,10 +55,13 @@ namespace ack{
 
     /**
      * Function verifies ECDSA signature.
-     * @note digest is truncated to curve.n byte length.
+     *
+     * @tparam HLen   - digest length
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
      *
      * @param q      - public key point. Note: point validity should be checked before calling this function.
-     * @param digest - message digest to verify
+     * @param digest - message digest to verify. Note: digest is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
      * @param curve  - elliptic curve
@@ -70,27 +78,33 @@ namespace ack{
 
     /**
      * Asserts that ECDSA signature is valid.
-     * @note msg is truncated to curve.n byte length.
+     *
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
      *
      * @param q      - public key point. Note: point validity should be checked before calling this function.
-     * @param msg    - message to verify
+     * @param msg    - message to verify. Note: msg is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
      * @param curve  - elliptic curve
      * @param error  - error message when verification fails
     */
     template<typename CurveT, typename IntT = typename CurveT::int_type>
-    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const bytes_view msg, const IntT& r, const IntT& s, const CurveT& curve, const char* error)
+    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const bytes_view msg,
+                             const IntT& r, const IntT& s, const CurveT& curve, const char* error)
     {
         check( ecdsa_verify( q, msg, r, s, curve ), error );
     }
 
     /**
      * Asserts that ECDSA signature is valid.
-     * @note digest is truncated to curve.n byte length.
+     *
+     * @tparam HLen   - digest length
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
      *
      * @param q      - public key point. Note: point validity should be checked before calling this function.
-     * @param digest - message digest to verify
+     * @param digest - message digest to verify. Note: digest is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
      * @param curve  - elliptic curve

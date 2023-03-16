@@ -6,7 +6,7 @@
 
 /**
  * Macro defines invariant object for elliptic curve over prime field of type ec_curve_fp.
- * The invariant is defined at compile time.
+ * The invariant is constructed at compile time.
  * The name of the invariant is the same as the name of the curve.
  * Defined invariant uses ec_fixed_bigint as underlying big number type.
  *
@@ -28,7 +28,7 @@ namespace ack::ec_curve {
 
     /**
      * Invariant object representing the secp256k1 elliptic curve.
-     * The invariant is defined at compile time.
+     * The invariant is constructed at compile time.
      * The name of the invariant is the same as the name of the curve.
      *
      * Domain parameters were taken from SECG SEC 2: Recommended Elliptic Curve Domain Parameters.
@@ -48,7 +48,7 @@ namespace ack::ec_curve {
 
     /**
      * Invariant object representing the secp256r1 elliptic curve, also known as NIST P-256.
-     * The invariant is defined at compile time.
+     * The invariant is constructed at compile time.
      * The name of the invariant is the same as the name of the curve.
      *
      * Domain parameters were taken from SECG SEC 2: Recommended Elliptic Curve Domain Parameters.
