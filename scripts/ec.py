@@ -85,7 +85,7 @@ def is_on_curve(point, curve):
 # Point negation
 def point_neg(point, curve):
     """Returns -point."""
-    assert is_on_curve(point)
+    assert is_on_curve(point, curve)
 
     if point is None:
         # -0 = 0

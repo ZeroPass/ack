@@ -1693,6 +1693,21 @@ namespace ack::tests {
             REQUIRE_EQUAL( p_proj.is_valid()   , false )
             REQUIRE_EQUAL( p_proj.to_affine()  , p     )
 
+            if constexpr ( typename CurveT::int_type().max_byte_size() >= 16 ) { 
+                p = point_type() * "0E09796974C57E714C35F110DFC27CCB";
+                REQUIRE_EQUAL( point_type().mul( "0E09796974C57E714C35F110DFC27CCB" ), p )
+                REQUIRE_EQUAL( p.is_identity(), true  )
+                REQUIRE_EQUAL( p.is_on_curve(), true  )
+                REQUIRE_EQUAL( p.is_valid()   , false )
+
+                p_proj = point_proj_type() * "0E09796974C57E714C35F110DFC27CCB";
+                REQUIRE_EQUAL( point_proj_type().mul( "0E09796974C57E714C35F110DFC27CCB" ), p_proj )
+                REQUIRE_EQUAL( p_proj.is_identity(), true  )
+                REQUIRE_EQUAL( p_proj.is_on_curve(), true  )
+                REQUIRE_EQUAL( p_proj.is_valid()   , false )
+                REQUIRE_EQUAL( p_proj.to_affine()  , p     )
+            }
+
             // Test multiplying generator by 0 results in identity
             REQUIRE_EQUAL( c.g.is_identity(), false );
             const auto g_proj = point_proj_type( c.g );
@@ -1792,6 +1807,30 @@ namespace ack::tests {
         using bn_t            = typename secp256k1_t::int_type;
         const auto& curve     = secp256k1;
         using point_proj_type = secp256k1_point_proj;
+
+        // Custom test generated with python
+        {
+            auto p1 = curve.make_point( "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", /*verify=*/ true );
+            auto p2 = p1 * "C6047F9441ED7D6D3045406E95C07CD85C778E4B8CEF3";
+            REQUIRE_EQUAL( p2.x , "EED4CB4E92BB0D5D85DBDB7995776135DC54208E710D585289AE129DD8EA6ACE" )
+            REQUIRE_EQUAL( p2.y , "982FCA2C5901EA6E67F6EE86656F072A8AEDF243ED690A97C368664CC744C4A3" )
+
+            p2 *= "5CBDF0646E5DB4EAA398F365";
+            REQUIRE_EQUAL( p2.x , "EFDB9793C70B1572C4EBB3FC0F4950664E585D17CFCA213A62577F1FBAA90466" )
+            REQUIRE_EQUAL( p2.y , "6F413AA07DE4725313A601EEBA0084EBD511B6E019F45E17889124B8CFFAB6AE" )
+
+            auto p3 = p2 * -bn_t( "DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798" );
+            REQUIRE_EQUAL( p3.x , "ED03E116F92A916361DB25AC8AE2A97C6762BA5E25A5955BF8DAA3DD2CA582E1" )
+            REQUIRE_EQUAL( p3.y , "BB1CC6CE54BBF2ACEF7950DF46670124CF947E60C7BB69338C624EC6B763C49C" )
+
+            auto p4 = -p3 * "C136C1DC0CBEB930E9E298043589351D81D8E0BC736AE2A1F51921";
+            REQUIRE_EQUAL( p4.x , "9888D3776EBCFF17FAB4B31DE9A98A45AAEC1AFC1FBA288E0B78A0030732B57C" )
+            REQUIRE_EQUAL( p4.y , "8A58BDF2645D0E7B53D76AC9EB47A52ECE0EC2670D3299E3BCF20162E6128A5C" )
+
+            auto p5 = -p3 * -bn_t( "C136C1DC0CBEB930E9E298043589351D81D8E0BC736AE2A1F51921" );
+            REQUIRE_EQUAL( p5.x , "9888D3776EBCFF17FAB4B31DE9A98A45AAEC1AFC1FBA288E0B78A0030732B57C" )
+            REQUIRE_EQUAL( p5.y , "75A7420D9BA2F184AC28953614B85AD131F13D98F2CD661C430DFE9C19ED71D3" )
+        }
 
         // Test vectors from: https://crypto.stackexchange.com/questions/784/are-there-any-secp256k1-ecdsa-test-examples-available
         {
