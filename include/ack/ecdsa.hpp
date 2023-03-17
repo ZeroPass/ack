@@ -20,13 +20,16 @@ namespace ack{
      * @param msg   - message to verify. Note: msg is truncated to curve.n byte length.
      * @param r     - signature r value
      * @param s     - signature s value
-     * @param curve - elliptic curve
      * @return true if signature is valid, false otherwise.
     */
     template<typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp<CurveT>& q, const bytes_view msg,
-                                           const IntT& r, const IntT& s, const CurveT& curve)
+    [[nodiscard]] static bool ecdsa_verify(const ec_point_fp<CurveT>& q, const bytes_view msg, const IntT& r, const IntT& s)
     {
+        if ( q.is_identity() ) {
+            return false;
+        }
+
+        const auto& curve = q.curve();
         if ( r < 1 || r >= curve.n || s < 1 || s >= curve.n ) {
             return false;
         }
@@ -64,16 +67,15 @@ namespace ack{
      * @param digest - message digest to verify. Note: digest is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
-     * @param curve  - elliptic curve
      * @return true if signature is valid, false otherwise.
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
     [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
-                                           const IntT& r, const IntT& s, const CurveT& curve)
+                                           const IntT& r, const IntT& s)
     {
         const auto bd = digest.extract_as_byte_array();
         const auto m  = bytes_view( reinterpret_cast<const byte_t*>( bd.data() ), HLen );
-        return ecdsa_verify( q, m, r, s, curve );
+        return ecdsa_verify( q, m, r, s );
     }
 
     /**
@@ -86,14 +88,13 @@ namespace ack{
      * @param msg    - message to verify. Note: msg is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
-     * @param curve  - elliptic curve
      * @param error  - error message when verification fails
     */
     template<typename CurveT, typename IntT = typename CurveT::int_type>
     inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const bytes_view msg,
-                             const IntT& r, const IntT& s, const CurveT& curve, const char* error)
+                             const IntT& r, const IntT& s, const char* error)
     {
-        check( ecdsa_verify( q, msg, r, s, curve ), error );
+        check( ecdsa_verify( q, msg, r, s ), error );
     }
 
     /**
@@ -107,13 +108,12 @@ namespace ack{
      * @param digest - message digest to verify. Note: digest is truncated to curve.n byte length.
      * @param r      - signature r value
      * @param s      - signature s value
-     * @param curve  - elliptic curve
      * @param error  - error message when verification fails
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
     inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
-                             const IntT& r, const IntT& s, const CurveT& curve, const char* error)
+                             const IntT& r, const IntT& s, const char* error)
     {
-        check( ecdsa_verify( q, digest, r, s, curve ), error );
+        check( ecdsa_verify( q, digest, r, s ), error );
     }
 }
