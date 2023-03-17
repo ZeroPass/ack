@@ -31,6 +31,8 @@ namespace ack {
 
         /**
          * Returns the curve this point belongs to.
+         * @warning If this point is the identity element of the curve, the curve can be nullptr.
+         *          Make sure to check if this point is not identity before calling this method.
          * @return the curve this point belongs to.
         */
         const CurveT& curve() const
@@ -390,7 +392,7 @@ namespace ack {
         */
         constexpr bool is_identity() const
         {
-            return ( x.is_zero() && y.is_zero() ) || this->curve_ == nullptr;
+            return this->curve_ == nullptr || ( x.is_zero() && y.is_zero() );
         }
 
         /**
