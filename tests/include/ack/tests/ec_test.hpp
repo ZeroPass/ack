@@ -1047,6 +1047,15 @@ namespace ack::tests {
             REQUIRE_EQUAL( p1_inv_proj_normal.y == p1_inv_proj.y, true )
             REQUIRE_EQUAL( p1_inv_proj_normal.z == p1_inv_proj.z, true )
 
+            // Test retrieving curve reference from point at infinity fails
+            REQUIRE_ASSERT( "curve is null", [&]() {
+                auto& cr = c23_point().curve();
+            })
+
+            REQUIRE_ASSERT( "curve is null", [&]() {
+                auto& cr = c23_point_proj().curve();
+            })
+
             // Test creating field element with value not in range fails
             REQUIRE_ASSERT( "Invalid field element value", [&]() {
                 auto aa = c23.make_field_element( -3 );
@@ -1693,7 +1702,7 @@ namespace ack::tests {
             REQUIRE_EQUAL( p_proj.is_valid()   , false )
             REQUIRE_EQUAL( p_proj.to_affine()  , p     )
 
-            if constexpr ( typename CurveT::int_type().max_byte_size() >= 16 ) { 
+            if constexpr ( typename CurveT::int_type().max_byte_size() >= 16 ) {
                 p = point_type() * "0E09796974C57E714C35F110DFC27CCB";
                 REQUIRE_EQUAL( point_type().mul( "0E09796974C57E714C35F110DFC27CCB" ), p )
                 REQUIRE_EQUAL( p.is_identity(), true  )

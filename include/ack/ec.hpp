@@ -37,6 +37,7 @@ namespace ack {
         */
         const CurveT& curve() const
         {
+            check( curve_ != nullptr, "curve is null" );
             return *curve_;
         }
 
