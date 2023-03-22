@@ -5,21 +5,125 @@
 #include <ack/fe.hpp>
 #include <ack/utils.hpp>
 
+#include <type_traits>
+
 namespace ack {
+    namespace detail {
+        template<typename IntT, typename = std::enable_if_t<std::is_integral_v<IntT> || is_bigint_v<IntT>>>
+        using cref_int_t = std::conditional_t<std::is_integral_v<IntT>, const IntT, const IntT&>;
+
+        template<typename IntA, typename IntB>
+        [[nodiscard]] inline constexpr bool fp_is_valid(cref_int_t<IntA> a, cref_int_t<IntB> p)
+        {
+            return ( a >= 0 ) && ( a < p );
+        }
+
+        template<typename IntA, typename IntB>
+        [[nodiscard]] inline constexpr IntB fp_neg(cref_int_t<IntA> a, cref_int_t<IntB> p)
+        {
+            if ( a == 0 ) {
+                return a;
+            }
+            return p - a;
+        }
+
+        template<typename IntA, typename IntB>
+        inline constexpr void fp_normalize(IntA& a, cref_int_t<IntB> p)
+        {
+            if ( a == 0  || ( a == 1 && p != 1 ) ) {
+                return;
+            }
+
+            if ( a < 0 ) {
+                if constexpr (is_bigint_v<IntA> && is_bigint_v<IntB>) {
+                    if ( a.byte_length() > p.byte_length() ) {
+                        a %= p;
+                    }
+                    a += p;
+                }
+                else {
+                    a %= p;
+                    a += p;
+                }
+            }
+            else if ( a >= p ) {
+                if constexpr (is_bigint_v<IntA> && is_bigint_v<IntB>) {
+                    if ( a.byte_length() > p.byte_length() ) {
+                        a %= p;
+                    }
+                    else {
+                        a -= p;
+                    }
+                }
+                else {
+                    a -= p;
+                }
+            }
+        }
+
+        template<typename IntA, typename IntB, typename IntC>
+        [[nodiscard]] inline auto constexpr fp_add(cref_int_t<IntA> a, cref_int_t<IntB> b, cref_int_t<IntC> p)
+        {
+            auto res = a + b;
+            if ( res >= p ) {
+                res -= p;
+            }
+            return res;
+        }
+
+        template<typename IntA, typename IntB, typename IntC>
+        [[nodiscard]] inline auto constexpr fp_sub(cref_int_t<IntA> a, cref_int_t<IntB> b, cref_int_t<IntC> p)
+        {
+            auto res = a - b;
+            if ( res < 0 ) {
+                res += p;
+            }
+            return res;
+        }
+
+        template<typename IntA, typename IntB, typename IntC>
+        [[nodiscard]] inline IntA fp_mul(cref_int_t<IntA> a, cref_int_t<IntB> b, cref_int_t<IntC> p)
+        {
+            return ( a * b ) % p;
+        }
+
+        template<typename IntA, typename BufferB, typename IntC>
+        [[nodiscard]] inline auto fp_div(cref_int_t<IntA> a, const bigint<BufferB>& b, cref_int_t<IntC> p)
+        {
+            return ( a * b.modinv( p ) ) % p;
+        }
+    }
 
     /** Checks if finite field element a is valid.
      * i.e.: a >= 0 and a < p.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Big integer buffer type of finite field element.
+     * @tparam BufferB - Big integer buffer type of the prime modulus.
      *
      * @param a - Finite field element.
      * @param p - Prime modulus of the finite field.
      * @return true if a is valid finite field element, false otherwise.
      */
-    template<typename BigNumT>
-    [[nodiscard]] inline constexpr bool fp_is_valid(const BigNumT& a, const BigNumT& p)
+    template<typename BufferA, typename BufferB>
+    [[nodiscard]] inline constexpr bool fp_is_valid(const bigint<BufferA>& a, const bigint<BufferB>& p)
     {
-        return ( a >= 0 ) && ( a < p );
+        return detail::fp_is_valid<bigint<BufferA>, bigint<BufferB>>( a, p );
+    }
+
+    /** Checks if finite field element a is valid.
+     * i.e.: a >= 0 and a < p.
+     *
+     * @tparam IntA - Small integer type of finite field element.
+     * @tparam BufferB - Big integer buffer type of the prime modulus.
+     *
+     * @param a - Finite field element.
+     * @param p - Prime modulus of the finite field.
+     * @return true if a is valid finite field element, false otherwise.
+     */
+    template<typename IntA, typename BufferB, typename = std::enable_if_t<std::is_integral_v<IntA>>>
+    [[nodiscard]] inline constexpr bool fp_is_valid(IntA a, const bigint<BufferB>& p)
+    {
+        return detail::fp_is_valid<IntA, bigint<BufferB>>( a, p );
     }
 
     /**
@@ -27,17 +131,54 @@ namespace ack {
      * The result is -a mod p.
      *
      * @note Expects that a is positive integer and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Big integer buffer type of finite field element.
+     * @tparam BufferB - Big integer buffer type of the prime modulus.
      *
      * @param a - Finite field element.
      * @param p - Prime modulus of the finite field.
      * @return -a mod p.
      */
-    template<typename BigNumT>
-    [[nodiscard]] inline constexpr BigNumT fp_neg(const BigNumT& a, const BigNumT& p)
+    template<typename BufferA, typename BufferB>
+    [[nodiscard]] inline constexpr bigint<BufferA> fp_neg(const bigint<BufferA>& a, const bigint<BufferB>& p)
     {
-        return p - a;
+        return detail::fp_neg<bigint<BufferA>, bigint<BufferB>>( a, p );
+    }
+
+    /**
+     * Negates prime finite field element a.
+     * The result is -a mod p.
+     *
+     * @note Expects that a is positive integer and less than p.
+     *       Out of range values are not checked and will produce wrong results.
+     *
+     * @tparam IntA - Small integer type of finite field element.
+     * @tparam BufferB - Big integer buffer type of the prime modulus.
+     *
+     * @param a - Finite field element.
+     * @param p - Prime modulus of the finite field.
+     * @return -a mod p.
+     */
+    template<typename IntA, typename BufferB, typename = std::enable_if_t<std::is_integral_v<IntA>>>
+    [[nodiscard]] inline constexpr bigint<BufferB> fp_neg(IntA a, const bigint<BufferB>& p)
+    {
+        return detail::fp_neg<IntA, bigint<BufferB>>( a, p );
+    }
+
+    /**
+     * Normalizes prime finite field element a.
+     *
+     * @tparam BufferA - Big integer buffer type of finite field element.
+     * @tparam BufferB - Big integer buffer type of the prime modulus.
+     *
+     * @param a - reference to finite field element.
+     * @param p - Prime modulus of the finite field.
+    */
+    template<typename BufferA, typename BufferB>
+    inline constexpr void fp_normalize(bigint<BufferA>& a, const bigint<BufferB>& p)
+    {
+        detail::fp_normalize<bigint<BufferA>, bigint<BufferB>>( a, p );
     }
 
     /**
@@ -45,22 +186,43 @@ namespace ack {
      * The result is a + b mod p.
      *
      * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam BufferB - Type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
      * @param a - First finite field element.
      * @param b - Second finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a + b mod p.
     */
-    template<typename BigNumT>
-    [[nodiscard]] inline BigNumT constexpr fp_add(const BigNumT& a, const BigNumT& b, const BigNumT& p)
+    template<typename BufferA, typename BufferB, typename BufferC>
+    [[nodiscard]] inline bigint<BufferA> constexpr fp_add(const bigint<BufferA>& a, const bigint<BufferB>& b, const bigint<BufferC>& p)
     {
-        BigNumT res = a + b;
-        if ( res >= p ) {
-            res -= p;
-        }
-        return res;
+        return detail::fp_add<bigint<BufferA>, bigint<BufferB>, bigint<BufferC>>( a, b, p );
+    }
+
+    /**
+     * Calculates addition of prime finite field elements a and b.
+     * The result is a + b mod p.
+     *
+     * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
+     *
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam IntB    - Small integer type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
+     *
+     * @param a - First finite field element.
+     * @param b - Second finite field element.
+     * @param p - Prime modulus of the finite field.
+     * @return a + b mod p.
+    */
+    template<typename BufferA, typename IntB, typename BufferC, typename = std::enable_if_t<std::is_integral_v<IntB>>>
+    [[nodiscard]] inline bigint<BufferA> constexpr fp_add(const bigint<BufferA>& a, IntB b, const bigint<BufferC>& p)
+    {
+        return detail::fp_add<bigint<BufferA>, IntB, bigint<BufferC>>( a, b, p );
     }
 
     /**
@@ -68,22 +230,43 @@ namespace ack {
      * The result is a - b mod p.
      *
      * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam BufferB - Type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
      * @param a - First finite field element.
      * @param b - Second finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a - b mod p.
     */
-    template<typename BigNumT>
-    [[nodiscard]] inline constexpr BigNumT fp_sub(const BigNumT& a, const BigNumT& b, const BigNumT& p)
+    template<typename BufferA, typename BufferB, typename BufferC>
+    [[nodiscard]] inline bigint<BufferA> fp_sub(const bigint<BufferA>& a, const bigint<BufferB>& b, const bigint<BufferC>& p)
     {
-        BigNumT res = a - b;
-        if ( res.is_negative() ) {
-            res += p;
-        }
-        return res;
+        return detail::fp_sub<bigint<BufferA>, bigint<BufferB>, bigint<BufferC>>( a, b, p );
+    }
+
+    /**
+     * Calculates subtraction of prime finite field elements a and b.
+     * The result is a - b mod p.
+     *
+     * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
+     *
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam IntB    - Small integer type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
+     *
+     * @param a - First finite field element.
+     * @param b - Second finite field element.
+     * @param p - Prime modulus of the finite field.
+     * @return a - b mod p.
+    */
+    template<typename BufferA, typename IntB, typename BufferC, typename = std::enable_if_t<std::is_integral_v<IntB>>>
+    [[nodiscard]] inline bigint<BufferA> fp_sub(const bigint<BufferA>& a, IntB b, const bigint<BufferC>& p)
+    {
+        return detail::fp_sub<bigint<BufferA>, IntB, bigint<BufferC>>( a, b, p );
     }
 
     /**
@@ -91,36 +274,43 @@ namespace ack {
      * The result is a * b mod p.
      *
      * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam BufferB - Type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
      * @param a - First finite field element.
      * @param b - Second finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a * b mod p.
     */
-    template<typename BigNumT>
-    [[nodiscard]] inline BigNumT fp_mul(const BigNumT& a, const BigNumT& b, const BigNumT& p)
+    template<typename BufferA, typename BufferB, typename BufferC>
+    [[nodiscard]] inline bigint<BufferA> fp_mul(const bigint<BufferA>& a, const bigint<BufferB>& b, const bigint<BufferC>& p)
     {
-        return (a * b) % p;
+        return detail::fp_mul<bigint<BufferA>, bigint<BufferB>, bigint<BufferC>>( a, b, p );
     }
 
     /**
-     * Calculates multiplication of prime finite field element a and word b.
+     * Calculates multiplication of prime finite field elements a and b.
      * The result is a * b mod p.
      *
-     * @note Expects that a is positive integer and a & b are less than p.
+     * @note Expects that a, b are positive integers and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam IntB    - Small integer type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
-     * @param a - Finite field element.
-     * @param b - Finite field element.
+     * @param a - First finite field element.
+     * @param b - Second finite field element.
      * @param p - Prime modulus of the finite field.
+     * @return a * b mod p.
     */
-    template<typename BigNumT>
-    [[nodiscard]] inline BigNumT fp_mul(const BigNumT& a, const word_t b, const BigNumT& p)
+    template<typename BufferA, typename IntB, typename BufferC, typename = std::enable_if_t<std::is_integral_v<IntB>>>
+    [[nodiscard]] inline bigint<BufferA> fp_mul(const bigint<BufferA>& a, IntB b, const bigint<BufferC>& p)
     {
-        return (a * b) % p;
+        return detail::fp_mul<bigint<BufferA>, IntB, bigint<BufferC>>( a, b, p );
     }
 
     /**
@@ -128,15 +318,17 @@ namespace ack {
      * The result is a * a mod p.
      *
      * @note Expects that a is positive integer and less than p.
+     *       Out of range values are not checked and will produce wrong results.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
      * @param a - Finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a * a mod p.
     */
-    template<typename BigNumT>
-    [[maybe_unused]] inline BigNumT fp_sqr(const BigNumT& a, const BigNumT& p)
+    template<typename BufferA, typename BufferC>
+    [[nodiscard]] inline bigint<BufferA> fp_sqr(const bigint<BufferA>& a, const bigint<BufferC>& p)
     {
         return fp_mul( a, a, p );
     }
@@ -147,29 +339,30 @@ namespace ack {
      *
      * @note Expects that a, b are positive integers and less than p.
      *
-     * @tparam BigNumT Type of the finite field element.
+     * @tparam BufferA - Type of the first finite field element.
+     * @tparam BufferB - Type of the second finite field element.
+     * @tparam BufferC - Type of the prime modulus.
      *
      * @param a - First finite field element.
      * @param b - Second finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a / b mod p.
     */
-    template<typename BigNumT>
-    [[maybe_unused]] inline BigNumT fp_div(const BigNumT& a, const BigNumT& b, const BigNumT& p)
+    template<typename BufferA, typename BufferB, typename BufferC>
+    [[nodiscard]] inline bigint<BufferA> fp_div(const bigint<BufferA>& a, const bigint<BufferB>& b, const bigint<BufferC>& p)
     {
-        return (a * b.modinv(p)) % p;
+        return detail::fp_div<bigint<BufferA>, BufferB, bigint<BufferC>>( a, b, p );
     }
-
 
     /**
      * struct represents a finite field element.
      * @tparam BigNumT       - The big number type used to represent the element.
      * @tparam PrimeFieldTag - The tag to distinguish prime field element from other field elements.
-     */
-    template<typename BigNumT, typename PrimeFieldTag>
-    class fp_element : public field_element<fp_element<BigNumT, PrimeFieldTag>, BigNumT, PrimeFieldTag> {
+    */
+    template<typename IntT, typename PrimeFieldTag>
+    class fp_element : public field_element<fp_element<IntT, PrimeFieldTag>, IntT, PrimeFieldTag> {
         public:
-            using base_type = field_element<fp_element<BigNumT, PrimeFieldTag>, BigNumT, PrimeFieldTag>;
+            using base_type = field_element<fp_element<IntT, PrimeFieldTag>, IntT, PrimeFieldTag>;
             using base_type::base_type;
 
             /**
@@ -179,7 +372,7 @@ namespace ack {
              *      The returned instance is invalid and can be used only for comparison.
              *
              * @return Zero finite field element.
-             */
+            */
             constexpr static fp_element zero()
             {
                 return fp_element();
@@ -192,7 +385,7 @@ namespace ack {
              *       The returned instance is invalid and can be used only for comparison.
              *
              * @return Finite field element with value 1.
-             */
+            */
             constexpr static fp_element one()
             {
                 auto one = fp_element();
@@ -208,13 +401,13 @@ namespace ack {
              *          It is expected that modulus will be valid for the lifetime of the element.
              *
              * @param modulus - Prime modulus of the finite field.
-             */
-            constexpr fp_element(const BigNumT& modulus) :
+            */
+            constexpr fp_element(const IntT& modulus) :
                 pm_(&modulus)
             {}
 
             // Prevents construction from rvalue reference to modulus.
-            constexpr fp_element(BigNumT&& modulus) = delete;
+            constexpr fp_element(IntT&& modulus) = delete;
 
             /**
              * Constructs a finite field element.
@@ -231,19 +424,18 @@ namespace ack {
              *
              *                  Note, this check can be performed also after construction
              *                  by calling `is_valid()` method.
-             */
-
-            constexpr fp_element(BigNumT value, const BigNumT& modulus, bool check = false)
+            */
+            constexpr fp_element(IntT value, const IntT& modulus, bool check = false)
                 : v_(std::move(value))
                 , pm_(&modulus)
             {
                 if ( check ) {
-                    ack::check( is_valid(), "value is not valid for the given modulus" );
+                    ack::check( is_valid(), "invalid value for given modulus" );
                 }
             }
 
             // Prevents construction from rvalue reference to modulus.
-            constexpr fp_element(const BigNumT& value, BigNumT&& modulus) = delete;
+            constexpr fp_element(const IntT& value, IntT&& modulus) = delete;
 
             constexpr fp_element(const fp_element& other) = default;
             constexpr fp_element(fp_element&& other) = default;
@@ -264,17 +456,17 @@ namespace ack {
              *
              * @return Reference to this.
             */
-            constexpr fp_element& assign(BigNumT value, bool check = false)
+            constexpr fp_element& assign(IntT value, bool check = false)
             {
-                if (pm_ == nullptr) {
+                if ( pm_ == nullptr ) {
                     return *this;
                 }
 
-                if (check) {
-                    check( fp_is_valid( value,  *pm_ ), "Value is not valid." );
+                if ( check ) {
+                    ack::check( fp_is_valid( value,  *pm_ ), "invalid value" );
                 }
 
-                v_ = std::move(value);
+                v_ = std::move( value );
                 return *this;
             }
 
@@ -290,21 +482,16 @@ namespace ack {
              *
              * @return Reference to this.
             */
-            constexpr fp_element& operator = (BigNumT value)
+            constexpr fp_element& operator = (IntT value)
             {
-                if (pm_ == nullptr) {
-                    return *this;
-                }
-
-                v_ = std::move( value );
-                return *this;
+                return assign( std::move( value ), /*check=*/ false );
             }
 
             /**
              * Returns big integer value of the finite field element.
              * @return Value of the finite field element.
-             */
-            constexpr const BigNumT& value() const
+            */
+            constexpr const IntT& value() const
             {
                 return v_;
             }
@@ -313,7 +500,7 @@ namespace ack {
              * Casts finite field element to big integer value.
              * @return const reference to big integer value of the finite field element.
             */
-            constexpr operator const BigNumT&() const
+            constexpr operator const IntT&() const
             {
                 return v_;
             }
@@ -322,10 +509,10 @@ namespace ack {
              * Returns modulus of the finite field element.
              * @note Function asserts that modulus is not null.
              * @return Modulus of the finite field element.
-             */
-            constexpr const BigNumT& modulus() const
+            */
+            constexpr const IntT& modulus() const
             {
-                check( pm_ != nullptr, "Modulus is null." );
+                check( pm_ != nullptr, "modulus is null" );
                 return *pm_;
             }
 
@@ -342,7 +529,7 @@ namespace ack {
             /**
              * Returns true if the finite field element is zero or modulus is null or modulus is either zero or 1.
              * @return True if the finite field element is zero.
-             */
+            */
             constexpr bool is_zero() const
             {
                 return !v_.is_one()  && ( pm_ == nullptr || pm_->is_zero() || pm_->is_one() || v_.is_zero() );
@@ -351,7 +538,7 @@ namespace ack {
             /**
              * Returns true if the finite field element is 1.
              * @return True if the finite field element is 1.
-             */
+            */
             constexpr bool is_one() const
             {
                 return v_.is_one();
@@ -387,12 +574,24 @@ namespace ack {
 
             /**
              * Calculate modular addition of this finite field element and big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to add.
              * @return (this + x) % modulus.
             */
-            template<typename BigNumU>
-            [[nodiscard]]  constexpr fp_element add(const BigNumU& x) const
+            template<typename BufferT>
+            [[nodiscard]]  constexpr fp_element add(const bigint<BufferT>& x) const
+            {
+                return fp_element( fp_add( v_, x, *pm_), *pm_ );
+            }
+
+            /**
+             *  Calculate modular addition of this finite field element and integer.
+             * @tparam IntU - Small integer type.
+             * @param x - Integer to add.
+             * @return (this + x) % modulus.
+            */
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr fp_element add(IntU x) const
             {
                 return fp_element( fp_add( v_, x, *pm_), *pm_ );
             }
@@ -409,12 +608,24 @@ namespace ack {
 
             /**
              * Calculate modular subtraction of this finite field element and big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to subtract.
              * @return (this - x) % modulus.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr fp_element sub(const BigNumU& x) const
+            template<typename BufferT>
+            [[nodiscard]] constexpr fp_element sub(const bigint<BufferT>& x) const
+            {
+                return fp_element( fp_sub( v_, x, *pm_), *pm_ );
+            }
+
+            /**
+             * Calculate modular subtraction of this finite field element and integer.
+             * @tparam IntU - Small integer type.
+             * @param x - Integer to subtract.
+             * @return (this - x) % modulus.
+            */
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr fp_element sub(IntU x) const
             {
                 return fp_element( fp_sub( v_, x, *pm_), *pm_ );
             }
@@ -431,23 +642,37 @@ namespace ack {
 
             /**
              * Calculate modular multiplication of this finite field element and big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to multiply.
              * @return (this * x) % modulus.
             */
-            template<typename BigNumU>
-            [[nodiscard]] fp_element mul(const BigNumU& x) const
+            template<typename BufferT>
+            [[nodiscard]] fp_element mul(const bigint<BufferT>& x) const
             {
+                if ( v_.is_one() ) {
+                    return fp_element( x, *pm_ ); // note x can be bigger than modulus
+                }
+                if ( x.is_one() ) {
+                    return *this;
+                }
                 return fp_element( fp_mul( v_ , x, *pm_ ), *pm_ );
             }
 
             /**
-             * Calculate modular multiplication of this finite field element and word.
-             * @param x - Word to multiply.
+             * Calculate modular multiplication of this finite field element and integer.
+             * @tparam IntU - Small integer type.
+             * @param x - Integer to multiply.
              * @return (this * x) % modulus.
             */
-            [[nodiscard]] fp_element mul(word_t x) const
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] fp_element mul(IntU x) const
             {
+                if ( v_.is_one() ) {
+                    return fp_element( x, *pm_ ); // note x can be bigger than modulus
+                }
+                if ( x == 1 ) {
+                    return *this;
+                }
                 return fp_element( fp_mul( v_ , x, *pm_ ), *pm_ );
             }
 
@@ -457,6 +682,9 @@ namespace ack {
             */
             [[nodiscard]] fp_element sqr() const
             {
+                if ( v_.is_one() ) {
+                    return *this;
+                }
                 return fp_element( fp_sqr( v_, *pm_ ), *pm_ );
             }
 
@@ -472,13 +700,16 @@ namespace ack {
 
             /**
              * Calculate modular division of this finite field element and big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to divide.
              * @return (this / x) % modulus.
             */
-            template<typename BigNumU>
-            [[nodiscard]] fp_element div(const BigNumU& x) const
+            template<typename BufferT>
+            [[nodiscard]] fp_element div(const bigint<BufferT>& x) const
             {
+                if ( x.is_one() ) {
+                    return *this;
+                }
                 return fp_element( fp_div( v_, x, *pm_ ), *pm_);
             }
 
@@ -504,24 +735,26 @@ namespace ack {
 
             /**
              * Checks if finite field element is equal to big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is equal to rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator == (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator == (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ == rhs;
             }
 
             /**
-             * Checks if finite field element is equal to word.
+             * Checks if finite field element is equal to integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is equal to rhs.
             */
-            [[nodiscard]] constexpr friend bool operator == (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator == (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ == rhs;
             }
@@ -539,24 +772,26 @@ namespace ack {
 
             /**
              * Checks if finite field element is not equal to big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is not equal to rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator != (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator != (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ != rhs;
             }
 
             /**
-             * Checks if finite field element is not equal to word.
+             * Checks if finite field element is not equal to integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is not equal to rhs.
             */
-            [[nodiscard]] constexpr friend bool operator != (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator != (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ != rhs;
             }
@@ -574,24 +809,26 @@ namespace ack {
 
             /**
              * Checks if finite field element is less than big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is less than rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator < (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator < (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ < rhs;
             }
 
             /**
-             * Checks if finite field element is less than word.
+             * Checks if finite field element is less than integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is less than rhs.
             */
-            [[nodiscard]] constexpr friend bool operator < (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator < (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ < rhs;
             }
@@ -609,24 +846,26 @@ namespace ack {
 
             /**
              * Checks if finite field element is less or equal to big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is less or equal to rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator <= (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator <= (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ <= rhs;
             }
 
             /**
-             * Checks if finite field element is less or equal to word.
+             * Checks if finite field element is less or equal to integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is less or equal to rhs.
             */
-            [[nodiscard]] constexpr friend bool operator <= (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator <= (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ <= rhs;
             }
@@ -644,24 +883,26 @@ namespace ack {
 
             /**
              * Checks if finite field element is greater than big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is greater than rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator > (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator > (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ > rhs;
             }
 
             /**
-             * Checks if finite field element is greater than word.
+             * Checks if finite field element is greater than integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is greater than rhs.
             */
-            [[nodiscard]] constexpr friend bool operator > (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator > (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ > rhs;
             }
@@ -679,30 +920,33 @@ namespace ack {
 
             /**
              * Checks if finite field element is greater or equal to big integer.
-             * @tparam BigNumU - Type of big integer.
+             * @tparam BufferT - Buffer type of big integer.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side big integer.
              * @return True if lhs is greater or equal to rhs.
             */
-            template<typename BigNumU>
-            [[nodiscard]] constexpr friend bool operator >= (const fp_element& lhs, const BigNumU& rhs)
+            template<typename BufferT>
+            [[nodiscard]] constexpr friend bool operator >= (const fp_element& lhs, const bigint<BufferT>& rhs)
             {
                 return lhs.v_ >= rhs;
             }
 
             /**
-             * Checks if finite field element is greater or equal to word.
+             * Checks if finite field element is greater or equal to integer.
+             * @tparam IntU - Small integer type.
              * @param lhs - Left hand side finite field element.
              * @param rhs - Right hand side word.
              * @return True if lhs is greater or equal to rhs.
             */
-            [[nodiscard]] constexpr friend bool operator >= (const fp_element& lhs, word_t rhs)
+            template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+            [[nodiscard]] constexpr friend bool operator >= (const fp_element& lhs, IntU rhs)
             {
                 return lhs.v_ >= rhs;
             }
 
             /**
-             * Prints this element. EOSIO helper function.
+             * Prints this element.
+             * @note EOSIO helper function.
             */
             void print() const
             {
@@ -710,7 +954,7 @@ namespace ack {
             }
 
         private:
-            BigNumT v_;
-            const BigNumT* pm_ = nullptr;
+            IntT v_;
+            const IntT* pm_ = nullptr;
     };
 }

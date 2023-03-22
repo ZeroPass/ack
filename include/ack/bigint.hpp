@@ -19,8 +19,8 @@
 
 #pragma once
 #include <ack/buffer.hpp>
-#include <ack/types.hpp>
 #include <ack/type_traits.hpp>
+#include <ack/types.hpp>
 #include <ack/utils.hpp>
 
 #include <eosio/eosio.hpp>
@@ -2470,4 +2470,13 @@ namespace ack {
      */
     template<std::size_t MaxBitSize>
     using fixed_bigint = bigint<fixed_word_buffer<get_word_size_from_bitsize(MaxBitSize)>>;
+    
+    template <typename>
+    struct is_bigint : std::false_type {};
+
+    template <typename T>
+    struct is_bigint<bigint<T>> : std::true_type {};
+    
+    template<typename T>
+    constexpr bool is_bigint_v = is_bigint<T>::value;
 }

@@ -1,15 +1,16 @@
 // Copyright © 2023 ZeroPass <zeropass@pm.me>
 // Author: Crt Vavros
 #pragma once
+#include <ack/bigint.hpp>
 
 namespace ack {
     /**
      * CRTP base class for field elements.
     */
-    template<typename Derived, typename BigNumT, typename FieldTagT>
+    template<typename Derived, typename IntT, typename FieldTagT>
     struct field_element
     {
-        using int_type = BigNumT;
+        using int_type = IntT;
 
         // Delete constructors and assignment operators from derived class.
         // This is to prevent object slicing.
@@ -40,7 +41,7 @@ namespace ack {
          * Casts this element to big integer.
          * @return const reference to big integer representation of this element.
         */
-        constexpr const BigNumT& value() const
+        constexpr const IntT& value() const
         {
             return underlying().value_;
         }
@@ -49,7 +50,7 @@ namespace ack {
          * Casts this element to big integer.
          * @return reference to big integer representation of this element.
         */
-        constexpr operator const BigNumT&() const
+        constexpr operator const IntT&() const
         {
             return value();
         }
@@ -93,7 +94,7 @@ namespace ack {
         /**
          * Calculates addition of this element with another.
          * @param x - Element to add.
-         * @param R = this + x.
+         * @return R = this + x.
         */
         [[nodiscard]] Derived add(const Derived& x) const
         {
@@ -102,12 +103,24 @@ namespace ack {
 
         /**
          * Calculates addition of this element with big integer.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to add.
-         * @param R = this + x.
+         * @return R = this + x.
         */
-        template<typename BigNumU>
-        [[nodiscard]] constexpr Derived add(const BigNumU& x) const
+        template<typename BufferT>
+        [[nodiscard]] constexpr Derived add(const bigint<BufferT>& x) const
+        {
+            return underlying().add( x );
+        }
+
+        /**
+         * Calculates addition of this element with integer.
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to add.
+         * @return R = this + x.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr Derived add(IntU x) const
         {
             return underlying().add( x );
         }
@@ -115,7 +128,7 @@ namespace ack {
         /**
          * Calculates subtraction of this element with another.
          * @param x - Element to subtract.
-         * @param R = this - x.
+         * @return R = this - x.
         */
         [[nodiscard]] constexpr Derived sub(const Derived& x) const
         {
@@ -124,12 +137,24 @@ namespace ack {
 
         /**
          * Calculates subtraction of this element with big integer.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to subtract.
-         * @param R = this - x.
+         * @return R = this - x.
         */
-        template<typename BigNumU>
-        [[nodiscard]] constexpr Derived sub(const BigNumU& x) const
+        template<typename BufferT>
+        [[nodiscard]] constexpr Derived sub(const bigint<BufferT>& x) const
+        {
+            return underlying().sub( x );
+        }
+
+        /**
+         * Calculates subtraction of this element with integer.
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to subtract.
+         * @return R = this - x.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr Derived sub(IntU x) const
         {
             return underlying().sub( x );
         }
@@ -137,7 +162,7 @@ namespace ack {
         /**
          * Calculates multiplication of this element with another.
          * @param x - Element to multiply.
-         * @param R = this * x.
+         * @return R = this * x.
         */
         [[nodiscard]] Derived mul(const Derived& x) const
         {
@@ -146,29 +171,31 @@ namespace ack {
 
         /**
          * Calculates multiplication of this element with big integer.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to multiply.
-         * @param R = this * x.
+         * @return R = this * x.
         */
-        template<typename BigNumU>
-        [[nodiscard]] Derived mul(const BigNumU& x) const
+        template<typename BufferT>
+        [[nodiscard]] constexpr Derived mul(const bigint<BufferT>& x) const
         {
             return underlying().mul( x );
         }
 
         /**
-         * Calculates multiplication of this element with word.
-         * @param x - Word to multiply.
-         * @param R = this * x.
+         * Calculates multiplication of this element with integer.
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to multiply.
+         * @return R = this * x.
         */
-        [[nodiscard]] Derived mul(word_t x) const
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr Derived mul(IntU x) const
         {
             return underlying().mul( x );
         }
 
          /**
          * Calculates square of this element.
-         * @param R = this^2.
+         * @return R = this^2.
         */
         [[nodiscard]] Derived sqr() const
         {
@@ -178,7 +205,7 @@ namespace ack {
         /**
          * Calculates division of this element with another.
          * @param x - Element to divide.
-         * @param R = this / x.
+         * @return R = this / x.
         */
         [[nodiscard]] Derived div(const Derived& x) const
         {
@@ -187,11 +214,24 @@ namespace ack {
 
         /**
          * Calculates division of this element with big integer.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to divide.
+         * @return R = this / x.
         */
-        template<typename BigNumU>
-        [[nodiscard]] Derived div(const BigNumU& x) const
+        template<typename BufferT>
+        [[nodiscard]] Derived div(const bigint<BufferT>& x) const
+        {
+            return underlying().div( x );
+        }
+
+        /**
+         * Calculates division of this element with integer.
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to divide.
+         * @return R = this / x.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] Derived div(IntU x) const
         {
             return underlying().div( x );
         }
@@ -209,7 +249,7 @@ namespace ack {
          * Calculates addition of elements a and b.
          * @param a - First element.
          * @param b - Second element.
-         * @param R = a + b.
+         * @return R = a + b.
         */
         [[nodiscard]] constexpr friend Derived operator + (const Derived& a, const Derived& b)
         {
@@ -218,22 +258,61 @@ namespace ack {
 
         /**
          * Calculates addition of element a and big integer b.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param a - Element.
          * @param b - Integer.
-         * @param R = a + b.
+         * @return R = a + b.
         */
-        template<typename BigNumU>
-        [[nodiscard]] constexpr friend Derived operator + (const Derived& a, const BigNumU& b)
+        template<typename BufferT>
+        [[nodiscard]] constexpr friend Derived operator + (const Derived& a, const bigint<BufferT>& b)
         {
             return a.add( b );
+        }
+
+        /**
+         * Calculates addition of element a and integer b.
+         * @tparam IntU - Small integer type.
+         * @param a - Element.
+         * @param b - Integer.
+         * @return R = a + b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr friend Derived operator + (const Derived& a, IntU b)
+        {
+            return a.add( b );
+        }
+
+        /**
+         * Calculates addition of big integer a and element b.
+         * @tparam BufferT - Buffer type of big integer.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a + b.
+        */
+        template<typename BufferT>
+        [[nodiscard]] constexpr friend Derived operator + (const bigint<BufferT>& a, const Derived& b)
+        {
+            return b.add( a );
+        }
+
+        /**
+         * Calculates addition of integer a and element b.
+         * @tparam IntU - Small integer type.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a + b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr friend Derived operator + (IntU a, const Derived& b)
+        {
+            return b.add( a );
         }
 
         /**
          * Calculates subtraction of elements a and b.
          * @param a - First element.
          * @param b - Second element.
-         * @param R = a - b.
+         * @return R = a - b.
         */
         [[nodiscard]] constexpr friend Derived operator - (const Derived& a, const Derived& b)
         {
@@ -242,22 +321,61 @@ namespace ack {
 
         /**
          * Calculates subtraction of element a and big integer b.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param a - Element.
          * @param b - Integer.
-         * @param R = a - b.
+         * @return R = a - b.
         */
-        template<typename BigNumU>
-        [[nodiscard]] constexpr friend Derived operator - (const Derived& a, const BigNumU& b)
+        template<typename BufferT>
+        [[nodiscard]] constexpr friend Derived operator - (const Derived& a, const bigint<BufferT>& b)
         {
             return a.sub( b );
+        }
+
+        /**
+         * Calculates subtraction of element a and integer b.
+         * @tparam IntU - Small integer type.
+         * @param a - Element.
+         * @param b - Integer.
+         * @return R = a - b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr friend Derived operator - (const Derived& a, IntU b)
+        {
+            return a.sub( b );
+        }
+
+        /**
+         * Calculates subtraction of big integer a and element b.
+         * @tparam BufferT - Buffer type of big integer.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a - b.
+        */
+        template<typename BufferT>
+        [[nodiscard]] constexpr friend Derived operator - (const bigint<BufferT>& a, const Derived& b)
+        {
+            return b.sub( a );
+        }
+
+        /**
+         * Calculates subtraction of integer a and element b.
+         * @tparam IntU - Small integer type.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a - b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] constexpr friend Derived operator - (IntU a, const Derived& b)
+        {
+            return b.sub( a );
         }
 
         /**
          * Calculates multiplication of elements a and b.
          * @param a - First element.
          * @param b - Second element.
-         * @param R = a * b.
+         * @return R = a * b.
         */
         [[nodiscard]] friend Derived operator * (const Derived& a, const Derived& b)
         {
@@ -266,48 +384,52 @@ namespace ack {
 
         /**
          * Calculates multiplication of element a and big integer b.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param a - Element.
          * @param b - Integer.
-         * @param R = a * b.
+         * @return R = a * b.
         */
-        template<typename BigNumU, typename = std::enable_if< !std::is_same_v<BigNumU, Derived> >>
-        [[nodiscard]] friend Derived operator * (const Derived& a, const BigNumU& b)
+        template<typename BufferT>
+        [[nodiscard]] friend Derived operator * (const Derived& a, const bigint<BufferT>& b)
         {
             return a.mul( b );
         }
 
         /**
-         * Calculates multiplication of element a and big integer b.
-         * @tparam BigNumU - Type of big integer.
+         * Calculates multiplication of element a and integer b.
+         * @tparam IntU - Small integer type.
+         * @param a - Element.
+         * @param b - Integer.
+         * @return R = a * b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] friend Derived operator * (const Derived& a, IntU b)
+        {
+            return a.mul( b );
+        }
+
+        /**
+         * Calculates multiplication of big integer a and element b.
+         * @tparam BufferT - Buffer type of big integer.
          * @param a - Integer.
          * @param b - Element.
-         * @param R = a * b.
+         * @return R = a * b.
         */
-        template<typename BigNumU, typename = std::enable_if< !std::is_same_v<BigNumU, Derived> >>
-        [[nodiscard]] friend Derived operator * (const BigNumU& a, const Derived& b)
+        template<typename BufferT>
+        [[nodiscard]] friend Derived operator * (const bigint<BufferT>& a, const Derived& b)
         {
             return b.mul( a );
         }
 
         /**
-         * Calculates multiplication of element a and word b.
-         * @param a - Element.
-         * @param b - Word.
-         * @param R = a * b.
-        */
-        [[nodiscard]] friend Derived operator * (const Derived& a, word_t b)
-        {
-            return a.mul( b );
-        }
-
-        /**
-         * Calculates multiplication of element a and word b.
-         * @param a - Word.
+         * Calculates multiplication of integer a and element b.
+         * @tparam IntU - Small integer type.
+         * @param a - Integer.
          * @param b - Element.
-         * @param R = a * b.
+         * @return R = a * b.
         */
-        [[nodiscard]] friend Derived operator * (word_t a, const Derived& b )
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] friend Derived operator * (IntU a, const Derived& b)
         {
             return b.mul( a );
         }
@@ -316,7 +438,7 @@ namespace ack {
          * Calculates division of elements a and b.
          * @param a - First element.
          * @param b - Second element.
-         * @param R = a / b.
+         * @return R = a / b.
         */
         [[nodiscard]] friend Derived operator / (const Derived& a, const Derived& b)
         {
@@ -325,23 +447,62 @@ namespace ack {
 
         /**
          * Calculates division of element a and big integer b.
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param a - Element.
          * @param b - Integer.
-         * @param R = a / b.
+         * @return R = a / b.
         */
-        template<typename BigNumU>
-        [[nodiscard]] friend Derived operator / (const Derived& a, const BigNumU& b)
+        template<typename BufferT>
+        [[nodiscard]] friend Derived operator / (const Derived& a, const bigint<BufferT>& b)
         {
             return a.div( b );
         }
 
         /**
+         * Calculates division of element a and integer b.
+         * @tparam IntU - Small integer type.
+         * @param a - Element.
+         * @param b - Integer.
+         * @return R = a / b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] friend Derived operator / (const Derived& a, IntU b)
+        {
+            return a.div( b );
+        }
+
+        /**
+         * Calculates division of big integer a and element b.
+         * @tparam BufferT - Buffer type of big integer.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a / b.
+        */
+        template<typename BufferT>
+        [[nodiscard]] friend Derived operator / (const bigint<BufferT>& a, const Derived& b)
+        {
+            return b.div( a );
+        }
+
+        /**
+         * Calculates division of integer a and element b.
+         * @tparam IntU - Small integer type.
+         * @param a - Integer.
+         * @param b - Element.
+         * @return R = a / b.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        [[nodiscard]] friend Derived operator / (IntU a, const Derived& b)
+        {
+            return b.div( a );
+        }
+
+        /**
          * Calculates addition of this element with another element
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this + x.
          *
          * @param x - Element to add.
-         * @param this = this + x.
+         * @return Reference to this element.
         */
         constexpr Derived& operator += (const Derived& x)
         {
@@ -352,14 +513,30 @@ namespace ack {
 
         /**
          * Calculates addition of this element with big integer
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this + x.
          *
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to add.
-         * @param this = this + x.
+         * @return Reference to this element.
         */
-        template<typename BigNumU>
-        constexpr Derived& operator += (const BigNumU& x)
+        template<typename BufferT>
+        constexpr Derived& operator += (const bigint<BufferT>& x)
+        {
+            auto& self = underlying();
+            self = add( x );
+            return self;
+        }
+
+        /**
+         * Calculates addition of this element with small integer
+         * and assigns the result to this element: this = this + x.
+         *
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to add.
+         * @return Reference to this element.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        constexpr Derived& operator += (IntU x)
         {
             auto& self = underlying();
             self = add( x );
@@ -368,10 +545,10 @@ namespace ack {
 
         /**
          * Calculates subtraction of this element with another element
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this - x.
          *
          * @param x - Element to subtract.
-         * @param this = this - x.
+         * @return Reference to this element.
         */
         constexpr Derived& operator -= (const Derived& x)
         {
@@ -382,15 +559,30 @@ namespace ack {
 
         /**
          * Calculates subtraction of this element with big integer
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this - x.
          *
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to subtract.
-         * @param this = this - x.
          * @return Reference to this element.
         */
-        template<typename BigNumU>
-        constexpr Derived& operator -= (const BigNumU& x)
+        template<typename BufferT>
+        constexpr Derived& operator -= (const bigint<BufferT>& x)
+        {
+            auto& self = underlying();
+            self = sub( x );
+            return self;
+        }
+
+        /**
+         * Calculates subtraction of this element with small integer
+         * and assigns the result to this element: this = this - x.
+         *
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to subtract.
+         * @return Reference to this element.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        constexpr Derived& operator -= (IntU x)
         {
             auto& self = underlying();
             self = sub( x );
@@ -399,10 +591,10 @@ namespace ack {
 
         /**
          * Calculates multiplication of this element with another element
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this * x.
          *
          * @param x - Element to multiply.
-         * @param this = this * x.
+         * @return Reference to this element.
         */
         Derived& operator *= (const Derived& x)
         {
@@ -413,14 +605,14 @@ namespace ack {
 
         /**
          * Calculates multiplication of this element with big integer
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this * x.
          *
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to multiply.
-         * @param this = this * x.
+         * @return Reference to this element.
         */
-        template<typename BigNumU>
-        Derived& operator *= (const BigNumU& x)
+        template<typename BufferT>
+        Derived& operator *= (const bigint<BufferT>& x)
         {
             auto& self = underlying();
             self = mul( x );
@@ -428,13 +620,15 @@ namespace ack {
         }
 
         /**
-         * Calculates multiplication of this element with word
-         * and assigns the result to this element.
+         * Calculates multiplication of this element with small integer
+         * and assigns the result to this element: this = this * x.
          *
-         * @param x - Word to multiply.
-         * @param this = this * x.
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to multiply.
+         * @return Reference to this element.
         */
-        Derived& operator *= (word_t x)
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        Derived& operator *= (IntU x)
         {
             auto& self = underlying();
             self = mul( x );
@@ -443,10 +637,10 @@ namespace ack {
 
         /**
          * Calculates division of this element with another element
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this / x.
          *
          * @param x - Element to divide.
-         * @param this = this / x.
+         * @return Reference to this element.
         */
         Derived& operator /= (const Derived& x)
         {
@@ -457,14 +651,30 @@ namespace ack {
 
         /**
          * Calculates division of this element with big integer
-         * and assigns the result to this element.
+         * and assigns the result to this element: this = this / x.
          *
-         * @tparam BigNumU - Type of big integer.
+         * @tparam BufferT - Buffer type of big integer.
          * @param x - Integer to divide.
-         * @param this = this / x.
+         * @return Reference to this element.
         */
-        template<typename BigNumU>
-        Derived& operator /= (const BigNumU& x)
+        template<typename BufferT>
+        Derived& operator /= (const bigint<BufferT>& x)
+        {
+            auto& self = underlying();
+            self = div( x );
+            return self;
+        }
+
+        /**
+         * Calculates division of this element with small integer
+         * and assigns the result to this element: this = this / x.
+         *
+         * @tparam IntU - Small integer type.
+         * @param x - Integer to divide.
+         * @return Reference to this element.
+        */
+        template<typename IntU, typename = std::enable_if_t<std::is_integral_v<IntU>>>
+        Derived& operator /= (IntU x)
         {
             auto& self = underlying();
             self = div( x );
