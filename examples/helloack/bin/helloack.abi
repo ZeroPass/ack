@@ -13,6 +13,16 @@
     ],
     "structs": [
         {
+            "name": "bt_ecc_secp256k1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecc_secp256r1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "bt_rsa_1024_sha1",
             "base": "",
             "fields": []
@@ -58,12 +68,64 @@
             "fields": []
         },
         {
+            "name": "check_ecdsa_secp256k1_sha256",
+            "base": "",
+            "fields": [
+                {
+                    "name": "qx",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "qy",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "r",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "s",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "check_ecdsa_secp256r1_sha256",
+            "base": "",
+            "fields": [
+                {
+                    "name": "qx",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "qy",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "r",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "s",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
             "name": "check_rsa_pss_sha1",
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
-                    "type": "rsa_public_key_view"
+                    "name": "pubkey",
+                    "type": "rsa_pss_public_key_view"
                 },
                 {
                     "name": "msg",
@@ -80,8 +142,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
-                    "type": "rsa_public_key_view"
+                    "name": "pubkey",
+                    "type": "rsa_pss_public_key_view"
                 },
                 {
                     "name": "msg",
@@ -98,8 +160,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
-                    "type": "rsa_public_key_view"
+                    "name": "pubkey",
+                    "type": "rsa_pss_public_key_view"
                 },
                 {
                     "name": "msg",
@@ -116,7 +178,7 @@
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
+                    "name": "pubkey",
                     "type": "rsa_public_key_view"
                 },
                 {
@@ -134,7 +196,7 @@
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
+                    "name": "pubkey",
                     "type": "rsa_public_key_view"
                 },
                 {
@@ -152,7 +214,7 @@
             "base": "",
             "fields": [
                 {
-                    "name": "rsa_pubkey",
+                    "name": "pubkey",
                     "type": "rsa_public_key_view"
                 },
                 {
@@ -162,6 +224,24 @@
                 {
                     "name": "sig",
                     "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "rsa_pss_public_key_view",
+            "base": "",
+            "fields": [
+                {
+                    "name": "modulus",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "exponent",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "pss_salt_len",
+                    "type": "varuint32?"
                 }
             ]
         },
@@ -176,15 +256,21 @@
                 {
                     "name": "exponent",
                     "type": "bytes_view"
-                },
-                {
-                    "name": "pss_salt_len",
-                    "type": "uint8?"
                 }
             ]
         }
     ],
     "actions": [
+        {
+            "name": "btecck1",
+            "type": "bt_ecc_secp256k1_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccr1",
+            "type": "bt_ecc_secp256r1_sha256",
+            "ricardian_contract": ""
+        },
         {
             "name": "btrsa1ksha1",
             "type": "bt_rsa_1024_sha1",
@@ -228,6 +314,16 @@
         {
             "name": "btrsapss4sha2",
             "type": "bt_rsa_pss_4096_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "ecdsak1",
+            "type": "check_ecdsa_secp256k1_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "ecdsar1",
+            "type": "check_ecdsa_secp256r1_sha256",
             "ricardian_contract": ""
         },
         {

@@ -34,6 +34,64 @@ namespace ack {
         }
     }
 
+    /**
+     * Returns the number of words needed to store the given number of elements of the given type.
+     * @tparam T the type of the elements
+     *
+     * @param size the number of elements
+     * @return the number of words needed to store the given number of elements of the given type.
+    */
+    template <typename T, typename = std::enable_if_t<std::is_trivial_v<T> && !std::is_pointer_v<T>>>
+    inline constexpr std::size_t get_word_size(std::size_t size) {
+        return (size * sizeof(T) + (sizeof(word_t) - 1)) / sizeof(word_t);
+    }
+
+    /**
+     * Returns the number of words needed to store the given span.
+     * @tparam T the type of the span
+     *
+     * @param span the span
+     * @return the number of words needed to store the given span
+    */
+    template <typename T>
+    inline constexpr std::size_t get_word_size(const std::span<T>& span) {
+        return get_word_size<T>( span.size() );
+    }
+
+    /**
+     * Returns the number of words needed to store the given vector.
+     * @tparam T element type of the vector
+     *
+     * @param vec the vector
+     * @return the number of words needed to store the given vector
+    */
+    template <typename T>
+    inline constexpr std::size_t get_word_size(const std::vector<T>& vec) {
+        return get_word_size<T>( vec.size() );
+    }
+
+    /**
+     * Returns the number of words needed to store the given array.
+     * @tparam T element type of the array
+     * @tparam N size of the array
+     *
+     * @param a the array
+     * @return the number of words needed to store the given array
+    */
+    template <typename T, size_t N>
+    inline constexpr std::size_t get_word_size(const std::array<T, N>& a) {
+        return get_word_size<T>( a.size() );
+    }
+
+    /**
+     * Returns the number of words needed to store the given number of bits.
+     * @param bitsize - the number of bits
+     * @return the number of words needed to store the given number of bits
+    */
+    inline constexpr std::size_t get_word_size_from_bitsize(std::size_t bitsize) {
+        return (bitsize + word_bit_size - 1) / word_bit_size;
+    }
+
     constexpr inline byte_t from_hex( char c ) {
         if( c >= '0' && c <= '9' )
             return byte_t(c - '0');
@@ -57,10 +115,11 @@ namespace ack {
 
         check( out_data_len >= (( hex_str_len + 1) / 2 ), "Invalid out data size" );
 
-        auto i = hex_str;
-        auto i_end = hex_str + hex_str_len;
-        byte_t* out_pos = out_data;
-        byte_t* out_end = out_pos + out_data_len;
+        auto i                = hex_str;
+        const auto i_end      = hex_str + hex_str_len;
+        byte_t* out_pos       = out_data;
+        const byte_t* out_end = out_pos + out_data_len;
+
         if ( ( hex_str_len % 2 ) != 0 ) {
             *out_data = from_hex( *i );
             i++;

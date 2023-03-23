@@ -2,6 +2,9 @@
 // Author: Crt Vavros
 
 #include <array>
+#include <ack/bigint.hpp>
+#include <ack/ec_curve.hpp>
+#include <ack/utils.hpp>
 
 // Benchmark test vectors
 
@@ -603,4 +606,50 @@ struct rsa_2048_sha512 {
         0x34, 0xE9, 0x07, 0xE4, 0x39, 0xD0, 0x84, 0x64, 0x80, 0xAE, 0x6C, 0x88,
         0x8C, 0x1E, 0x9B, 0xE2
     };
+};
+
+struct secp256k1_sha256_tv
+{
+    // Test vector from Google's Wycheproof RSA signature verification tests.
+    // Generated from: 'ecdsa_secp256k1_sha256_p1363_test.json'
+    // URL: 'https://raw.githubusercontent.com/google/wycheproof/master/testvectors/ecdsa_secp256k1_sha256_p1363_test.json'
+    //
+    // Algorithm: ECDSA
+    // GeneratorVersion: 0.8r12
+
+    constexpr static auto& curve = ack::ec_curve::secp256k1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "00b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6f",
+        "00f0c9d75bfba7b31a6bca1974496eeb56de357071955d83c4b1badaa0b21832e9"
+    );
+
+    // special case hash
+    static constexpr auto h     = from_hex( "9b6cd3b812610000000026941a0f0bb53255ea4c9fd0cb3426e3a54b9fc6965c" );
+    static constexpr int_type r = "2bdea41cda63a2d14bf47353bd20880a690901de7cd6e3cc6d8ed5ba0cdb1091";
+    static constexpr int_type s = "c31599433036064073835b1e3eba8335a650c8fd786f94fe235ad7d41dc94c7a";
+};
+
+struct secp256r1_sha256_tv {
+    // NIST FIPS 186-4 test vectors
+    // https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures
+    // CAVS 11.0
+    // "SigVer" information
+    // Curves/SHAs selected: P-256,SHA-256
+    // Generated on Wed Mar 16 16:16:55 2011
+
+    constexpr static auto& curve = ack::ec_curve::secp256r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "e424dc61d4bb3cb7ef4344a7f8957a0c5134e16f7a67c074f82e6e12f49abf3c",
+        "970eed7aa2bc48651545949de1dddaf0127e5965ac85d1243d6f60e7dfaee927"
+    );
+
+    static constexpr auto     h = from_hex( "d1b8ef21eb4182ee270638061063a3f3c16c114e33937f69fb232cc833965a94" );
+    static constexpr int_type r = "bf96b99aa49c705c910be33142017c642ff540c76349b9dab72f981fd9347f4f";
+    static constexpr int_type s = "17c55095819089c2e03b9cd415abdf12444e323075d98f31920b9e0f57ec871c";
 };
