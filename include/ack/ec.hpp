@@ -953,6 +953,21 @@ namespace ack {
         using point_type         = PointT;
 
         /**
+         * Generates a point from base point g and given scalar x.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param x - scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type, typename IntT>
+        PointU generate_point(const IntT &x) const
+        {
+            return static_cast<const CurveT&>(*this)
+                .template generate_point<PointU>( x );
+        }
+
+        /**
          * Returns curve field element from the given integer.
          * @param x the integer to convert
          * @return curve field element
@@ -1050,6 +1065,14 @@ namespace ack {
             h( h )
         {}
 
+        /**
+         * Generates a point from base point g and given scalar x.
+         *
+         * @tparam PointT - point type to create.
+         *
+         * @param x - scalar to multiply base point g with.
+         * @return PointT - point on the curve.
+        */
         template<typename PointT = point_type, typename IntT = BigNumT>
         PointT generate_point(const IntT &x) const
         {
