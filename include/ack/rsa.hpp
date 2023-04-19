@@ -133,19 +133,32 @@ namespace ack {
             return false;
         }
 
-        // Construct EM' = 0x00 || 0x01 || PS || 0x00 || T
+        // Verify EM == 0x00 || 0x01 || PS || 0x00 || T
         // https://tools.ietf.org/html/rfc3447#section-9.2
-        byte_t em_[em.size()];
-        em_[0] = 0x00;
-        em_[1] = 0x01;
 
+        // Verify the padding
+        if ( em[0] != 0x00 || em[1] != 0x01 ) {
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
+            return false;
+        }
+
+        // Verify the first element of PS is 0xFF and the PS padding byte is 0x00
         const auto ps_len = em.size() - t_len - 3;
-        memset( &em_[2], 0xff, ps_len );
+        if ( em[2] != 0xff || em[2 + ps_len] != 0x00 ) {
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
+            return false;
+        }
 
-        em_[2 + ps_len] = 0x00;
-        gen_t( std::span<byte_t>{ &em_[ 3 + ps_len ], t_len } );
+        // Verify the rest of PS is 0xFF
+        if ( memcmp( &em[ 3 ], &em[ 2 ],  ps_len - 1 ) != 0 ) {
+            ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: inconsistent" );
+            return false;
+        }
 
-        return memcmp( em_, em.data(), em.size() ) == 0;
+        // Generate T and verify EM[ 3 + ps_len ] == T
+        std::array<byte_t, t_len> t;
+        gen_t( std::span<byte_t>{ t.data(), t.size() } );
+        return memcmp( &em[ 3 + ps_len ], t.data(), t.size() ) == 0;
     }
 
     // T generator - https://tools.ietf.org/html/rfc3447#section-9.2
