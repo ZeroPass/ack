@@ -1,8 +1,8 @@
 cmake_minimum_required( VERSION 3.14 )
-project( 
-  ack 
+project(
+  ack
   LANGUAGES CXX
-  VERSION 0.1.0
+  VERSION 0.3.0
 )
 
 option( ACK_NO_INTRINSICS     "Don't use intrinsics"      OFF )
