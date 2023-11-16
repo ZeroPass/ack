@@ -547,7 +547,7 @@ namespace ack {
             auto tmp = *this;
             auto s   = scalar;
             while ( s != 0 ) {
-                if ( ( s & 1U ) != 0 ) {
+                if ( s.is_odd() ) {
                     r += tmp;
                 }
                 tmp = tmp.doubled();
@@ -725,7 +725,7 @@ namespace ack {
                 return true;
             }
             const auto z2 = z.sqr();
-            return ( y.sqr() * z - ( ( x.sqr() * x + this->curve().a * x * z2 + this->curve().b * z * z2 ) ) ) == 0;
+            return ( y.sqr() * z - ( ( ( x.sqr() + this->curve().a * z2 ) * x  + this->curve().b * z * z2 ) ) ) == 0;
         }
 
         /**
