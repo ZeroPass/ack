@@ -92,7 +92,7 @@ namespace ack {
         return (bitsize + word_bit_size - 1) / word_bit_size;
     }
 
-    constexpr inline byte_t from_hex( char c ) {
+    inline constexpr byte_t from_hex( char c ) {
         if( c >= '0' && c <= '9' )
             return byte_t(c - '0');
         if( c >= 'a' && c <= 'f' )
@@ -198,7 +198,7 @@ namespace ack {
        memcpy( dst.data(), src.data(), sizeof(T) * S );
     }
 
-    constexpr inline void memxor(std::span<byte_t> dst, const bytes_view src, size_t num)
+    inline constexpr void memxor(std::span<byte_t> dst, const bytes_view src, size_t num)
     {
         //eosio::check( rhs.size() < lhs.size(), "rhs.size() < lhs.size()" );
         num = std::min( std::min( num, dst.size() ), src.size() );

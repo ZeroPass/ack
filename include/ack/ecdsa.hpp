@@ -7,7 +7,7 @@
 namespace ack{
     /**
      * Function verifies ECDSA signature.
-     * 
+     *
      * The implementation follows the NIST FIPS 186-5, section 6.4.2: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
      * and cross-checked against:
      *  - SECG SEC1 v2.0, section 4.1.4: https://www.secg.org/sec1-v2.pdf#page=52

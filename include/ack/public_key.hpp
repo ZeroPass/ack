@@ -112,19 +112,19 @@ namespace ack {
         EOSLIB_SERIALIZE( rsa_pss_public_key_view, (modulus)(exponent)(pss_salt_len) )
     };
 
-    constexpr inline bool operator == ( const rsa_public_key_view & lkey, const rsa_public_key_view& rkey ) {
+    inline constexpr bool operator == ( const rsa_public_key_view & lkey, const rsa_public_key_view& rkey ) {
         return lkey.exponent == rkey.exponent && lkey.modulus == rkey.modulus;
     }
 
-    constexpr inline bool operator == ( const rsa_pss_public_key_view & lkey, const rsa_pss_public_key_view& rkey ) {
+    inline constexpr bool operator == ( const rsa_pss_public_key_view & lkey, const rsa_pss_public_key_view& rkey ) {
         return lkey.exponent == rkey.exponent && lkey.modulus == rkey.modulus && lkey.pss_salt_len == rkey.pss_salt_len;
     }
 
-    constexpr inline bool operator != ( const rsa_public_key_view & lkey, const rsa_public_key_view& rkey ) {
+    inline constexpr bool operator != ( const rsa_public_key_view & lkey, const rsa_public_key_view& rkey ) {
         return !( lkey == rkey );
     }
 
-    constexpr inline bool operator != ( const rsa_pss_public_key_view & lkey, const rsa_pss_public_key_view& rkey ) {
+    inline constexpr bool operator != ( const rsa_pss_public_key_view & lkey, const rsa_pss_public_key_view& rkey ) {
         return !( lkey == rkey );
     }
 }

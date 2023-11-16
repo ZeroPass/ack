@@ -1095,7 +1095,7 @@ namespace ack::tests {
             REQUIRE_EQUAL( fixed_bigint<640>().max_byte_size(), 80  )
         }
 
-        // Test construction from 32 bit ints
+        // Test construction of fixed_bigint from 32 bit ints
         // Note, the correctness of conversion from hex is tested lower down in this test scope
         {
             using bigint_t = fixed_bigint<32>;
@@ -5237,6 +5237,40 @@ namespace ack::tests {
             bigint_ser_test<tv85>().do_tests();
             bigint_ser_test<tv86>().do_tests();
             bigint_ser_test<tv87>().do_tests();
+        }
+
+        // Test retrieving 32 bit integer
+        {
+            using bn_t = fixed_bigint<256>;
+            int32_t n32;
+
+            auto n = bn_t( 0 );
+            REQUIRE_EQUAL( n.get_int32( n32 ), true )
+            REQUIRE_EQUAL( n32               , 0    )
+
+            n = bn_t( 1 );
+            REQUIRE_EQUAL( n.get_int32( n32 ), true )
+            REQUIRE_EQUAL( n32               , 1    )
+
+            n = bn_t( -1 );
+            REQUIRE_EQUAL( n.get_int32( n32 ), true )
+            REQUIRE_EQUAL( n32               , -1   )
+
+            // std::numeric_limits<int32_t>::min() is bigint_t::invalid_var
+            for ( int64_t i = std::numeric_limits<int32_t>::min() + 1; i <= std::numeric_limits<int32_t>::max(); ) {
+                n = bn_t( i );
+                REQUIRE_EQUAL( n.get_int32( n32 ), true )
+                REQUIRE_EQUAL( n32               , i    )
+                if (( i % 2 ) == 0 ) i < 0 ? i /= 2 : i == 0 ? i += 2  : i *= 2;
+                else i < 0 ? i /= 3 : i == 0 ? i += 3 : i *= 3;
+            }
+
+            // Test invalids
+            n = bn_t( static_cast<int64_t>(std::numeric_limits<uint32_t>::max() ) + 1 );
+            REQUIRE_EQUAL( n.get_int32( n32 ), false )
+
+            n = -n;
+            REQUIRE_EQUAL( n.get_int32( n32 ), false )
         }
     EOSIO_TEST_END
 

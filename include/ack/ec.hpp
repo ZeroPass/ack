@@ -45,7 +45,7 @@ namespace ack {
          * Checks if this point is the identity element of the curve, i.e. point at infinity.
          * @return true if this point is the identity element of the curve, false otherwise
         */
-        constexpr bool is_identity() const
+        inline constexpr bool is_identity() const
         {
             return underlying().is_identity();
         }
@@ -54,7 +54,7 @@ namespace ack {
          * Checks if this point is on the curve.
          * @return true if this point is on the curve, false otherwise
         */
-        [[nodiscard]] bool is_on_curve() const
+        [[nodiscard]] inline bool is_on_curve() const
         {
             return underlying().is_on_curve();
         }
@@ -64,7 +64,7 @@ namespace ack {
          * @note Should do SEC 1 section 3.2.2.1 like verification.
          * @return true if this point is valid, false otherwise
         */
-        [[nodiscard]] bool is_valid() const
+        [[nodiscard]] inline bool is_valid() const
         {
             return underlying().is_valid();
         }
@@ -75,7 +75,7 @@ namespace ack {
          *
          * @return the inverse of this point
         */
-        [[nodiscard]] constexpr PointT inverted() const
+        [[nodiscard]] inline constexpr PointT inverted() const
         {
             return underlying().inverted();
         }
@@ -87,7 +87,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT add(const PointT& a) const
+        [[nodiscard]] inline PointT add(const PointT& a) const
         {
             return underlying().add( a );
         }
@@ -99,7 +99,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT add(const ec_point_base& a) const
+        [[nodiscard]] inline PointT add(const ec_point_base& a) const
         {
             return add( a.underlying() );
         }
@@ -110,7 +110,7 @@ namespace ack {
          *
          * @return the double of this point
         */
-        [[nodiscard]] PointT doubled() const
+        [[nodiscard]] inline PointT doubled() const
         {
             return underlying().doubled();
         }
@@ -122,7 +122,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT sub(const PointT& a) const
+        [[nodiscard]] inline PointT sub(const PointT& a) const
         {
             return underlying().sub( a );
         }
@@ -134,7 +134,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT sub(const ec_point_base& a) const
+        [[nodiscard]] inline PointT sub(const ec_point_base& a) const
         {
             return sub( a.underlying() );
         }
@@ -146,7 +146,7 @@ namespace ack {
          * @param scalar - the scalar to multiply this point by
          * @return the resulting point
         */
-        [[nodiscard]] PointT mul(const int_type& scalar) const
+        [[nodiscard]] inline PointT mul(const int_type& scalar) const
         {
             return underlying().mul( scalar );
         }
@@ -159,12 +159,12 @@ namespace ack {
          * @param b - the point to add to the other point
          * @return reference to this point
         */
-        [[nodiscard]] friend PointT operator + (const PointT& a, const PointT& b)
+        [[nodiscard]] friend inline PointT operator + (const PointT& a, const PointT& b)
         {
             return a.add( b );
         }
 
-        [[nodiscard]] friend PointT operator + (const ec_point_base& a, const ec_point_base& b)
+        [[nodiscard]] friend inline PointT operator + (const ec_point_base& a, const ec_point_base& b)
         {
             return a.add( b );
         }
@@ -176,7 +176,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        PointT& operator += (const PointT& a)
+        inline PointT& operator += (const PointT& a)
         {
             return underlying() = add( a );
         }
@@ -188,7 +188,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        PointT& operator += (const ec_point_base& a)
+        inline PointT& operator += (const ec_point_base& a)
         {
             return this-> operator += ( a.underlying() );
         }
@@ -201,7 +201,7 @@ namespace ack {
          * @param b - the point to subtract from the other point
          * @return the result point of the subtraction
         */
-        [[nodiscard]] friend PointT operator - (const PointT& a, const PointT& b)
+        [[nodiscard]] friend inline PointT operator - (const PointT& a, const PointT& b)
         {
             return a.sub( b );
         }
@@ -214,7 +214,7 @@ namespace ack {
          * @param b - the point to subtract from the other point
          * @return the result point of the subtraction
         */
-        [[nodiscard]] friend PointT operator - (const ec_point_base& a, const ec_point_base& b)
+        [[nodiscard]] friend inline PointT operator - (const ec_point_base& a, const ec_point_base& b)
         {
             return a.sub( b );
         }
@@ -226,7 +226,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        PointT& operator -= (const PointT& a)
+        inline PointT& operator -= (const PointT& a)
         {
             return underlying() = sub( a );
         }
@@ -238,7 +238,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        PointT& operator -= (const ec_point_base& a)
+        inline PointT& operator -= (const ec_point_base& a)
         {
             return this->operator -= ( a.underlying() );
         }
@@ -251,7 +251,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const PointT& p, const int_type& s)
+        [[nodiscard]] friend inline PointT operator * (const PointT& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -264,7 +264,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const ec_point_base& p, const int_type& s)
+        [[nodiscard]] friend inline PointT operator * (const ec_point_base& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -277,7 +277,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const int_type& s, const PointT& p)
+        [[nodiscard]] friend inline PointT operator * (const int_type& s, const PointT& p)
         {
             return p.mul( s );
         }
@@ -290,7 +290,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const int_type& s, const ec_point_base& p)
+        [[nodiscard]] friend inline PointT operator * (const int_type& s, const ec_point_base& p)
         {
             return p.mul( s );
         }
@@ -302,7 +302,7 @@ namespace ack {
          * @param s - the scalar to multiply this point by.
          * @return reference to this point
         */
-        PointT& operator *= (const int_type& s)
+        inline PointT& operator *= (const int_type& s)
         {
             return underlying() = mul( s );
         }
@@ -313,7 +313,7 @@ namespace ack {
          *
          * @return the inverse of this point
         */
-        [[nodiscard]] constexpr PointT operator - () const
+        [[nodiscard]] inline constexpr PointT operator - () const
         {
             return inverted();
         }
@@ -323,12 +323,12 @@ namespace ack {
                 curve_( &curve )
             {}
 
-            constexpr inline PointT& underlying()
+            inline constexpr PointT& underlying()
             {
                 return static_cast<PointT&>( *this );
             }
 
-            constexpr inline const PointT& underlying() const
+            inline constexpr const PointT& underlying() const
             {
                 return static_cast<const PointT&>( *this );
             }
@@ -391,7 +391,7 @@ namespace ack {
          * Checks if this point is the identity element of the curve, i.e. point at infinity.
          * @return true if this point is the identity element of the curve, false otherwise
         */
-        constexpr bool is_identity() const
+        inline constexpr bool is_identity() const
         {
             return this->curve_ == nullptr || ( x.is_zero() && y.is_zero() );
         }
@@ -517,7 +517,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] ec_point_fp sub(const ec_point_fp& a) const
+        [[nodiscard]] inline ec_point_fp sub(const ec_point_fp& a) const
         {
             return *this + (-a);
         }
@@ -580,7 +580,7 @@ namespace ack {
          * @param b - the second point to compare
          * @return true if the points are not equal, false otherwise
         */
-        constexpr friend bool operator != (const ec_point_fp& a, const ec_point_fp& b)
+        constexpr friend inline bool operator != (const ec_point_fp& a, const ec_point_fp& b)
         {
             return !(a == b);
         }
@@ -710,7 +710,7 @@ namespace ack {
         */
         [[nodiscard]] constexpr bool is_identity() const
         {
-            return this->curve_ == nullptr ||( z.is_zero() );
+            return this->curve_ == nullptr || ( z.is_zero() );
         }
 
         /**
@@ -855,7 +855,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] ec_point_fp_proj sub(const ec_point_fp_proj& a) const
+        [[nodiscard]] inline ec_point_fp_proj sub(const ec_point_fp_proj& a) const
         {
             return *this + (-a);
         }
@@ -923,7 +923,7 @@ namespace ack {
          * @param b - the second point to compare
          * @return true if the points are not equal, false otherwise
         */
-        constexpr friend bool operator != (const ec_point_fp_proj& a, const ec_point_fp_proj& b)
+        constexpr friend inline bool operator != (const ec_point_fp_proj& a, const ec_point_fp_proj& b)
         {
             return !( a == b );
         }
@@ -961,9 +961,9 @@ namespace ack {
          * @return PointU - point on the curve.
         */
         template<typename PointU = point_type, typename IntT>
-        PointU generate_point(const IntT &x) const
+        inline PointU generate_point(const IntT &x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .template generate_point<PointU>( x );
         }
 
@@ -973,9 +973,9 @@ namespace ack {
          * @return curve field element
         */
         template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x) const
+        [[nodiscard]] inline constexpr field_element_type make_field_element(BigNumT&& x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_field_element( std::move(x) );
         }
 
@@ -985,9 +985,9 @@ namespace ack {
          * @return curve field element
         */
         template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x) const
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const BigNumT& x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_field_element( x );
         }
 
@@ -999,9 +999,9 @@ namespace ack {
          * @return curve point
         */
         template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr point_type make_point(BigNumT x, BigNumT y, bool verify = false) const
+        [[nodiscard]] inline constexpr point_type make_point(BigNumT x, BigNumT y, bool verify = false) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_point( std::move(x), std::move(y), verify );
         }
 
@@ -1009,9 +1009,9 @@ namespace ack {
          * Verifies curve parameters.
          * @return true if curve parameters are valid.
         */
-        [[nodiscard]] bool verify() const
+        [[nodiscard]] inline bool verify() const
         {
-            return static_cast<const CurveT&>(*this).verify();
+            return static_cast<const CurveT&>( *this ).verify();
         }
     };
 
@@ -1056,7 +1056,7 @@ namespace ack {
          * @param n - order of g
          * @param h - cofactor, i.e.: h = p / n
         */
-        constexpr ec_curve_fp(BigNumT p, BigNumT a, BigNumT b, std::pair<BigNumT, BigNumT> g, BigNumT n, uint32_t h):
+        inline constexpr ec_curve_fp(BigNumT p, BigNumT a, BigNumT b, std::pair<BigNumT, BigNumT> g, BigNumT n, uint32_t h):
             p( std::move(p) ),
             a( std::move(a) ),
             b( std::move(b) ),
@@ -1111,7 +1111,7 @@ namespace ack {
          * @return Field element
          *
         */
-        [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x) const
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const BigNumT& x) const
         {
             return make_field_element( x, /*verify=*/ true );
         }
@@ -1190,7 +1190,7 @@ namespace ack {
             //     return false;
             // }
 
-            // Verif p and n
+            // Verify p and n
             if ( p <= 3 || n <= 0 ) {
                 return false;
             }
