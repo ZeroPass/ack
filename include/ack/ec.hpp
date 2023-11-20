@@ -340,7 +340,7 @@ namespace ack {
     };
 
     // Forward declaration of ec_curve_fp
-    template<typename BigNumT, typename CurveTag>
+    template<typename IntT, typename CurveTag>
     struct ec_curve_fp;
 
     /**
@@ -960,11 +960,41 @@ namespace ack {
          * @param x - scalar to multiply base point g with.
          * @return PointU - point on the curve.
         */
-        template<typename PointU = point_type, typename IntT>
-        inline PointU generate_point(const IntT &x) const
+        template<typename PointU = point_type, typename IntT = int_type>
+        [[nodiscard]] inline PointU generate_point(const IntT &x) const
         {
             return static_cast<const CurveT&>( *this )
                 .template generate_point<PointU>( x );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type>
+        [[nodiscard]] inline PointU generate_point(const std::string_view sx) const
+        {
+            return static_cast<const CurveT&>( *this )
+                .template generate_point<PointU>( sx );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string literal scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string literal scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type, std::size_t N>
+        [[nodiscard]] inline PointU generate_point(const char (&sx)[N]) const
+        {
+            return static_cast<const CurveT&>( *this )
+                .template generate_point<PointU>( sx );
         }
 
         /**
@@ -972,8 +1002,8 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] inline constexpr field_element_type make_field_element(BigNumT&& x) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr field_element_type make_field_element(IntT&& x) const
         {
             return static_cast<const CurveT&>( *this )
                 .make_field_element( std::move(x) );
@@ -984,8 +1014,8 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] inline constexpr field_element_type make_field_element(const BigNumT& x) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const IntT& x) const
         {
             return static_cast<const CurveT&>( *this )
                 .make_field_element( x );
@@ -998,8 +1028,8 @@ namespace ack {
          * @param verify if true, the point is verified to be valid point on the curve created by the curve generator point g.
          * @return curve point
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] inline constexpr point_type make_point(BigNumT x, BigNumT y, bool verify = false) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr point_type make_point(IntT x, IntT y, bool verify = false) const
         {
             return static_cast<const CurveT&>( *this )
                 .make_point( std::move(x), std::move(y), verify );
@@ -1019,31 +1049,31 @@ namespace ack {
      * Struct defines curve over a prime finite field GF(p)
      * with Weierstrass equation y^2 = x^3 + ax + b.
      *
-     * @tparam BigNumT  - big number type
+     * @tparam IntT  - integer type
      * @tparam CurveTag - the curve tag
     */
-    template<typename BigNumT, typename CurveTag>
+    template<typename IntT, typename CurveTag>
     struct ec_curve_fp :
         ec_curve_base<
-            ec_curve_fp<BigNumT, CurveTag>,
-            fp_element<BigNumT, CurveTag>,
-            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>
+            ec_curve_fp<IntT, CurveTag>,
+            fp_element<IntT, CurveTag>,
+            ec_point_fp<ec_curve_fp<IntT, CurveTag>>
         >
     {
-        using base_type = ec_curve_base<ec_curve_fp<BigNumT, CurveTag>,
-                            fp_element<BigNumT, CurveTag>,
-                            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>>;
+        using base_type = ec_curve_base<ec_curve_fp<IntT, CurveTag>,
+                            fp_element<IntT, CurveTag>,
+                            ec_point_fp<ec_curve_fp<IntT, CurveTag>>>;
 
         using curve_tag          = CurveTag;
-        using int_type           = BigNumT;
+        using int_type           = IntT;
         using field_element_type = typename base_type::field_element_type;
         using point_type         = typename base_type::point_type;
 
-        const BigNumT    p;      // curve prime
-        const BigNumT    a;      // curve coefficient
-        const BigNumT    b;      // curve coefficient
+        const IntT       p;      // curve prime
+        const IntT       a;      // curve coefficient
+        const IntT       b;      // curve coefficient
         const point_type g;      // generator point
-        const BigNumT    n;      // order of g
+        const IntT       n;      // order of g
         const uint32_t   h;      // cofactor, i.e.: h = #E(Fp) / n
                                  //     #E(Fp) - number of points on the curve
 
@@ -1056,7 +1086,7 @@ namespace ack {
          * @param n - order of g
          * @param h - cofactor, i.e.: h = p / n
         */
-        inline constexpr ec_curve_fp(BigNumT p, BigNumT a, BigNumT b, std::pair<BigNumT, BigNumT> g, BigNumT n, uint32_t h):
+        inline constexpr ec_curve_fp(IntT p, IntT a, IntT b, std::pair<IntT, IntT> g, IntT n, uint32_t h):
             p( std::move(p) ),
             a( std::move(a) ),
             b( std::move(b) ),
@@ -1073,8 +1103,8 @@ namespace ack {
          * @param x - scalar to multiply base point g with.
          * @return PointT - point on the curve.
         */
-        template<typename PointT = point_type, typename IntT = BigNumT>
-        PointT generate_point(const IntT &x) const
+        template<typename PointT = point_type, typename IntNumT = IntT>
+        [[nodiscard]] PointT generate_point(const IntNumT& x) const
         {
             check( x > 0 && x < n, "x must be in range [1, n-1]" );
             if constexpr (std::is_same_v<PointT, point_type>) {
@@ -1082,6 +1112,34 @@ namespace ack {
             } else {
                 return PointT( g ) * x;
             }
+        }
+
+        /**
+         * Generates a point from base point g and given hex string scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type>
+        [[nodiscard]] PointU generate_point(const std::string_view sx) const
+        {
+            return generate_point<PointU>( int_type( sx ) );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string literal scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string literal scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type, std::size_t N>
+        [[nodiscard]] inline PointU generate_point(const char (&sx)[N]) const
+        {
+            return generate_point<PointU>( std::string_view( sx, N ) );
         }
 
         /**
@@ -1095,7 +1153,7 @@ namespace ack {
          * @return Field element
          *
         */
-        [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x) const
+        [[nodiscard]] constexpr field_element_type make_field_element(IntT&& x) const
         {
             return make_field_element( std::move(x), /*verify=*/ true );
         }
@@ -1111,7 +1169,7 @@ namespace ack {
          * @return Field element
          *
         */
-        [[nodiscard]] inline constexpr field_element_type make_field_element(const BigNumT& x) const
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const IntT& x) const
         {
             return make_field_element( x, /*verify=*/ true );
         }
@@ -1130,7 +1188,7 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(BigNumT&& x, BigNumT&& y, bool verify = false) const
+        [[nodiscard]] constexpr point_type make_point(IntT&& x, IntT&& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
@@ -1160,7 +1218,7 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(const BigNumT& x, const BigNumT& y, bool verify = false) const
+        [[nodiscard]] constexpr point_type make_point(const IntT& x, const IntT& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
@@ -1240,17 +1298,17 @@ namespace ack {
         }
 
         private:
-            [[nodiscard]] inline constexpr bool is_valid_integer(const BigNumT& x) const
+            [[nodiscard]] inline constexpr bool is_valid_integer(const IntT& x) const
             {
                 return !x.is_negative() && x < p;
             }
 
-            inline constexpr void check_integer(const BigNumT& x, const char* error) const
+            inline constexpr void check_integer(const IntT& x, const char* error) const
             {
                 check( is_valid_integer( x ), error );
             }
 
-            [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x, bool verify) const
+            [[nodiscard]] constexpr field_element_type make_field_element(IntT&& x, bool verify) const
             {
                 if ( verify ) {
                     check_integer( x, "Invalid field element value" );
@@ -1258,7 +1316,7 @@ namespace ack {
                 return field_element_type( std::move(x), p );
             }
 
-            [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x, bool verify) const
+            [[nodiscard]] constexpr field_element_type make_field_element(const IntT& x, bool verify) const
             {
                 if ( verify ) {
                     check_integer( x, "Invalid field element value" );
