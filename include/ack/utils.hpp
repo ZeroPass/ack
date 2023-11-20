@@ -109,30 +109,36 @@ namespace ack {
         }
 
         check( hex_str != nullptr, "Invalid hex string" );
+
+        // Remove terminating zero
+        if ( hex_str[hex_str_len - 1] == 0 ) {
+            hex_str_len--;
+        }
+
         if ( out_data == nullptr || out_data_len == 0) {
             return ( hex_str_len + 1 ) / 2; // return required out data size
         }
 
         check( out_data_len >= (( hex_str_len + 1) / 2 ), "Invalid out data size" );
 
-        auto i                = hex_str;
-        const auto i_end      = hex_str + hex_str_len;
+        auto in               = hex_str;
+        const auto in_end     = hex_str + hex_str_len;
         byte_t* out_pos       = out_data;
         const byte_t* out_end = out_pos + out_data_len;
 
         if ( ( hex_str_len % 2 ) != 0 ) {
-            *out_data = from_hex( *i );
-            i++;
+            *out_data = from_hex( *in );
+            in++;
             out_pos++;
         }
 
         // from eosio/fc
-        while ( i != i_end && out_end != out_pos ) {
-            *out_pos = byte_t( from_hex( *i ) << 4 );
-            ++i;
-            if( i != i_end )  {
-                *out_pos |= from_hex( *i );
-                ++i;
+        while ( in != in_end && out_end != out_pos ) {
+            *out_pos = byte_t( from_hex( *in ) << 4 );
+            ++in;
+            if( in != in_end )  {
+                *out_pos |= from_hex( *in );
+                ++in;
             }
             ++out_pos;
         }
@@ -169,7 +175,7 @@ namespace ack {
             return data;
         }
 
-        std::size_t dsize = (hex_str.size() + 1) / 2;
+        std::size_t dsize = from_hex( hex_str.data(), hex_str.size(), nullptr, 0 );
         check( N >= dsize, "Invalid out data size" );
         check( from_hex( hex_str, data.data(), data.size() ) == dsize, "Failed to parse hex string");
         return data;
