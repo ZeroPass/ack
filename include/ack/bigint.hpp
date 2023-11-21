@@ -29,6 +29,7 @@
 #include <bit>
 #include <cstdlib>
 #include <cstddef>
+#include <vector>
 #include <type_traits>
 
 namespace ack {
@@ -1448,6 +1449,41 @@ namespace ack {
                 return data;
             }
 
+            /**
+             * Converts this integer to non-adjacent form (NAF).
+             * @return NAF representation of this integer.
+            */
+            [[nodiscard]] inline std::vector<char> to_naf() const
+            {
+                std::vector<char> nafv;
+                nafv.reserve( bit_length() + 1 );
+                auto num = *this;
+                while ( num > 0U ) {
+                    if ( num.is_odd() ) {
+                        int32_t nd;
+                        (num % 4).get_int32( nd );
+                        nd = 2 - nd;
+                        nafv.push_back( nd );
+                        num -= nd;
+                    } else {
+                        nafv.push_back( 0 );
+                    }
+                    num >>= 1;
+                }
+                return nafv;
+            }
+
+            /**
+             * Converts this integer to reversed non-adjacent form (NAF).
+             * @return reversed NAF representation of this integer.
+            */
+            [[nodiscard]] inline std::vector<char> to_rnaf() const
+            {
+                auto naf = to_naf();
+                std::reverse(naf.begin(), naf.end());
+                return naf;
+            }
+
             constexpr void clear()
             {
                 *this = 0;
@@ -1623,7 +1659,7 @@ namespace ack {
              * @param n - Reference of type int32_t to receive extracted integer.
              * @return true if integer could be extracted otherwise false.
             */
-            constexpr const bool get_int32(int32_t& n) const
+            constexpr bool get_int32(int32_t& n) const
             {
                 static_assert( sizeof(word_t) == sizeof(uint32_t) );
                 if (word_length() > 1) {
