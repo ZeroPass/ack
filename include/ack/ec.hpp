@@ -589,6 +589,9 @@ namespace ack {
             friend CurveT;
             template<typename>
             friend struct ec_point_fp_proj;
+            template<typename>
+            friend struct ec_point_fp_jacobi;
+
             constexpr ec_point_fp( const CurveT& curve, field_element_type x, field_element_type y ) :
                 base_type( curve ),
                 x( std::move(x) ),
@@ -885,7 +888,7 @@ namespace ack {
             auto tmp = *this;
             auto s   = scalar;
             while ( s != 0 ) {
-                if ( ( s & 1U ) != 0 ) {
+                if ( s.is_odd() ) {
                     r += tmp;
                 }
                 tmp = tmp.doubled();
@@ -940,6 +943,386 @@ namespace ack {
             ec_point_fp_proj make_point(field_element_type x, field_element_type y, field_element_type z) const
             {
                 return ec_point_fp_proj( this->curve(), std::move(x), std::move(y), std::move(z) );
+            }
+    };
+
+    /**
+     * Struct representing a point on an elliptic curve in Jacobian coordinates
+     * over a prime finite field GF(p) for a short Weierstrass-form elliptic curve satisfying the equation:
+     *   y^2 = x^3 + ax * z^4 + b * z^6
+     *
+     * The use of Jacobian coordinates results in more efficient arithmetic operations
+     * compared to projective or affine coordinates.
+     *
+     *
+     * @warning The point's curve is stored as a pointer to the curve object.
+     *          The curve object must outlive the point object.
+     *
+     * @tparam CurveT - the curve type. Required to be an instance of ec_curve_fp.
+    */
+    template<typename CurveT>
+    struct ec_point_fp_jacobi : ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>
+    {
+        static_assert( is_ec_curve_fp<CurveT> );
+
+        using base_type          = ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>;
+        using int_type           = typename CurveT::int_type;
+        using field_element_type = typename CurveT::field_element_type;
+        using affine_point_type  = ec_point_fp<CurveT>;
+        using base_type::base_type;
+
+        field_element_type x;
+        field_element_type y;
+        field_element_type z;
+
+        /**
+         * Constructs a point at infinity
+        */
+        constexpr ec_point_fp_jacobi() :
+            base_type(),
+            x( field_element_type::zero() ),
+            y( field_element_type::one()  ),
+            z( field_element_type::zero() )
+        {}
+
+        /**
+         * Constructs this point from the given affine point.
+         * @warning The point's curve is stored as a pointer to the curve object.
+         *          The curve object must outlive the point object.
+         *
+         * @param p - the affine point to construct this point from.
+        */
+        explicit constexpr ec_point_fp_jacobi(affine_point_type p) :
+            ec_point_fp_jacobi()
+        {
+            if ( !p.is_identity() ) {
+                this->curve_ = &p.curve();
+                x = std::move(p.x);
+                y = std::move(p.y);
+                z = field_element_type( 1, p.curve().p );
+            }
+        }
+
+        /**
+         * Normalizes this point.
+         * This ensures Z coordinate is 1 therefore the x, y coordinates reflect
+         * those of the equivalent to point in an affine coordinate system.
+         *
+         * @return this point
+        */
+        ec_point_fp_jacobi& normalize()
+        {
+            if ( !is_identity() && !z.is_one() ) {
+                const auto z_inv  = z.inv();
+                const auto z_inv2 = z_inv * z_inv;
+                x *= z_inv2;
+                y *= z_inv2 * z_inv;
+                z = 1;
+            }
+            return *this;
+        }
+
+        /**
+         * Returns the normalized representation of this point.
+         * This ensures Z coordinate is 1 therefore the x, y coordinates reflect
+         * those of the equivalent to point in an affine coordinate system.
+        */
+        [[nodiscard]] ec_point_fp_jacobi normalized() const
+        {
+            auto r = *this;
+            r.normalize();
+            return r;
+        }
+
+        /**
+         * Returns the affine representation of this point.
+         * @note No point verification is performed.
+         * @note Slow operation due to division.
+         *
+         * @return this point in affine form.
+        */
+        [[nodiscard]] const affine_point_type to_affine() const
+        {
+            if ( is_identity() ) {
+                return affine_point_type();
+            }
+            if ( z.is_one() ) {
+                return affine_point_type( this->curve(), x, y );
+            }
+
+            // It is assumed that the point is on the curve and therefore calculated x and y are valid.
+            // Calling affine_point_type() constructor will skip verification check.
+            const auto z_inv  = z.inv();
+            const auto z_inv2 = z_inv.sqr();
+            return affine_point_type( this->curve(), x * z_inv2, y * z_inv2 * z_inv );
+        }
+
+        /**
+         * Checks if this point is the identity element of the curve, i.e. point at infinity.
+         * @return true if this point is the identity element of the curve, false otherwise
+        */
+        [[nodiscard]] inline constexpr bool is_identity() const
+        {
+            return this->curve_ == nullptr || ( z.is_zero() );
+        }
+
+        /**
+         * Checks if this point is on the curve by calculating
+         * the left and right hand side of the equation:  y^2 = x^3 + ax * z^4 + b * z^6
+         *
+         * @return true if this point is on the curve, false otherwise
+         * @note Slow operation
+        */
+        [[nodiscard]] bool is_on_curve() const
+        {
+            if ( is_identity() ) {
+                return true;
+            }
+            const auto z2 = z.sqr();
+            const auto z4 = z2.sqr();
+            const auto z6 = z2 * z4;
+            return  y.sqr() == ( ( ( x.sqr() + this->curve().a * z4 ) * x + this->curve().b * z6 ) ) ;
+        }
+
+        /**
+         * Performs SEC 1 section 3.2.2.1 point check,
+         * i.e. if point was generated using curve generator g and is not identity element.
+         * Checks:
+         *    - point is not the identity element
+         *    - point is on the curve
+         *    - point has order n
+         *
+         * @note Slow operation.
+         *
+         * @return true if this point is valid, false otherwise
+        */
+        [[nodiscard]] bool is_valid() const
+        {
+            if ( is_identity() ) {
+                return false;
+            }
+
+            if ( !is_on_curve() ) {
+                return false;
+            }
+
+            if ( !(this->curve().n * *this).is_identity() ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Returns the inverse of this point.
+         * R = -this
+         *
+         * @return the inverse of this point
+        */
+        [[nodiscard]] constexpr ec_point_fp_jacobi inverted() const
+        {
+            if ( is_identity() ) {
+                return *this;
+            }
+            return ec_point_fp_jacobi( this->curve(), x, -y, z );
+        }
+
+        /**
+         * Adds the given point to this point.
+         * R = this + a
+         *
+         * @param a - the point to add to this point
+         * @return reference to this point
+        */
+        [[nodiscard]] ec_point_fp_jacobi add(const ec_point_fp_jacobi& q) const
+        {
+            const auto& p = *this;
+            if ( p.is_identity() ) {
+                return q;
+            }
+
+            if ( q.is_identity() ) {
+                return p;
+            }
+
+            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
+            // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
+            auto pz2 = p.z.sqr();
+            auto qz2 = q.z.sqr();
+            auto U1 = p.x * qz2;
+            auto U2 = q.x * pz2;
+            auto S1 = p.y * qz2 * q.z;
+            auto S2 = q.y * pz2 * p.z;
+
+            auto H  = U2 - U1;
+            auto R  = S2 - S1;
+            if ( H.is_zero() ) {
+                if ( R.is_zero() ) {
+                    return doubled();
+                } else {
+                    return ec_point_fp_jacobi();
+                }
+            }
+
+            auto H2 = H.sqr();
+            auto H3 = H2 * H;
+            auto V  = U1 * H2;
+
+            auto X3 = R.sqr() - H3 - 2 * V;
+            auto Y3 = R * ( V - X3 ) - S1 * H3;
+            auto Z3 = H * p.z * q.z;
+            return make_point( std::move(X3), std::move(Y3), std::move(Z3) );
+        }
+
+        /**
+         * Returns the double of this point.
+         * R = 2 * this
+         *
+         * @return the double of this point
+        */
+        [[nodiscard]] ec_point_fp_jacobi doubled() const
+        {
+            const auto& p = *this;
+            if ( p.is_identity() ) {
+                return p;
+            }
+
+            if ( p.y == 0 ) {
+                return ec_point_fp_jacobi(); // identity
+            }
+
+            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-1998-cmo-2
+            // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-2007-bl
+            auto y2 = p.y.sqr();
+            auto z2 = p.z.sqr();
+            auto S  = 4 * p.x * y2;
+            auto M  = 3 * p.x.sqr() + this->curve().a * z2.sqr();
+            auto RX = M.sqr() - 2 * S;
+            auto RY = M * ( S - RX ) - 8 * y2.sqr();
+            auto RZ = 2 * p.y * p.z;
+            return make_point( std::move(RX), std::move(RY), std::move(RZ) );
+        }
+
+        /**
+         * Subtracts the given point from this point.
+         * R = this - a
+         *
+         * @param a - the point to subtract from this point
+         * @return reference to this point
+        */
+        [[nodiscard]] inline ec_point_fp_jacobi sub(const ec_point_fp_jacobi& a) const
+        {
+            return *this + ( -a );
+        }
+
+        /**
+         * Multiplies this point by the given scalar.
+         * R = this * scalar
+         *
+         * @param scalar - the scalar to multiply this point by
+         * @return the resulting point
+        */
+        [[nodiscard]] ec_point_fp_jacobi mul(const int_type& scalar) const
+        {
+            if ( scalar.is_one() || is_identity() ) {
+                return *this;
+            }
+
+            if ( scalar.is_zero() ) {
+                return ec_point_fp_jacobi();
+            }
+
+            if ( scalar < 0 ) {
+                return inverted() * -scalar;
+            }
+
+            // Point scalar multiplication by the reversed NAF method
+            // optimized for cases where this.z == 1.
+            //
+            // The base algorithm is described in:
+            // "Comparative analysis of the scalar point multiplication
+            // algorithms in the NIST FIPS 186 elliptic curve cryptography"
+            // (Section 3.2: Scalar multiplication by the NAF method)
+            // https://ceur-ws.org/Vol-2913/paper2.pdf
+            const auto& p   = *this;
+            const auto pneg = -p;
+            auto r = make_point(0, 0, 1);
+            for ( const char i : scalar.to_rnaf() ) {
+                r = r.doubled();
+                if ( i > 0 ) {
+                    r += p;
+                }
+                else if ( i < 0 ) {
+                    r += pneg;
+                }
+            }
+            return r;
+        }
+
+        /**
+         * Compares 2 points for equality.
+         * Points are equal if they are both identity or if
+         * a.x * b.z^2 == b.x * a.z^2 and a.y * b.z^3 == b.y * a.z^3
+         *
+         * @note Calling this function can be slow.
+         *
+         * @param a - the first point to compare
+         * @param b - the second point to compare
+         * @return true if the points are equal, false otherwise
+        */
+        constexpr friend bool operator == (const ec_point_fp_jacobi& a, const ec_point_fp_jacobi& b)
+        {
+            if ( std::addressof(a) == std::addressof(b) ) {
+                return true;
+            }
+
+            if ( a.is_identity() || b.is_identity() ) {
+                return a.is_identity() && b.is_identity();
+            }
+
+            // Using short circuit in case of inequality
+            const auto az2 = a.z.sqr();
+            const auto bz2 = b.z.sqr();
+            return ( a.curve_  == b.curve_  ) &&
+                   ( a.x * bz2 == b.x * az2 ) &&
+                   ( a.y * bz2 * b.z == b.y * az2 * a.z );
+        }
+
+        /**
+         * Compares 2 points for inequality.
+         * @note See operator == for details.
+         *
+         * @param a - the first point to compare
+         * @param b - the second point to compare
+         * @return true if the points are not equal, false otherwise
+        */
+        constexpr friend inline bool operator != (const ec_point_fp_jacobi& a, const ec_point_fp_jacobi& b)
+        {
+            return !( a == b );
+        }
+
+        private:
+            friend CurveT;
+            constexpr ec_point_fp_jacobi(const CurveT& curve, field_element_type x, field_element_type y, field_element_type z) :
+                base_type( curve ),
+                x( std::move(x) ),
+                y( std::move(y) ),
+                z( std::move(z) )
+            {}
+
+            ec_point_fp_jacobi make_point(field_element_type x, field_element_type y, field_element_type z) const
+            {
+                return ec_point_fp_jacobi( this->curve(), std::move(x), std::move(y), std::move(z) );
+            }
+
+            ec_point_fp_jacobi make_point(int_type x, int_type y, int_type z) const
+            {
+                return ec_point_fp_jacobi(
+                    this->curve(),
+                    field_element_type( std::move(x), this->curve().p ),
+                    field_element_type( std::move(y), this->curve().p ),
+                    field_element_type( std::move(z), this->curve().p )
+                );
             }
     };
 
