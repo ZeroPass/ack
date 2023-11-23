@@ -358,3 +358,6 @@ MigrationBackup/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Allow RSP test vectors
+!tests/tv/**/*.rsp

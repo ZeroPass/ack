@@ -3,6 +3,7 @@
 # Author: Crt Vavros
 
 import collections, enum, os, re, sys
+from typing import Dict, List, TextIO, Tuple, Optional
 
 curve_pattern = re.compile(r"^\[P-[0-9]+]$", re.IGNORECASE)
 curve_hash_pattern = re.compile(r"^\[P-[0-9]+,[A-Za-z0-9-]+]$", re.IGNORECASE)
@@ -25,7 +26,8 @@ curve_primes = {
 class TestType(enum.Enum):
     Unknown      = -1,
     ECPKV        = 1,
-    SigVer_ECDSA = 2
+    ECKeyPair    = 2
+    SigVer_ECDSA = 3
 
 class TestVectors:
     def __init__(self):
@@ -34,20 +36,23 @@ class TestVectors:
 
 class EcTestVector:
     def __init__(self):
-        self.curve_name = ''
-        self.Qx = ''
-        self.Qy = ''
-        self.hash_algo = ''
-        self.msg = ''
-        self.r = ''
-        self.s = ''
-        self.result = ''
+        self.curve_name: str = ''
+        self.d: str  = '' # private key
+        self.Qx: str = ''
+        self.Qy: str = ''
+        self.hash_algo: str = ''
+        self.msg: str = ''
+        self.r: str = ''
+        self.s: str = ''
+        self.result: str = ''
+
+ECTestEntries = Dict[str, List[EcTestVector]]
 
 class EcTestVectors(TestVectors):
     def __init__(self):
-        self.entries = None # dictionary {[curve,hash] or [curve] : [MsgTestVector]}
+        self.entries: Optional[ECTestEntries] = None # dictionary {[curve,hash] or [curve] : [EcTestVector]}
 
-def parse_header(file):
+def parse_header(file: TextIO)-> Tuple[str, TestType, int]:
     file.seek(0)
     header = ''
     type  = TestType.Unknown
@@ -57,29 +62,36 @@ def parse_header(file):
             header += line[1:].strip() + "\n"
             if '"PKV" information' in line:
                 type = TestType.ECPKV
+            elif 'Key Pair" information' in line:
+                type = TestType.ECKeyPair
             elif 'SigVer" information' in line:
                 type = TestType.SigVer_ECDSA
         elif curve_pattern.match(line) or curve_hash_pattern.match(line):
             return (header, type, num)
         elif len(line) != 0:
-            print(f'warning: unexpected end of header or corrupted header at line: {num + 1}')
-            return (header.strip(), num)
+            print(f'WARNING: Unexpected end of header or corrupted header at line: {num + 1}')
+            return (header.strip(), type,  num)
+    print(f'ERROR: Reached end of a file while parsing file header')
+    return ("", type,  0)
 
-
-def normalized_hex_str(str):
+def normalized_hex_str(str: str):
     if len(str) % 2 != 0:
         return '0' + str
     return str
 
-def parse_rsa_test_vector_entries(file, current_line):
-    file.seek(current_line)
+def parse_ec_test_vector_entries(file: TextIO, offest: int, type: TestType) -> Dict[str, List[EcTestVector]]:
+    if type == TestType.Unknown:
+        return {}
 
     key = ''
-    dictionary = {}
-    entries = []
+    dictionary: Dict[str, List[EcTestVector]] = {}
+    entries: List[EcTestVector] = []
     tv = EcTestVector()
     curve_name = ''
     hash_algo = ''
+    b_parsed = False
+
+    file.seek(offest)
     for num, line in enumerate(file):
         line = line.strip()
         if curve_pattern.match(line) or curve_hash_pattern.match(line):
@@ -96,18 +108,27 @@ def parse_rsa_test_vector_entries(file, current_line):
             curve_name = key[1 : epos].strip()
             tv.curve_name = curve_name
 
-        if line.startswith('Qx '):
+        if line.startswith('d '):
+            tv.d = normalized_hex_str(line.replace('d ', '').strip('= '))
+            b_parsed = True
+        elif line.startswith('Qx '):
             tv.Qx = normalized_hex_str(line.replace('Qx ', '').strip('= '))
+            b_parsed = True
         elif line.startswith('Qy '):
             tv.Qy = normalized_hex_str(line.replace('Qy ', '').strip('= '))
+            b_parsed = True
         elif line.startswith('R '):
             tv.r = normalized_hex_str(line.replace('R ', '').strip('= '))
+            b_parsed = True
         elif line.startswith('S '):
             tv.s = normalized_hex_str(line.replace('S ', '').strip('= '))
+            b_parsed = True
         elif line.startswith('Msg'):
             tv.msg = normalized_hex_str(line.replace('Msg', '').strip('= '))
+            b_parsed = True
         elif line.startswith('Result'):
             tv.result = line.replace('Result', '').strip('= ')
+            b_parsed = True
             if not tv.result.startswith('P') and not tv.result.startswith('F'):
                 print(f"WARNING: Unknown result value '{tv.result}' on line:{num}, skipping test vector")
             else:
@@ -115,23 +136,30 @@ def parse_rsa_test_vector_entries(file, current_line):
             tv = EcTestVector()
             tv.curve_name = curve_name
             tv.hash_algo = hash_algo
+            b_parsed = False
+        elif len(line) == 0 and type == TestType.ECKeyPair and b_parsed:
+            entries.append(tv)
+            tv = EcTestVector()
+            tv.curve_name = curve_name
+            tv.hash_algo = hash_algo
+            b_parsed = False
 
     if len(key) != 0:
         dictionary[key] = entries
     return dictionary
 
-def parse_rsp(file_path):
+def parse_rsp(file_path: str):
     header = ''
     with open(file_path) as f:
         header, type, end_line_num = parse_header(f)
-        entries = parse_rsa_test_vector_entries(f, end_line_num)
-        tests   = EcTestVectors()
+        entries = parse_ec_test_vector_entries(f, end_line_num, type)
+        tests          = EcTestVectors()
         tests.header   = header
         tests.type     = type
         tests.entries  = entries
         return tests
 
-def format_var(var: str, decl: bool, indent_size: int = 0, var_type = 'auto') -> str:
+def format_var(var: str, decl: bool, indent_size: int = 0, var_type: str = 'auto') -> str:
     str = f'{f"{var_type} " if decl else ""}{var};'
     if indent_size > 0:
         str = indent(str, indent_size)
@@ -145,6 +173,7 @@ def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
         test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ true )', decl_vars, indent_size) + '\n'
         test_str += indent('REQUIRE_EQUAL( q.is_valid(), true )', indent_size) + '\n'
         test_str += indent('REQUIRE_EQUAL( ec_point_fp_proj( q ).is_valid(), true )', indent_size) + '\n'
+        test_str += indent('REQUIRE_EQUAL( ec_point_fp_jacobi( q ).is_valid(), true )', indent_size) + '\n'
     else:
         if '1 - Q_x or Q_y out of range' in tv.result:
             p = curve_primes[tv.curve_name]
@@ -164,6 +193,24 @@ def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
             test_str += format_var(f'q = curve.make_point( "{ tv.Qx }", "{ tv.Qy }", /*verify=*/ false )', decl_vars, indent_size) + '\n'
             test_str += indent('REQUIRE_EQUAL( q.is_valid(), false )', indent_size) + '\n'
             test_str += indent('REQUIRE_EQUAL( ec_point_fp_proj( q ).is_valid(), false )', indent_size) + '\n'
+            test_str += indent('REQUIRE_EQUAL( ec_point_fp_jacobi( q ).is_valid(), false )', indent_size) + '\n'
+    return test_str
+
+def tveckeypair2str(tv: EcTestVector, decl_vars: bool) -> str:
+    test_str = ''
+    indent_size = 4
+    test_str += format_var(f'k  = bn_t( "{ tv.d }" )', decl_vars, indent_size) + '\n'
+    test_str += format_var(f'q  = curve.make_point( "{ tv.Qx }", "{ tv.Qy }" )', decl_vars, indent_size) + '\n'
+    test_str += format_var(f'qg = curve.generate_point( k )', decl_vars, indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( qg, q )', indent_size) + '\n\n'
+
+    test_str += format_var(f'qg_proj = curve.generate_point<point_proj_type>( k )', decl_vars, indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( qg_proj.is_valid() , true )', indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( qg_proj.to_affine(), q    )', indent_size) + '\n\n'
+
+    test_str += format_var(f'qg_jacobi = curve.generate_point<point_jacobi_type>( k )', decl_vars, indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( qg_jacobi.is_valid() , true )', indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( qg_jacobi.to_affine(), q    )', indent_size) + '\n'
     return test_str
 
 def tvecdsa2str(tv: EcTestVector, decl_vars: bool) -> str:
@@ -216,6 +263,8 @@ def main():
                     match tests.type:
                         case TestType.ECPKV:
                             tcase = tvecpkv2str(tv, decl_vars)
+                        case TestType.ECKeyPair:
+                            tcase = tveckeypair2str(tv, decl_vars)
                         case TestType.SigVer_ECDSA:
                             tcase = tvecdsa2str(tv, decl_vars)
                     test_cases[tv.curve_name][key] += tcase + '\n'
@@ -225,19 +274,31 @@ def main():
         print("*/\n\n", file=f)
 
         indent_size = 4
-        test_type = 'ecdsa' if tests.type == TestType.SigVer_ECDSA else 'ec_pkv'
+        test_type = 'unknown'
+        match tests.type:
+            case TestType.ECPKV:
+                test_type = 'ec_pkv'
+            case TestType.ECKeyPair:
+                test_type = 'ec_keypair'
+            case TestType.SigVer_ECDSA:
+                test_type = 'ecdsa'
+
         for curve_name, testsd in test_cases.items():
             tname = f'{test_type}_{curve_var[curve_name]}_test'
             print(f'EOSIO_TEST_BEGIN({tname})', file=f)
             print(indent('{', indent_size), file=f)
-            print(indent(f'using bn_t = ack::ec_fixed_bigint<{ curve_sizes[curve_name] }>;', indent_size*2), file=f)
-            print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size*2), file=f)
+            print(indent(f'using { curve_var[curve_name] }_t = std::remove_cv_t<decltype( ack::ec_curve::{ curve_var[curve_name] })>;', indent_size * 2), file=f)
+            print(indent(f'using bn_t = typename { curve_var[curve_name] }_t::int_type;', indent_size * 2), file=f)
+            print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size * 2), file=f)
+            print(indent(f'using point_proj_type = ack::ec_point_fp_proj<{ curve_var[curve_name] }_t>;', indent_size * 2), file=f)
+            print(indent(f'using point_jacobi_type = ack::ec_point_fp_jacobi<{ curve_var[curve_name] }_t>;', indent_size * 2), file=f)
+
             for curve_hash, tests in testsd.items():
                 # Each test vector set is wrapped in {}
-                print(indent( f'// {curve_hash}', indent_size*2), file=f )
-                print(indent( '{', indent_size*2), file=f )
-                print(indent( f'{tests}', indent_size*2), file=f )
-                print(indent( '}\n', indent_size*2), file=f )
+                print(indent( f'// {curve_hash}', indent_size * 2), file=f )
+                print(indent( '{', indent_size * 2), file=f )
+                print(indent( f'{tests}', indent_size * 2), file=f )
+                print(indent( '}\n', indent_size * 2), file=f )
             print(indent('}', indent_size), file=f )
             print(f'EOSIO_TEST_END // {tname}\n', file=f)
 
