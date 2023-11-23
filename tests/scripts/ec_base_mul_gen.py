@@ -129,6 +129,9 @@ def tv2str(tv: tuple, decl_vars: bool) -> str:
     test_str += indent('REQUIRE_EQUAL( curve.generate_point<point_proj_type>( k ).to_affine(), r )', indent_size) + '\n'
     test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_proj_type>( "{ int_hex( tv[0] ) }" ).to_affine(), r )', indent_size) + '\n'
     test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_proj_type>( "{ int_hex( tv[0] ) }"sv ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( k ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( "{ int_hex( tv[0] ) }" ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( "{ int_hex( tv[0] ) }"sv ).to_affine(), r )', indent_size) + '\n'
     return test_str
 
 def main():
@@ -170,6 +173,7 @@ def main():
             print(indent(f'using bn_t = typename { curve_var[curve_name] }_t::int_type;', indent_size), file=f)
             print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size), file=f)
             print(indent(f'using point_proj_type = ack::ec_point_fp_proj<{ curve_var[curve_name] }_t>;', indent_size), file=f)
+            print(indent(f'using point_jacobi_type = ack::ec_point_fp_jacobi<{ curve_var[curve_name] }_t>;', indent_size), file=f)
             print(indent( '{', indent_size), file=f )
             print(indent( f'{ tcs.rstrip() }', indent_size), file=f )
             print(indent( '}', indent_size), file=f )
