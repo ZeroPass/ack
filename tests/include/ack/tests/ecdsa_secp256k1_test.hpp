@@ -10,7 +10,6 @@
 #include <ack/tests/utils.hpp>
 
 #include <eosio/crypto.hpp>
-#include <eosio/fixed_bytes.hpp>
 #include <eosio/tester.hpp>
 
 namespace ack::tests {
@@ -39,7 +38,7 @@ namespace ack::tests {
             constexpr ec_fixed_bigint<256> sig_r = "9996B9881AE5194BD5073F291C8149A2F4FBCD7472E17EE3A0C794A89240E26E";
             constexpr ec_fixed_bigint<256> sig_s = "2C718E083D6AED9ED86C08FC6538CDCA3037B8EF89D235763799456339379C62";
 
-            auto digest = eosio::checksum256( from_hex( "9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08" ) );
+            auto digest = hash256( from_hex( "9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08" ) );
             bool result = true; // Signature is valid
             test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
         }

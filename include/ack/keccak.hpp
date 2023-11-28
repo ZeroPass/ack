@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <vector>
 
-#include <eosio/fixed_bytes.hpp>
-
 #include <ack/types.hpp>
 
 namespace ack {
@@ -115,7 +113,6 @@ namespace ack {
         }
     } // internal_use_do_not_use
 
-
     /**
      * SHA3-256 hash function.
      * @note Implementation parameters are based on the NIST FIPS 202 standard.
@@ -124,7 +121,7 @@ namespace ack {
      * @param data - data to hash
      * @return 256-bit hash
     */
-    inline eosio::checksum256 sha3_256(const bytes_view& data)
+    inline hash256 sha3_256(const bytes_view& data)
     {
         std::array<byte_t, 32> h;
         internal_do_not_use::keccak<17 * 8, 6>(
@@ -144,7 +141,7 @@ namespace ack {
      * @param data - data to hash
      * @return 384-bit hash
     */
-    inline eosio::fixed_bytes<48> sha3_384(const bytes_view& data)
+    inline hash384 sha3_384(const bytes_view& data)
     {
         std::array<byte_t, 48> h;
         internal_do_not_use::keccak<13 * 8, 6>(
@@ -164,7 +161,7 @@ namespace ack {
      * @param data - data to hash
      * @return 512-bit hash
     */
-    inline eosio::checksum512 sha3_512(const bytes_view& data)
+    inline hash512 sha3_512(const bytes_view& data)
     {
         std::array<byte_t, 64> h;
         internal_do_not_use::keccak<9 * 8, 6>(
@@ -176,10 +173,16 @@ namespace ack {
         return h;
     }
 
+    /**
+     * SHAKE-128 hash function.
+     * @tparam - Size - output hash size in bytes.
+     * @param data - data to hash
+     * @return Size long hash
+    */
     template<std::size_t Size>
-    inline eosio::fixed_bytes<Size> shake128_fixed(const bytes_view& data)
+    inline hash_t<Size> shake128_fixed(const bytes_view& data)
     {
-        using hash = eosio::fixed_bytes<Size>;
+        using hash = hash_t<Size>;
         using word_t = typename hash::word_t;
         static_assert( Size % sizeof(word_t) == 0,
             "the size of digest is not divisible by the size of word"
@@ -195,9 +198,15 @@ namespace ack {
         return h;
     }
 
-    inline bytes shake128(const bytes_view& data, std::size_t out_len)
+    /**
+     * SHAKE-128 hash function.
+     * @param data     - data to hash
+     * @param hash_len - output hash length
+     * @return hash_len long hash
+    */
+    inline bytes shake128(const bytes_view& data, std::size_t hash_len)
     {
-        bytes h( out_len );
+        bytes h( hash_len );
         internal_do_not_use::keccak<21 * 8, 31>(
             reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
@@ -207,16 +216,22 @@ namespace ack {
         return h;
     }
 
+    /**
+     * SHAKE-256 hash function.
+     * @tparam - Size - output hash size in bytes.
+     * @param data - data to hash
+     * @return Size long hash
+    */
     template<std::size_t Size>
-    inline eosio::fixed_bytes<Size> shake256_fixed(const bytes_view& data)
+    inline hash_t<Size> shake256_fixed(const bytes_view& data)
     {
-        using hash = eosio::fixed_bytes<Size>;
+        using hash = hash_t<Size>;
         using word_t = typename hash::word_t;
         static_assert( Size % sizeof(word_t) == 0,
             "the size of digest is not divisible by the size of word"
         );
 
-        std::array<uint8_t, Size> h;
+        fixed_bytes<Size> h;
         internal_do_not_use::keccak<17 * 8, 31>(
             reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
@@ -227,6 +242,12 @@ namespace ack {
         return h;
     }
 
+    /**
+     * SHAKE-256 hash function.
+     * @param data     - data to hash
+     * @param hash_len - output hash length
+     * @return hash_len long hash
+    */
     inline bytes shake256(const bytes_view& data, std::size_t out_len)
     {
         bytes h( out_len );

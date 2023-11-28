@@ -139,11 +139,14 @@ If configured correctly, you should be able to add the antelope.ck library to yo
     // Do something...
   }
 
+  // Calculate SHA384
+  hash384 mdsh384 = ack::sha384( byte_data );
+
   // Calculate SHA3-384
-  eosio::fixed_bytes<48> mdsh3 = ack::sha3_384( byte_data );
+  hash384 mdsh3 = ack::sha3_384( byte_data );
 
   // Calculate fixed size SHAKE-128 hash
-  eosio::checksum160 mdshk128 = ack::shake128_fixed<20>( byte_data );
+  hash160 mdshk128 = ack::shake128_fixed<20>( byte_data );
 
   // calculate var-long SHAKE-256 hash
   bytes mdshk256 = ack::shake256( byte_data, /*hash_len=*/16 );

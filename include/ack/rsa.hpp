@@ -6,10 +6,11 @@
 #include <type_traits>
 
 #include <eosio/crypto.hpp>
-#include <eosio/fixed_bytes.hpp>
 
 #include <ack/mgf.hpp>
+#include <ack/bigint.hpp>
 #include <ack/public_key.hpp>
+#include <ack/types.hpp>
 #include <ack/utils.hpp>
 
 #if ACK_NO_INTRINSICS == 0
@@ -34,15 +35,35 @@ namespace ack {
         constexpr auto sha256_digest_info_prefix = std::array<byte_t, 19> {
             0x30, 0x31, 0x30, 0x0D, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
         };
-        constexpr size_t pkcs1_v1_5_t_sha256_size = sha256_digest_info_prefix.size() + sizeof(eosio::checksum256);
+        constexpr size_t pkcs1_v1_5_t_sha256_size = sha256_digest_info_prefix.size() + sizeof(hash256);
         static_assert( pkcs1_v1_5_t_sha256_size == 51 );
 
         constexpr auto sha512_digest_info_prefix = std::array<byte_t, 19> {
             0x30, 0x51, 0x30, 0x0D, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40
         };
-        constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(eosio::checksum512);
+        constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(hash512);
         static_assert( pkcs1_v1_5_t_sha512_size == 83 );
     }
+
+
+    void uECC_vli_clear(uint32_t *vli, uint32_t num_words) {
+        uint32_t i;
+        for (i = 0; i < num_words; ++i) {
+            vli[i] = 0;
+        }
+    }
+    void uECC_vli_bytesToNative(uint32_t *native,
+                                             const uint8_t *bytes,
+                                             int num_bytes) {
+        int i;
+        uECC_vli_clear(native, (num_bytes + (sizeof(uint32_t) - 1)) / sizeof(uint32_t));
+        for (i = 0; i < num_bytes; ++i) {
+            unsigned b = num_bytes - 1 - i;
+            native[b / sizeof(uint32_t)] |=
+                (uint32_t)bytes[i] << (8 * (b % sizeof(uint32_t)));
+        }
+    }
+
 
     /**
     * Returns result of modular exponentiation.
@@ -84,6 +105,42 @@ namespace ack {
 
         auto res = rsa_mod_exp_sw( (const uint8_t*)base, base_len, prop, (uint8_t *)out );
         rsa_free_key_prop( prop );
+
+        // assert(false);
+        // using rsa_int = bigint<8192>;
+        // rsa_int bn_base;
+
+        // // std::array<uint32_t, 32> aa_base;
+        // // uECC_vli_bytesToNative(aa_base.data(), (const uint8_t*)base, base_len);
+        // // bn_base.set_array(aa_base.data(), aa_base.size());
+
+        // if (!bn_base.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(base), base_len })) {
+        //     return 0;
+        // }
+
+        //  bigint<32> bn_exp;
+        // // // std::array<uint32_t, 1> aa_exp;
+        // // // uECC_vli_bytesToNative(aa_exp.data(), (const uint8_t*)exponent, exponent_len);
+        // // // bn_exp.set_array(aa_exp.data(), aa_exp.size());
+        // if (!bn_exp.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(exponent), exponent_len })) {
+        //     return 0;
+        // }
+
+        // //constexpr word_t expp = 555;
+
+        // rsa_int bn_mod;
+        // // std::array<uint32_t, 32> aa_mod;
+        // // uECC_vli_bytesToNative(aa_mod.data(), (const uint8_t*)modulus, modulus_len);
+        // // bn_mod.set_array(aa_mod.data(), aa_mod.size());
+        // if (!bn_mod.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(modulus), modulus_len })) {
+        //     return 0;
+        // }
+
+        // if (!bn_base.mod_exp(bn_exp, bn_mod)) {
+        //     return 0;
+        // }
+
+        // return bn_base.get_bytes(std::span<byte_t>{ reinterpret_cast<byte_t*>(out), out_len }) ? base_len : 0;
     #endif
         return res == 0 ? base_len : 0;
     }
@@ -164,7 +221,7 @@ namespace ack {
     // T generator - https://tools.ietf.org/html/rfc3447#section-9.2
     // @param put_hash - function should calculate hash and put the calculated digest to the buffer pointed to by it's argument
     template<std::size_t S, typename std::size_t HS>
-    inline void rsa_1_5_t_generator(std::span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, const eosio::fixed_bytes<HS>& digest)
+    inline void rsa_1_5_t_generator(std::span<byte_t>& t, const std::array<byte_t, S> digest_info_prefix, const hash_t<HS>& digest)
     {
         memcpy( t.data(), digest_info_prefix.data(), digest_info_prefix.size() );
         auto hash = digest.extract_as_byte_array();
@@ -187,10 +244,10 @@ namespace ack {
     * @return true if signature is valid, else false.
     */
     template<size_t HLen, typename HashT>
-    [[nodiscard]] static bool rsassa_pss_mgf1_verify(const rsa_pss_public_key_view& pub_key, const eosio::fixed_bytes<HLen>& digest, const bytes_view& signature, HashT&& hash)
+    [[nodiscard]] static bool rsassa_pss_mgf1_verify(const rsa_pss_public_key_view& pub_key, const hash_t<HLen>& digest, const bytes_view& signature, HashT&& hash)
     {
         using HDT = typename std::invoke_result_t<HashT, const char*, size_t>;
-        static_assert( std::is_same_v<eosio::fixed_bytes<HLen>, HDT> );
+        static_assert( std::is_same_v<hash_t<HLen>, HDT> );
 
         // 1. Length check
         if ( signature.size() != pub_key.modulus.size() ) {
@@ -269,7 +326,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_sha1(const rsa_public_key_view& pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha1(const rsa_public_key_view& pub_key, const hash160& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha1_size>( pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha1_digest_info_prefix, digest );
         });
@@ -284,7 +341,7 @@ namespace ack {
     * @param signature - RSA PKCS1 v1.5 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_sha1_assert(const rsa_public_key_view& pub_key, const eosio::checksum160& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_sha1_assert(const rsa_public_key_view& pub_key, const hash160& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha1( pub_key, digest, signature ), error );
     }
 
@@ -299,7 +356,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_sha256(const rsa_public_key_view& pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha256(const rsa_public_key_view& pub_key, const hash256& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha256_size>( pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha256_digest_info_prefix, digest );
         });
@@ -314,7 +371,7 @@ namespace ack {
     * @param signature - RSA PKCS1 v1.5 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_sha256(const rsa_public_key_view& pub_key, const eosio::checksum256& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_sha256(const rsa_public_key_view& pub_key, const hash256& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha256( pub_key, digest, signature ), error );
     }
 
@@ -329,7 +386,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_sha512(const rsa_public_key_view& pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_sha512(const rsa_public_key_view& pub_key, const hash512& digest, const bytes_view& signature) {
         return rsassa_pkcs1_v1_5_verify<detail::pkcs1_v1_5_t_sha512_size>( pub_key, signature, [&](std::span<byte_t>&& t) {
             rsa_1_5_t_generator( t, detail::sha512_digest_info_prefix, digest );
         });
@@ -344,7 +401,7 @@ namespace ack {
     * @param signature - RSA PKCS1 v1.5 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_sha512(const rsa_public_key_view& pub_key, const eosio::checksum512& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_sha512(const rsa_public_key_view& pub_key, const hash512& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha512( pub_key, digest, signature ), error );
     }
 
@@ -359,7 +416,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_pss_sha1(const rsa_pss_public_key_view& pub_key, const eosio::checksum160& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha1(const rsa_pss_public_key_view& pub_key, const hash160& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( pub_key, digest, signature, eosio::sha1 );
     }
 
@@ -372,7 +429,7 @@ namespace ack {
     * @param signature - RSASSA-PSS MGF1 SHA-1 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_pss_sha1(const rsa_pss_public_key_view& pub_key, const eosio::checksum160& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_pss_sha1(const rsa_pss_public_key_view& pub_key, const hash160& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_pss_sha1( pub_key, digest, signature ), error );
     }
 
@@ -387,7 +444,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_pss_sha256(const rsa_pss_public_key_view& pub_key, const eosio::checksum256& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha256(const rsa_pss_public_key_view& pub_key, const hash256& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( pub_key, digest, signature, eosio::sha256 );
     }
 
@@ -400,7 +457,7 @@ namespace ack {
     * @param signature - RSASSA-PSS MGF1 SHA-256 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_pss_sha256(const rsa_pss_public_key_view& pub_key, const eosio::checksum256& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_pss_sha256(const rsa_pss_public_key_view& pub_key, const hash256& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_pss_sha256( pub_key, digest, signature ), error );
     }
 
@@ -415,7 +472,7 @@ namespace ack {
     *
     * @return false if verification has failed, true if succeeds
     */
-    [[nodiscard]] inline bool verify_rsa_pss_sha512(const rsa_pss_public_key_view& pub_key, const eosio::checksum512& digest, const bytes_view& signature) {
+    [[nodiscard]] inline bool verify_rsa_pss_sha512(const rsa_pss_public_key_view& pub_key, const hash512& digest, const bytes_view& signature) {
         return rsassa_pss_mgf1_verify( pub_key, digest, signature, eosio::sha512 );
     }
 
@@ -428,7 +485,7 @@ namespace ack {
     * @param signature - RSASSA-PSS MGF1 SHA-512 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_pss_sha512(const rsa_pss_public_key_view& pub_key, const eosio::checksum512& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_pss_sha512(const rsa_pss_public_key_view& pub_key, const hash512& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_pss_sha512( pub_key, digest, signature ), error );
     }
 }

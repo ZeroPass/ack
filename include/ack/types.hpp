@@ -8,23 +8,26 @@
 #include <vector>
 
 #include <eosio/datastream.hpp>
+#include <eosio/fixed_bytes.hpp>
 #include <eosio/varint.hpp>
 
 namespace ack {
-    using byte_t      = uint8_t;
-    using word_t      = uint32_t;
-    using bytes       = std::vector<byte_t>;
-    using bytes_view  = std::span<const byte_t>;
+    using byte_t     = uint8_t;
+    using word_t     = uint32_t;
+    using bytes      = std::vector<byte_t>;
+    using bytes_view = std::span<const byte_t>;
 
     template<std::size_t N>
     using fixed_bytes = std::array<byte_t, N>;
 
-    static constexpr size_t word_bit_size = sizeof(word_t) * 8;
+    template<std::size_t N>
+    using hash_t  = eosio::fixed_bytes<N>;
+    using hash160 = eosio::checksum160;
+    using hash256 = eosio::checksum256;
+    using hash384 = eosio::fixed_bytes<48>;
+    using hash512 = eosio::checksum512;
 
-    // helper type for the std::visit
-    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-    // explicit deduction guide (not needed as of C++20)
-    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+    static constexpr size_t word_bit_size = sizeof(word_t) * 8;
 
     inline bytes make_bytes(const bytes_view& data) {
         return bytes{ data.begin(), data.end() };

@@ -70,7 +70,7 @@ namespace ack{
      * @return true if signature is valid, false otherwise.
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const hash_t<HLen>& digest,
                                            const IntT& r, const IntT& s)
     {
         const auto bd = digest.extract_as_byte_array();
@@ -111,7 +111,7 @@ namespace ack{
      * @param error  - error message when verification fails
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
-    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const hash_t<HLen>& digest,
                              const IntT& r, const IntT& s, const char* error)
     {
         check( ecdsa_verify( q, digest, r, s ), error );
