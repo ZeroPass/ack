@@ -185,7 +185,7 @@ namespace ack {
             "the size of digest is not divisible by the size of word"
         );
 
-        eosio::fixed_bytes<Size> h;
+        fixed_bytes<Size> h;
         internal_do_not_use::keccak<21 * 8, 31>(
             reinterpret_cast<const internal_do_not_use::C*>( data.data() ),
             data.size(),
