@@ -225,7 +225,7 @@ def tvecdsa2str(tv: EcTestVector, decl_vars: bool) -> str:
     test_str += indent('test_ecdsa_verification( r, pubkey, d, sig_r, sig_s, curve );', indent_size) + '\n'
     return test_str
 
-def indent(text:str, amount, ch=' '):
+def indent(text:str, amount: int , ch: str = ' '):
     padding = amount * ch
     return ''.join(padding+line for line in text.splitlines(True))
 
@@ -243,9 +243,13 @@ def main():
         print("Couldn't determine test(s) type", file=sys.stderr)
         return 1
 
-    out_file = os.path.splitext(sys.argv[1])[0]+'.hpp'
+    if tests.entries is None:
+        print("File contains no test cases!")
+        return 0
+
+    out_file = os.path.splitext(sys.argv[1])[0] + '.hpp'
     with open(out_file, "w") as f:
-        test_cases = collections.defaultdict(dict)
+        test_cases: Dict[str, Dict[str, str]] = collections.defaultdict(dict)
         for key, entries in tests.entries.items():
             for tv in entries:
                 if tv.curve_name in supported_curves:
