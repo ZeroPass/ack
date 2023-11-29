@@ -8,7 +8,6 @@
 #include <ack/types.hpp>
 
 namespace ack {
-
     namespace internal_do_not_use {
         // Implementation in this scope was taken from:
         // https://github.com/XKCP/XKCP/blob/8f447eb59d43fef72297f5f1560e2cefea093b32/Standalone/CompactFIPS202/C/TweetableFIPS202.c
@@ -121,7 +120,7 @@ namespace ack {
      * @param data - data to hash
      * @return 256-bit hash
     */
-    inline hash256 sha3_256(const bytes_view& data)
+    [[nodiscard]] inline hash256 sha3_256(const bytes_view& data)
     {
         std::array<byte_t, 32> h;
         internal_do_not_use::keccak<17 * 8, 6>(
@@ -136,12 +135,12 @@ namespace ack {
     /**
      * SHA3-384 hash function.
      * @note Implementation parameters are based on the NIST FIPS 202 standard.
-     *      https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+     *       https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
      *
      * @param data - data to hash
      * @return 384-bit hash
     */
-    inline hash384 sha3_384(const bytes_view& data)
+    [[nodiscard]] inline hash384 sha3_384(const bytes_view& data)
     {
         std::array<byte_t, 48> h;
         internal_do_not_use::keccak<13 * 8, 6>(
@@ -156,12 +155,12 @@ namespace ack {
     /**
      * SHA3-512 hash function.
      * @note Implementation parameters are based on the NIST FIPS 202 standard.
-     *      https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
+     *       https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
      *
      * @param data - data to hash
      * @return 512-bit hash
     */
-    inline hash512 sha3_512(const bytes_view& data)
+    [[nodiscard]] inline hash512 sha3_512(const bytes_view& data)
     {
         std::array<byte_t, 64> h;
         internal_do_not_use::keccak<9 * 8, 6>(
@@ -180,7 +179,7 @@ namespace ack {
      * @return Size long hash
     */
     template<std::size_t Size>
-    inline hash_t<Size> shake128_fixed(const bytes_view& data)
+    [[nodiscard]] constexpr inline hash_t<Size> shake128_fixed(const bytes_view& data)
     {
         using hash = hash_t<Size>;
         using word_t = typename hash::word_t;
@@ -204,7 +203,7 @@ namespace ack {
      * @param hash_len - output hash length
      * @return hash_len long hash
     */
-    inline bytes shake128(const bytes_view& data, std::size_t hash_len)
+    [[nodiscard]] inline bytes shake128(const bytes_view& data, std::size_t hash_len)
     {
         bytes h( hash_len );
         internal_do_not_use::keccak<21 * 8, 31>(
@@ -223,7 +222,7 @@ namespace ack {
      * @return Size long hash
     */
     template<std::size_t Size>
-    inline hash_t<Size> shake256_fixed(const bytes_view& data)
+    [[nodiscard]] constexpr inline hash_t<Size> shake256_fixed(const bytes_view& data)
     {
         using hash = hash_t<Size>;
         using word_t = typename hash::word_t;
@@ -248,7 +247,7 @@ namespace ack {
      * @param hash_len - output hash length
      * @return hash_len long hash
     */
-    inline bytes shake256(const bytes_view& data, std::size_t out_len)
+    [[nodiscard]] inline bytes shake256(const bytes_view& data, std::size_t out_len)
     {
         bytes h( out_len );
         internal_do_not_use::keccak<17 * 8, 31>(
