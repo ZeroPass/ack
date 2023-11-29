@@ -1453,7 +1453,7 @@ namespace ack {
              * Converts this integer to non-adjacent form (NAF).
              * @return NAF representation of this integer.
             */
-            [[nodiscard]] inline std::vector<char> to_naf() const
+            [[nodiscard]] std::vector<char> to_naf() const
             {
                 std::vector<char> nafv;
                 nafv.reserve( bit_length() + 1 );

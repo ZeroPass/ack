@@ -355,7 +355,7 @@ namespace ack {
      * over a prime finite field GF(p) with short Weierstrass equation:
      * y^2 = x^3 + ax + b
      *
-     * The implementation followed the algorithms described in:
+     * The implementation follows the algorithms described in:
      *  - SECG standards SEC 1: Elliptic Curve Cryptography, Version 2.0
      *    https://www.secg.org/sec1-v2.pdf
      *  - RFC-6090: https://www.rfc-editor.org/rfc/rfc6090
@@ -1068,7 +1068,7 @@ namespace ack {
 
         /**
          * Checks if this point is on the curve by calculating
-         * the left and right hand side of the equation:  y^2 = x^3 + ax * z^4 + b * z^6
+         * the left and right hand side of the equation: y^2 = x^3 + ax * z^4 + b * z^6
          *
          * @return true if this point is on the curve, false otherwise
          * @note Slow operation
@@ -1709,9 +1709,9 @@ namespace ack {
     };
 
     /**
-     * Fast multiplication of points and addition of points, i.e. a*P + b*Q
-     * Function uses Shamir's trick to calculate a*P + b*Q in one batch,
-     * thus the speedup shoule be ~2x.
+     * Fast multiplication of points and addition of points, i.e.: a*P + b*Q
+     * Function uses combination of non-adjacent form of number (NAF) and
+     * Shamir's trick to calculate a*P + b*Q in one batch, thus the speedup shoule be ~2.5x.
      *
      * @tparam PointT - point type
      * @tparam CurveT - curve type
@@ -1722,34 +1722,64 @@ namespace ack {
      * @param q - Second point
      * @return PointT - Result of a*P + b*Q
     */
-    template<typename PointT, typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] PointT ec_mul_add_fast(const IntT& a, const ec_point_base<PointT, CurveT>& p,
-                                         const IntT& b, const ec_point_base<PointT, CurveT>& q)
+    template <typename PointT, typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]] static PointT ec_mul_add_fast(const IntT &a, const ec_point_base<PointT, CurveT> &p,
+                                                const IntT &b, const ec_point_base<PointT, CurveT> &q)
     {
-        using bpt = ec_point_base<PointT, CurveT>;
-
-        auto s1_bits = a.bit_length();
-        auto s2_bits = b.bit_length();
-        int l = std::max(s1_bits, s2_bits) - 1;
-
-        const PointT pq_sum = p + q;
-        const bpt* points[4] = { nullptr, &p, &q, &pq_sum };
-
-        const auto get_point = [&](int i) {
-            return points[ a.test_bit( i ) | ( b.test_bit( i ) << 1 ) ];
-        };
-
-        PointT r;
-        auto point = get_point( l-- );
-        if (point) {
-            r = static_cast<const PointT&>( *point );
+        // Get the NAF representations of a and b.
+        auto a_naf = a.to_rnaf();
+        auto b_naf = b.to_rnaf();
+        if ( a_naf.size() < b_naf.size() ) {
+            a_naf.insert( a_naf.begin(), b_naf.size() - a_naf.size(), 0 );
+        } else if ( a_naf.size() > b_naf.size() ) {
+            b_naf.insert( b_naf.begin(), a_naf.size() - b_naf.size(), 0 );
         }
 
-        for( ; l >= 0; l-- ) {
+        // Precompute required points
+        const auto pneg         = -p;
+        const auto qneg         = -q;
+        const auto pnegqneg     = pneg + qneg;
+        const auto pqneg        = p + qneg;
+        const auto pqneg_inv    = -pqneg;
+        const auto pnegqneg_inv = -pnegqneg;
+
+        // Iterate reversed NAF representations of a and b,
+        // optimized for cases where this.z == 1.
+        PointT r;
+        for ( std::size_t i = 0; i < a_naf.size(); i++ ) {
             r = r.doubled();
-            auto point = get_point( l );
-            if (point) {
-                r += *point;
+            if ( a_naf[i] == 0 ) {
+                if ( b_naf[i] == 0 ) {
+                    continue;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += qneg;
+                }
+                else {
+                    r += q;
+                }
+            }
+            else if ( a_naf[i] < 0 ) {
+                if ( b_naf[i] == 0 ) {
+                    r += pneg;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += pnegqneg;
+                }
+                else {
+                    r += pqneg_inv;
+                }
+            }
+            else { // a_naf[i] > 0
+                if ( b_naf[i] == 0 ) {
+                    r += p;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += pqneg;
+                }
+                else {
+                    r += pnegqneg_inv;
+                }
             }
         }
 

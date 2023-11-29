@@ -39,10 +39,10 @@ namespace ack{
             e -= curve.n;
         }
 
-        IntT w  = s.modinv( curve.n );
-        auto u1 = ( e * w ) % curve.n;
-        auto u2 = ( r * w ) % curve.n;
-        auto rr = ec_mul_add_fast( u1, ec_point_fp_proj( curve.g ), u2, ec_point_fp_proj( q ) )
+        const IntT w  = s.modinv( curve.n );
+        const auto u1 = ( e * w ) % curve.n;
+        const auto u2 = ( r * w ) % curve.n;
+        auto rr = ec_mul_add_fast( u1, ec_point_fp_jacobi( curve.g ), u2, ec_point_fp_jacobi( q ) )
             .to_affine();
 
         if ( rr.is_identity() ) {
