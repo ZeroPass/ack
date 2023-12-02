@@ -485,7 +485,7 @@ namespace ack {
             // Calculate new x and y
             auto x3 = s.sqr() - x - a.x;
             auto y3 = s * ( x - x3 ) - y;
-            return ec_point_fp( this->curve(), x3, y3 );
+            return ec_point_fp( this->curve(), std::move( x3 ), std::move( y3 ) );
         }
 
         /**
@@ -501,13 +501,12 @@ namespace ack {
             }
 
             // Calculate tangent slope
-            auto x_sqr = x.sqr();
-            auto s = ( x_sqr + x_sqr + x_sqr + this->curve().a ) / ( y + y ) ;
+            const auto s = ( 3 * x.sqr() + this->curve().a ) / ( 2 * y ) ;
 
             // Calculate new x and y
-            auto x2 = s.sqr() - x - x;
+            auto x2 = s.sqr() - 2 * x;
             auto y2 = s * ( x - x2 ) - y;
-            return ec_point_fp( this->curve(), x2, y2 );
+            return ec_point_fp( this->curve(), std::move( x2 ), std::move( y2 ) );
         }
 
         /**
@@ -792,10 +791,10 @@ namespace ack {
                 return p;
             }
 
-            auto t0 = p.y * q.z;
-            auto t1 = q.y * p.z;
-            auto u0 = p.x * q.z;
-            auto u1 = q.x * p.z;
+           const auto t0 = p.y * q.z;
+           const auto t1 = q.y * p.z;
+           const auto u0 = p.x * q.z;
+           const auto u1 = q.x * p.z;
             if ( u0 == u1 ) {
                 if ( t0 == t1 ) {
                     return doubled();
@@ -805,14 +804,14 @@ namespace ack {
             }
 
             // Note: Wrapping the following code in 3 lambdas
-            //       can make a little bit faster execution time (few 10s of us)
-            auto t  = t0 - t1;
-            auto u  = u0 - u1;
-            auto u2 = u.sqr();
-            auto u3 = u * u2;
+            //       can make slightly faster execution time (few 10s of us)
+            const auto t  = t0 - t1;
+            const auto u  = u0 - u1;
+            const auto u2 = u.sqr();
+            const auto u3 = u * u2;
 
-            auto v  = p.z * q.z;
-            auto w  = t * t * v - u2 * ( u0 + u1 );
+            const auto v  = p.z * q.z;
+            const auto w  = t.sqr() * v - u2 * ( u0 + u1 );
 
             auto rx = u * w;
             auto ry = t * ( u0 * u2 - w ) - t0 * u3;
@@ -838,13 +837,14 @@ namespace ack {
             }
 
             auto t  = p.x.sqr() * 3 + this->curve().a * p.z.sqr();
-            auto u  = p.y * p.z * 2;
-            auto v  = u * p.x * p.y * 2;
-            auto w  = t.sqr() - v * 2;
+            const auto dy = 2 * p.y;
+            const auto u  = dy * p.z;
+            const auto v  = u * p.x * dy;
+            const auto w  = t.sqr() - v * 2;
 
             auto rx = u * w;
 
-            auto u2 = u.sqr();
+            const auto u2 = u.sqr();
             auto ry = t * ( v - w ) - u2 * p.y.sqr() * 2;
 
             auto rz = u2 * u;
@@ -1365,7 +1365,7 @@ namespace ack {
             __attribute__((always_inline))
             static ec_point_fp_jacobi add_ne(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
             {
-                // This extra function, although inlined, produces a little bit more efficient code than
+                // This extra function, although inlined, produces slightly more efficient code than
                 // it would if put directly into the calling scope.
                 const auto pz2 = p.z.sqr();
                 const auto qz2 = q.z.sqr();
