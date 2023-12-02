@@ -1147,31 +1147,19 @@ namespace ack {
 
             // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
             // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
-            auto pz2 = p.z.sqr();
-            auto qz2 = q.z.sqr();
-            auto U1 = p.x * qz2;
-            auto U2 = q.x * pz2;
-            auto S1 = p.y * qz2 * q.z;
-            auto S2 = q.y * pz2 * p.z;
 
-            auto H  = U2 - U1;
-            auto R  = S2 - S1;
-            if ( H.is_zero() ) {
-                if ( R.is_zero() ) {
-                    return doubled();
-                } else {
-                    return ec_point_fp_jacobi();
-                }
+            const bool bZ1IsOne = p.z.is_one();
+            const bool bZ2IsOne = q.z.is_one();
+            if ( bZ1IsOne && bZ2IsOne ) {
+                return add_z_1( p, q );
             }
-
-            auto H2 = H.sqr();
-            auto H3 = H2 * H;
-            auto V  = U1 * H2;
-
-            auto X3 = R.sqr() - H3 - 2 * V;
-            auto Y3 = R * ( V - X3 ) - S1 * H3;
-            auto Z3 = H * p.z * q.z;
-            return make_point( std::move(X3), std::move(Y3), std::move(Z3) );
+            else if ( bZ1IsOne ) {
+                return add_z2_1( q, p );
+            }
+            else if ( bZ2IsOne ) {
+                return add_z2_1( p, q );
+            }
+            return add_ne( p, q );
         }
 
         /**
@@ -1323,6 +1311,65 @@ namespace ack {
                     field_element_type( std::move(y), this->curve().p ),
                     field_element_type( std::move(z), this->curve().p )
                 );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline)) // note: forced inline produces a little more efficient computation. [[clang::always_inline]] doesn't work.
+            static ec_point_fp_jacobi addex(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q,
+                                            const field_element_type& U1, const field_element_type& U2,
+                                            const field_element_type& S1, const field_element_type& S2)
+            {
+                // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
+                //  note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
+                const auto H  = U2 - U1;
+                const auto R  = S2 - S1;
+                if ( H.is_zero() ) {
+                    if ( R.is_zero() ) {
+                        return p.doubled();
+                    } else {
+                        return ec_point_fp_jacobi();
+                    }
+                }
+                const auto H2 = H.sqr();
+                const auto H3 = H2 * H;
+                const auto V  = U1 * H2;
+
+                const auto X3 = R.sqr() - H3 - 2 * V;
+                const auto Y3 = R * ( V - X3 ) - S1 * H3;
+                auto Z3 = std::move( H );
+                if ( !p.z.is_one() ) {
+                    Z3 *= p.z;
+                }
+                if ( !q.z.is_one() ) {
+                    Z3 *= q.z;
+                }
+                return ec_point_fp_jacobi( p.curve(), std::move(X3), std::move(Y3), std::move(Z3) );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_z_1(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                return addex( p, q, p.x, q.x, p.y, q.y );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_z2_1(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                const auto pz2 = p.z.sqr();
+                return addex( p, q, p.x, q.x * pz2, p.y, q.y * pz2 * p.z );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_ne(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                // This extra function, although inlined, produces a little bit more efficient code than
+                // it would if put directly into the calling scope.
+                const auto pz2 = p.z.sqr();
+                const auto qz2 = q.z.sqr();
+                return addex( p, q, p.x * qz2, q.x * pz2, p.y * qz2 * q.z, q.y * pz2 * p.z );
             }
     };
 
@@ -1652,7 +1699,7 @@ namespace ack {
                 return false;
             }
 
-            // check that the discriminant is nonzero. If zero, the curve is singular.
+            // check that discriminant is nonzero. If zero, the curve is singular.
             if ( ( -16 * y2 ) == 0) {
                 return false;
             }
@@ -1744,7 +1791,7 @@ namespace ack {
         const auto pnegqneg_inv = -pnegqneg;
 
         // Iterate reversed NAF representations of a and b,
-        // optimized for cases where this.z == 1.
+        // optimized for cases where p.z == 1 or q.z == 1.
         PointT r;
         for ( std::size_t i = 0; i < a_naf.size(); i++ ) {
             r = r.doubled();
