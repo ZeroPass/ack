@@ -836,7 +836,17 @@ namespace ack {
                 return ec_point_fp_proj(); // identity
             }
 
-            auto t  = p.x.sqr() * 3 + this->curve().a * p.z.sqr();
+            const auto t = []( const ec_point_fp_proj& p) {
+                const auto x2 = p.x.sqr();
+                if ( p.curve().a_is_zero ) {
+                    return 3 * x2;
+                }
+                if ( p.curve().a_is_minus_3 ) {
+                    return 3 * ( x2 - p.z.sqr() );
+                }
+                return 3 * x2 + p.curve().a * p.z.sqr();
+            }( p );
+
             const auto dy = 2 * p.y;
             const auto u  = dy * p.z;
             const auto v  = u * p.x * dy;
@@ -1179,16 +1189,30 @@ namespace ack {
                 return ec_point_fp_jacobi(); // identity
             }
 
-            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-1998-cmo-2
-            // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-2007-bl
-            auto y2 = p.y.sqr();
-            auto z2 = p.z.sqr();
-            auto S  = 4 * p.x * y2;
-            auto M  = 3 * p.x.sqr() + this->curve().a * z2.sqr();
-            auto RX = M.sqr() - 2 * S;
-            auto RY = M * ( S - RX ) - 8 * y2.sqr();
-            auto RZ = 2 * p.y * p.z;
-            return make_point( std::move(RX), std::move(RY), std::move(RZ) );
+            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-1986-cc
+            // note: this algo was measured to be the most efficient of them all.
+
+            const auto M = [](const auto& p) {
+                const bool bZIsOne = p.z.is_one();
+                if ( p.curve().a_is_zero ) {
+                    return 3 * p.x.sqr();
+                }
+                else if ( p.curve().a_is_minus_3 ) {
+                    const auto z2 = bZIsOne ? p.z : p.z.sqr();
+                    return 3 * ( p.x - z2 ) * ( p.x + z2 );
+                }
+                else {
+                    const auto z4 = bZIsOne ? p.z : p.z.sqr().sqr();
+                    return 3 * p.x.sqr() + p.curve().a * z4;
+                }
+            }( p );
+
+            const auto y2 = p.y.sqr();
+            const auto S  = 4 * p.x * y2;
+            auto X3 = M.sqr() - 2 * S;
+            auto Y3 = M * ( S - X3 ) - 8 * y2.sqr();
+            auto Z3 = 2 * p.y * p.z;
+            return make_point( std::move(X3), std::move(Y3), std::move(Z3) );
         }
 
         /**
@@ -1314,7 +1338,7 @@ namespace ack {
             }
 
             [[nodiscard]]
-            __attribute__((always_inline)) // note: forced inline produces a little more efficient computation. [[clang::always_inline]] doesn't work.
+            __attribute__((always_inline)) // note: forced inline produces slightly more efficient computation. [[clang::always_inline]] doesn't work.
             static ec_point_fp_jacobi addex(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q,
                                             const field_element_type& U1, const field_element_type& U2,
                                             const field_element_type& S1, const field_element_type& S2)
@@ -1334,8 +1358,8 @@ namespace ack {
                 const auto H3 = H2 * H;
                 const auto V  = U1 * H2;
 
-                const auto X3 = R.sqr() - H3 - 2 * V;
-                const auto Y3 = R * ( V - X3 ) - S1 * H3;
+                auto X3 = R.sqr() - H3 - 2 * V;
+                auto Y3 = R * ( V - X3 ) - S1 * H3;
                 auto Z3 = std::move( H );
                 if ( !p.z.is_one() ) {
                     Z3 *= p.z;
@@ -1506,6 +1530,8 @@ namespace ack {
         const IntT       n;      // order of g
         const uint32_t   h;      // cofactor, i.e.: h = #E(Fp) / n
                                  //     #E(Fp) - number of points on the curve
+        const bool a_is_minus_3; // cached a == p - 3
+        const bool a_is_zero;    // cached a == 0
 
         /**
          * Creates a curve from the given parameters.
@@ -1522,7 +1548,9 @@ namespace ack {
             b( std::move(b) ),
             g( make_point( std::move(g.first), std::move(g.second) )),
             n( std::move(n) ),
-            h( h )
+            h( h ),
+            a_is_minus_3( a == ( p - 3) ),
+            a_is_zero( a.is_zero() )
         {}
 
         /**

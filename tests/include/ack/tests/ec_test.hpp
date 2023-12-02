@@ -2916,6 +2916,13 @@ namespace ack::tests {
         using point_proj_type   = secp256k1_point_proj;
         using point_jacobi_type = secp256k1_point_jacobi;
 
+        // Just making sure variables are correctly calculated and cached
+        static_assert( curve.a_is_minus_3 == false );
+        REQUIRE_EQUAL( curve.a_is_minus_3 == false, true )
+
+        static_assert( curve.a_is_zero == true );
+        REQUIRE_EQUAL( curve.a_is_zero == true, true )
+
         // Custom test generated with python
         {
             auto k  = bn_t( "C6047F9441ED7D6D3045406E95C07CD85C778E4B8CEF3" );
@@ -3584,9 +3591,16 @@ namespace ack::tests {
         using namespace detail;
         using namespace std::string_view_literals;
         using bn_t              = typename secp256r1_t::int_type;
-        const auto& curve       = secp256r1;
+        constexpr auto& curve   = secp256r1;
         using point_proj_type   = secp256r1_point_proj;
         using point_jacobi_type = secp256r1_point_jacobi;
+
+        // Just making sure variables are correctly calculated and cached
+        static_assert( curve.a_is_minus_3 == true );
+        REQUIRE_EQUAL( curve.a_is_minus_3 == true, true )
+
+        static_assert( curve.a_is_zero == false );
+        REQUIRE_EQUAL( curve.a_is_zero == false, true )
 
         // Test vectors from Botan library
         // src: https://github.com/randombit/botan/blob/321a50789e6eeda6898af114492445f0882ee70f/src/tests/data/pubkey/ecc_var_point_mul.vec
