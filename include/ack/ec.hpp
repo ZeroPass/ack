@@ -45,7 +45,7 @@ namespace ack {
          * Checks if this point is the identity element of the curve, i.e. point at infinity.
          * @return true if this point is the identity element of the curve, false otherwise
         */
-        constexpr bool is_identity() const
+        inline constexpr bool is_identity() const
         {
             return underlying().is_identity();
         }
@@ -54,7 +54,7 @@ namespace ack {
          * Checks if this point is on the curve.
          * @return true if this point is on the curve, false otherwise
         */
-        [[nodiscard]] bool is_on_curve() const
+        [[nodiscard]] inline bool is_on_curve() const
         {
             return underlying().is_on_curve();
         }
@@ -64,7 +64,7 @@ namespace ack {
          * @note Should do SEC 1 section 3.2.2.1 like verification.
          * @return true if this point is valid, false otherwise
         */
-        [[nodiscard]] bool is_valid() const
+        [[nodiscard]] inline bool is_valid() const
         {
             return underlying().is_valid();
         }
@@ -75,7 +75,7 @@ namespace ack {
          *
          * @return the inverse of this point
         */
-        [[nodiscard]] constexpr PointT inverted() const
+        [[nodiscard]] inline constexpr PointT inverted() const
         {
             return underlying().inverted();
         }
@@ -87,7 +87,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT add(const PointT& a) const
+        [[nodiscard]] inline PointT add(const PointT& a) const
         {
             return underlying().add( a );
         }
@@ -99,7 +99,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT add(const ec_point_base& a) const
+        [[nodiscard]] inline PointT add(const ec_point_base& a) const
         {
             return add( a.underlying() );
         }
@@ -110,7 +110,7 @@ namespace ack {
          *
          * @return the double of this point
         */
-        [[nodiscard]] PointT doubled() const
+        [[nodiscard]] inline PointT doubled() const
         {
             return underlying().doubled();
         }
@@ -122,7 +122,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT sub(const PointT& a) const
+        [[nodiscard]] inline PointT sub(const PointT& a) const
         {
             return underlying().sub( a );
         }
@@ -134,7 +134,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] PointT sub(const ec_point_base& a) const
+        [[nodiscard]] inline PointT sub(const ec_point_base& a) const
         {
             return sub( a.underlying() );
         }
@@ -146,7 +146,7 @@ namespace ack {
          * @param scalar - the scalar to multiply this point by
          * @return the resulting point
         */
-        [[nodiscard]] PointT mul(const int_type& scalar) const
+        [[nodiscard]] inline PointT mul(const int_type& scalar) const
         {
             return underlying().mul( scalar );
         }
@@ -159,12 +159,12 @@ namespace ack {
          * @param b - the point to add to the other point
          * @return reference to this point
         */
-        [[nodiscard]] friend PointT operator + (const PointT& a, const PointT& b)
+        [[nodiscard]] friend inline PointT operator + (const PointT& a, const PointT& b)
         {
             return a.add( b );
         }
 
-        [[nodiscard]] friend PointT operator + (const ec_point_base& a, const ec_point_base& b)
+        [[nodiscard]] friend inline PointT operator + (const ec_point_base& a, const ec_point_base& b)
         {
             return a.add( b );
         }
@@ -176,7 +176,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        PointT& operator += (const PointT& a)
+        inline PointT& operator += (const PointT& a)
         {
             return underlying() = add( a );
         }
@@ -188,7 +188,7 @@ namespace ack {
          * @param a - the point to add to this point
          * @return reference to this point
         */
-        PointT& operator += (const ec_point_base& a)
+        inline PointT& operator += (const ec_point_base& a)
         {
             return this-> operator += ( a.underlying() );
         }
@@ -201,7 +201,7 @@ namespace ack {
          * @param b - the point to subtract from the other point
          * @return the result point of the subtraction
         */
-        [[nodiscard]] friend PointT operator - (const PointT& a, const PointT& b)
+        [[nodiscard]] friend inline PointT operator - (const PointT& a, const PointT& b)
         {
             return a.sub( b );
         }
@@ -214,7 +214,7 @@ namespace ack {
          * @param b - the point to subtract from the other point
          * @return the result point of the subtraction
         */
-        [[nodiscard]] friend PointT operator - (const ec_point_base& a, const ec_point_base& b)
+        [[nodiscard]] friend inline PointT operator - (const ec_point_base& a, const ec_point_base& b)
         {
             return a.sub( b );
         }
@@ -226,7 +226,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        PointT& operator -= (const PointT& a)
+        inline PointT& operator -= (const PointT& a)
         {
             return underlying() = sub( a );
         }
@@ -238,7 +238,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        PointT& operator -= (const ec_point_base& a)
+        inline PointT& operator -= (const ec_point_base& a)
         {
             return this->operator -= ( a.underlying() );
         }
@@ -251,7 +251,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const PointT& p, const int_type& s)
+        [[nodiscard]] friend inline PointT operator * (const PointT& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -264,7 +264,7 @@ namespace ack {
          * @param s - the scalar to multiply the point by
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const ec_point_base& p, const int_type& s)
+        [[nodiscard]] friend inline PointT operator * (const ec_point_base& p, const int_type& s)
         {
             return p.mul( s );
         }
@@ -277,7 +277,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const int_type& s, const PointT& p)
+        [[nodiscard]] friend inline PointT operator * (const int_type& s, const PointT& p)
         {
             return p.mul( s );
         }
@@ -290,7 +290,7 @@ namespace ack {
          * @param p - the point to multiply
          * @return the result point of the multiplication
         */
-        [[nodiscard]] friend PointT operator * (const int_type& s, const ec_point_base& p)
+        [[nodiscard]] friend inline PointT operator * (const int_type& s, const ec_point_base& p)
         {
             return p.mul( s );
         }
@@ -302,7 +302,7 @@ namespace ack {
          * @param s - the scalar to multiply this point by.
          * @return reference to this point
         */
-        PointT& operator *= (const int_type& s)
+        inline PointT& operator *= (const int_type& s)
         {
             return underlying() = mul( s );
         }
@@ -313,7 +313,7 @@ namespace ack {
          *
          * @return the inverse of this point
         */
-        [[nodiscard]] constexpr PointT operator - () const
+        [[nodiscard]] inline constexpr PointT operator - () const
         {
             return inverted();
         }
@@ -323,12 +323,12 @@ namespace ack {
                 curve_( &curve )
             {}
 
-            constexpr inline PointT& underlying()
+            inline constexpr PointT& underlying()
             {
                 return static_cast<PointT&>( *this );
             }
 
-            constexpr inline const PointT& underlying() const
+            inline constexpr const PointT& underlying() const
             {
                 return static_cast<const PointT&>( *this );
             }
@@ -340,7 +340,7 @@ namespace ack {
     };
 
     // Forward declaration of ec_curve_fp
-    template<typename BigNumT, typename CurveTag>
+    template<typename IntT, typename CurveTag>
     struct ec_curve_fp;
 
     /**
@@ -355,7 +355,7 @@ namespace ack {
      * over a prime finite field GF(p) with short Weierstrass equation:
      * y^2 = x^3 + ax + b
      *
-     * The implementation followed the algorithms described in:
+     * The implementation follows the algorithms described in:
      *  - SECG standards SEC 1: Elliptic Curve Cryptography, Version 2.0
      *    https://www.secg.org/sec1-v2.pdf
      *  - RFC-6090: https://www.rfc-editor.org/rfc/rfc6090
@@ -391,7 +391,7 @@ namespace ack {
          * Checks if this point is the identity element of the curve, i.e. point at infinity.
          * @return true if this point is the identity element of the curve, false otherwise
         */
-        constexpr bool is_identity() const
+        inline constexpr bool is_identity() const
         {
             return this->curve_ == nullptr || ( x.is_zero() && y.is_zero() );
         }
@@ -485,7 +485,7 @@ namespace ack {
             // Calculate new x and y
             auto x3 = s.sqr() - x - a.x;
             auto y3 = s * ( x - x3 ) - y;
-            return ec_point_fp( this->curve(), x3, y3 );
+            return ec_point_fp( this->curve(), std::move( x3 ), std::move( y3 ) );
         }
 
         /**
@@ -501,13 +501,12 @@ namespace ack {
             }
 
             // Calculate tangent slope
-            auto x_sqr = x.sqr();
-            auto s = ( x_sqr + x_sqr + x_sqr + this->curve().a ) / ( y + y ) ;
+            const auto s = ( 3 * x.sqr() + this->curve().a ) / ( 2 * y ) ;
 
             // Calculate new x and y
-            auto x2 = s.sqr() - x - x;
+            auto x2 = s.sqr() - 2 * x;
             auto y2 = s * ( x - x2 ) - y;
-            return ec_point_fp( this->curve(), x2, y2 );
+            return ec_point_fp( this->curve(), std::move( x2 ), std::move( y2 ) );
         }
 
         /**
@@ -517,7 +516,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] ec_point_fp sub(const ec_point_fp& a) const
+        [[nodiscard]] inline ec_point_fp sub(const ec_point_fp& a) const
         {
             return *this + (-a);
         }
@@ -547,7 +546,7 @@ namespace ack {
             auto tmp = *this;
             auto s   = scalar;
             while ( s != 0 ) {
-                if ( ( s & 1U ) != 0 ) {
+                if ( s.is_odd() ) {
                     r += tmp;
                 }
                 tmp = tmp.doubled();
@@ -580,7 +579,7 @@ namespace ack {
          * @param b - the second point to compare
          * @return true if the points are not equal, false otherwise
         */
-        constexpr friend bool operator != (const ec_point_fp& a, const ec_point_fp& b)
+        constexpr friend inline bool operator != (const ec_point_fp& a, const ec_point_fp& b)
         {
             return !(a == b);
         }
@@ -589,6 +588,9 @@ namespace ack {
             friend CurveT;
             template<typename>
             friend struct ec_point_fp_proj;
+            template<typename>
+            friend struct ec_point_fp_jacobi;
+
             constexpr ec_point_fp( const CurveT& curve, field_element_type x, field_element_type y ) :
                 base_type( curve ),
                 x( std::move(x) ),
@@ -710,7 +712,7 @@ namespace ack {
         */
         [[nodiscard]] constexpr bool is_identity() const
         {
-            return this->curve_ == nullptr ||( z.is_zero() );
+            return this->curve_ == nullptr || ( z.is_zero() );
         }
 
         /**
@@ -725,7 +727,7 @@ namespace ack {
                 return true;
             }
             const auto z2 = z.sqr();
-            return ( y.sqr() * z - ( ( x.sqr() * x + this->curve().a * x * z2 + this->curve().b * z * z2 ) ) ) == 0;
+            return ( y.sqr() * z - ( ( ( x.sqr() + this->curve().a * z2 ) * x  + this->curve().b * z * z2 ) ) ) == 0;
         }
 
         /**
@@ -789,10 +791,10 @@ namespace ack {
                 return p;
             }
 
-            auto t0 = p.y * q.z;
-            auto t1 = q.y * p.z;
-            auto u0 = p.x * q.z;
-            auto u1 = q.x * p.z;
+           const auto t0 = p.y * q.z;
+           const auto t1 = q.y * p.z;
+           const auto u0 = p.x * q.z;
+           const auto u1 = q.x * p.z;
             if ( u0 == u1 ) {
                 if ( t0 == t1 ) {
                     return doubled();
@@ -802,14 +804,14 @@ namespace ack {
             }
 
             // Note: Wrapping the following code in 3 lambdas
-            //       can make a little bit faster execution time (few 10s of us)
-            auto t  = t0 - t1;
-            auto u  = u0 - u1;
-            auto u2 = u.sqr();
-            auto u3 = u * u2;
+            //       can make slightly faster execution time (few 10s of us)
+            const auto t  = t0 - t1;
+            const auto u  = u0 - u1;
+            const auto u2 = u.sqr();
+            const auto u3 = u * u2;
 
-            auto v  = p.z * q.z;
-            auto w  = t * t * v - u2 * ( u0 + u1 );
+            const auto v  = p.z * q.z;
+            const auto w  = t.sqr() * v - u2 * ( u0 + u1 );
 
             auto rx = u * w;
             auto ry = t * ( u0 * u2 - w ) - t0 * u3;
@@ -834,14 +836,25 @@ namespace ack {
                 return ec_point_fp_proj(); // identity
             }
 
-            auto t  = p.x.sqr() * 3 + this->curve().a * p.z.sqr();
-            auto u  = p.y * p.z * 2;
-            auto v  = u * p.x * p.y * 2;
-            auto w  = t.sqr() - v * 2;
+            const auto t = []( const ec_point_fp_proj& p) {
+                const auto x2 = p.x.sqr();
+                if ( p.curve().a_is_zero ) {
+                    return 3 * x2;
+                }
+                if ( p.curve().a_is_minus_3 ) {
+                    return 3 * ( x2 - p.z.sqr() );
+                }
+                return 3 * x2 + p.curve().a * p.z.sqr();
+            }( p );
+
+            const auto dy = 2 * p.y;
+            const auto u  = dy * p.z;
+            const auto v  = u * p.x * dy;
+            const auto w  = t.sqr() - v * 2;
 
             auto rx = u * w;
 
-            auto u2 = u.sqr();
+            const auto u2 = u.sqr();
             auto ry = t * ( v - w ) - u2 * p.y.sqr() * 2;
 
             auto rz = u2 * u;
@@ -855,7 +868,7 @@ namespace ack {
          * @param a - the point to subtract from this point
          * @return reference to this point
         */
-        [[nodiscard]] ec_point_fp_proj sub(const ec_point_fp_proj& a) const
+        [[nodiscard]] inline ec_point_fp_proj sub(const ec_point_fp_proj& a) const
         {
             return *this + (-a);
         }
@@ -885,7 +898,7 @@ namespace ack {
             auto tmp = *this;
             auto s   = scalar;
             while ( s != 0 ) {
-                if ( ( s & 1U ) != 0 ) {
+                if ( s.is_odd() ) {
                     r += tmp;
                 }
                 tmp = tmp.doubled();
@@ -923,7 +936,7 @@ namespace ack {
          * @param b - the second point to compare
          * @return true if the points are not equal, false otherwise
         */
-        constexpr friend bool operator != (const ec_point_fp_proj& a, const ec_point_fp_proj& b)
+        constexpr friend inline bool operator != (const ec_point_fp_proj& a, const ec_point_fp_proj& b)
         {
             return !( a == b );
         }
@@ -944,6 +957,447 @@ namespace ack {
     };
 
     /**
+     * Struct representing a point on an elliptic curve in Jacobian coordinates
+     * over a prime finite field GF(p) for a short Weierstrass-form elliptic curve satisfying the equation:
+     *   y^2 = x^3 + ax * z^4 + b * z^6
+     *
+     * The use of Jacobian coordinates results in more efficient arithmetic operations
+     * compared to projective or affine coordinates.
+     *
+     *
+     * @warning The point's curve is stored as a pointer to the curve object.
+     *          The curve object must outlive the point object.
+     *
+     * @tparam CurveT - the curve type. Required to be an instance of ec_curve_fp.
+    */
+    template<typename CurveT>
+    struct ec_point_fp_jacobi : ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>
+    {
+        static_assert( is_ec_curve_fp<CurveT> );
+
+        using base_type          = ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>;
+        using int_type           = typename CurveT::int_type;
+        using field_element_type = typename CurveT::field_element_type;
+        using affine_point_type  = ec_point_fp<CurveT>;
+        using base_type::base_type;
+
+        field_element_type x;
+        field_element_type y;
+        field_element_type z;
+
+        /**
+         * Constructs a point at infinity
+        */
+        constexpr ec_point_fp_jacobi() :
+            base_type(),
+            x( field_element_type::zero() ),
+            y( field_element_type::one()  ),
+            z( field_element_type::zero() )
+        {}
+
+        /**
+         * Constructs this point from the given affine point.
+         * @warning The point's curve is stored as a pointer to the curve object.
+         *          The curve object must outlive the point object.
+         *
+         * @param p - the affine point to construct this point from.
+        */
+        explicit constexpr ec_point_fp_jacobi(affine_point_type p) :
+            ec_point_fp_jacobi()
+        {
+            if ( !p.is_identity() ) {
+                this->curve_ = &p.curve();
+                x = std::move(p.x);
+                y = std::move(p.y);
+                z = field_element_type( 1, p.curve().p );
+            }
+        }
+
+        /**
+         * Normalizes this point.
+         * This ensures Z coordinate is 1 therefore the x, y coordinates reflect
+         * those of the equivalent to point in an affine coordinate system.
+         *
+         * @return this point
+        */
+        ec_point_fp_jacobi& normalize()
+        {
+            if ( !is_identity() && !z.is_one() ) {
+                const auto z_inv  = z.inv();
+                const auto z_inv2 = z_inv * z_inv;
+                x *= z_inv2;
+                y *= z_inv2 * z_inv;
+                z = 1;
+            }
+            return *this;
+        }
+
+        /**
+         * Returns the normalized representation of this point.
+         * This ensures Z coordinate is 1 therefore the x, y coordinates reflect
+         * those of the equivalent to point in an affine coordinate system.
+        */
+        [[nodiscard]] ec_point_fp_jacobi normalized() const
+        {
+            auto r = *this;
+            r.normalize();
+            return r;
+        }
+
+        /**
+         * Returns the affine representation of this point.
+         * @note No point verification is performed.
+         * @note Slow operation due to division.
+         *
+         * @return this point in affine form.
+        */
+        [[nodiscard]] const affine_point_type to_affine() const
+        {
+            if ( is_identity() ) {
+                return affine_point_type();
+            }
+            if ( z.is_one() ) {
+                return affine_point_type( this->curve(), x, y );
+            }
+
+            // It is assumed that the point is on the curve and therefore calculated x and y are valid.
+            // Calling affine_point_type() constructor will skip verification check.
+            const auto z_inv  = z.inv();
+            const auto z_inv2 = z_inv.sqr();
+            return affine_point_type( this->curve(), x * z_inv2, y * z_inv2 * z_inv );
+        }
+
+        /**
+         * Checks if this point is the identity element of the curve, i.e. point at infinity.
+         * @return true if this point is the identity element of the curve, false otherwise
+        */
+        [[nodiscard]] inline constexpr bool is_identity() const
+        {
+            return this->curve_ == nullptr || ( z.is_zero() );
+        }
+
+        /**
+         * Checks if this point is on the curve by calculating
+         * the left and right hand side of the equation: y^2 = x^3 + ax * z^4 + b * z^6
+         *
+         * @return true if this point is on the curve, false otherwise
+         * @note Slow operation
+        */
+        [[nodiscard]] bool is_on_curve() const
+        {
+            if ( is_identity() ) {
+                return true;
+            }
+            const auto z2 = z.sqr();
+            const auto z4 = z2.sqr();
+            const auto z6 = z2 * z4;
+            return  y.sqr() == ( ( ( x.sqr() + this->curve().a * z4 ) * x + this->curve().b * z6 ) ) ;
+        }
+
+        /**
+         * Performs SEC 1 section 3.2.2.1 point check,
+         * i.e. if point was generated using curve generator g and is not identity element.
+         * Checks:
+         *    - point is not the identity element
+         *    - point is on the curve
+         *    - point has order n
+         *
+         * @note Slow operation.
+         *
+         * @return true if this point is valid, false otherwise
+        */
+        [[nodiscard]] bool is_valid() const
+        {
+            if ( is_identity() ) {
+                return false;
+            }
+
+            if ( !is_on_curve() ) {
+                return false;
+            }
+
+            if ( !(this->curve().n * *this).is_identity() ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Returns the inverse of this point.
+         * R = -this
+         *
+         * @return the inverse of this point
+        */
+        [[nodiscard]] constexpr ec_point_fp_jacobi inverted() const
+        {
+            if ( is_identity() ) {
+                return *this;
+            }
+            return ec_point_fp_jacobi( this->curve(), x, -y, z );
+        }
+
+        /**
+         * Adds the given point to this point.
+         * R = this + a
+         *
+         * @param a - the point to add to this point
+         * @return reference to this point
+        */
+        [[nodiscard]] ec_point_fp_jacobi add(const ec_point_fp_jacobi& q) const
+        {
+            const auto& p = *this;
+            if ( p.is_identity() ) {
+                return q;
+            }
+
+            if ( q.is_identity() ) {
+                return p;
+            }
+
+            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
+            // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
+
+            const bool bZ1IsOne = p.z.is_one();
+            const bool bZ2IsOne = q.z.is_one();
+            if ( bZ1IsOne && bZ2IsOne ) {
+                return add_z_1( p, q );
+            }
+            else if ( bZ1IsOne ) {
+                return add_z2_1( q, p );
+            }
+            else if ( bZ2IsOne ) {
+                return add_z2_1( p, q );
+            }
+            return add_ne( p, q );
+        }
+
+        /**
+         * Returns the double of this point.
+         * R = 2 * this
+         *
+         * @return the double of this point
+        */
+        [[nodiscard]] ec_point_fp_jacobi doubled() const
+        {
+            const auto& p = *this;
+            if ( p.is_identity() ) {
+                return p;
+            }
+
+            if ( p.y == 0 ) {
+                return ec_point_fp_jacobi(); // identity
+            }
+
+            // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#doubling-dbl-1986-cc
+            // note: this algo was measured to be the most efficient of them all.
+
+            const auto M = [](const auto& p) {
+                const bool bZIsOne = p.z.is_one();
+                if ( p.curve().a_is_zero ) {
+                    return 3 * p.x.sqr();
+                }
+                else if ( p.curve().a_is_minus_3 ) {
+                    const auto z2 = bZIsOne ? p.z : p.z.sqr();
+                    return 3 * ( p.x - z2 ) * ( p.x + z2 );
+                }
+                else {
+                    const auto z4 = bZIsOne ? p.z : p.z.sqr().sqr();
+                    return 3 * p.x.sqr() + p.curve().a * z4;
+                }
+            }( p );
+
+            const auto y2 = p.y.sqr();
+            const auto S  = 4 * p.x * y2;
+            auto X3 = M.sqr() - 2 * S;
+            auto Y3 = M * ( S - X3 ) - 8 * y2.sqr();
+            auto Z3 = 2 * p.y * p.z;
+            return make_point( std::move(X3), std::move(Y3), std::move(Z3) );
+        }
+
+        /**
+         * Subtracts the given point from this point.
+         * R = this - a
+         *
+         * @param a - the point to subtract from this point
+         * @return reference to this point
+        */
+        [[nodiscard]] inline ec_point_fp_jacobi sub(const ec_point_fp_jacobi& a) const
+        {
+            return *this + ( -a );
+        }
+
+        /**
+         * Multiplies this point by the given scalar.
+         * R = this * scalar
+         *
+         * @param scalar - the scalar to multiply this point by
+         * @return the resulting point
+        */
+        [[nodiscard]] ec_point_fp_jacobi mul(const int_type& scalar) const
+        {
+            if ( scalar.is_one() || is_identity() ) {
+                return *this;
+            }
+
+            if ( scalar.is_zero() ) {
+                return ec_point_fp_jacobi();
+            }
+
+            if ( scalar < 0 ) {
+                return inverted() * -scalar;
+            }
+
+            // Point scalar multiplication by the reversed NAF method
+            // optimized for cases where this.z == 1.
+            //
+            // The base algorithm is described in:
+            // "Comparative analysis of the scalar point multiplication
+            // algorithms in the NIST FIPS 186 elliptic curve cryptography"
+            // (Section 3.2: Scalar multiplication by the NAF method)
+            // https://ceur-ws.org/Vol-2913/paper2.pdf
+            const auto& p   = *this;
+            const auto pneg = -p;
+            auto r = make_point(0, 0, 1);
+            for ( const char i : scalar.to_rnaf() ) {
+                r = r.doubled();
+                if ( i > 0 ) {
+                    r += p;
+                }
+                else if ( i < 0 ) {
+                    r += pneg;
+                }
+            }
+            return r;
+        }
+
+        /**
+         * Compares 2 points for equality.
+         * Points are equal if they are both identity or if
+         * a.x * b.z^2 == b.x * a.z^2 and a.y * b.z^3 == b.y * a.z^3
+         *
+         * @note Calling this function can be slow.
+         *
+         * @param a - the first point to compare
+         * @param b - the second point to compare
+         * @return true if the points are equal, false otherwise
+        */
+        constexpr friend bool operator == (const ec_point_fp_jacobi& a, const ec_point_fp_jacobi& b)
+        {
+            if ( std::addressof(a) == std::addressof(b) ) {
+                return true;
+            }
+
+            if ( a.is_identity() || b.is_identity() ) {
+                return a.is_identity() && b.is_identity();
+            }
+
+            // Using short circuit in case of inequality
+            const auto az2 = a.z.sqr();
+            const auto bz2 = b.z.sqr();
+            return ( a.curve_  == b.curve_  ) &&
+                   ( a.x * bz2 == b.x * az2 ) &&
+                   ( a.y * bz2 * b.z == b.y * az2 * a.z );
+        }
+
+        /**
+         * Compares 2 points for inequality.
+         * @note See operator == for details.
+         *
+         * @param a - the first point to compare
+         * @param b - the second point to compare
+         * @return true if the points are not equal, false otherwise
+        */
+        constexpr friend inline bool operator != (const ec_point_fp_jacobi& a, const ec_point_fp_jacobi& b)
+        {
+            return !( a == b );
+        }
+
+        private:
+            friend CurveT;
+            constexpr ec_point_fp_jacobi(const CurveT& curve, field_element_type x, field_element_type y, field_element_type z) :
+                base_type( curve ),
+                x( std::move(x) ),
+                y( std::move(y) ),
+                z( std::move(z) )
+            {}
+
+            ec_point_fp_jacobi make_point(field_element_type x, field_element_type y, field_element_type z) const
+            {
+                return ec_point_fp_jacobi( this->curve(), std::move(x), std::move(y), std::move(z) );
+            }
+
+            ec_point_fp_jacobi make_point(int_type x, int_type y, int_type z) const
+            {
+                return ec_point_fp_jacobi(
+                    this->curve(),
+                    field_element_type( std::move(x), this->curve().p ),
+                    field_element_type( std::move(y), this->curve().p ),
+                    field_element_type( std::move(z), this->curve().p )
+                );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline)) // note: forced inline produces slightly more efficient computation. [[clang::always_inline]] doesn't work.
+            static ec_point_fp_jacobi addex(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q,
+                                            const field_element_type& U1, const field_element_type& U2,
+                                            const field_element_type& S1, const field_element_type& S2)
+            {
+                // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
+                //  note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
+                const auto H  = U2 - U1;
+                const auto R  = S2 - S1;
+                if ( H.is_zero() ) {
+                    if ( R.is_zero() ) {
+                        return p.doubled();
+                    } else {
+                        return ec_point_fp_jacobi();
+                    }
+                }
+                const auto H2 = H.sqr();
+                const auto H3 = H2 * H;
+                const auto V  = U1 * H2;
+
+                auto X3 = R.sqr() - H3 - 2 * V;
+                auto Y3 = R * ( V - X3 ) - S1 * H3;
+                auto Z3 = std::move( H );
+                if ( !p.z.is_one() ) {
+                    Z3 *= p.z;
+                }
+                if ( !q.z.is_one() ) {
+                    Z3 *= q.z;
+                }
+                return ec_point_fp_jacobi( p.curve(), std::move(X3), std::move(Y3), std::move(Z3) );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_z_1(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                return addex( p, q, p.x, q.x, p.y, q.y );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_z2_1(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                const auto pz2 = p.z.sqr();
+                return addex( p, q, p.x, q.x * pz2, p.y, q.y * pz2 * p.z );
+            }
+
+            [[nodiscard]]
+            __attribute__((always_inline))
+            static ec_point_fp_jacobi add_ne(const ec_point_fp_jacobi& p, const ec_point_fp_jacobi& q)
+            {
+                // This extra function, although inlined, produces slightly more efficient code than
+                // it would if put directly into the calling scope.
+                const auto pz2 = p.z.sqr();
+                const auto qz2 = q.z.sqr();
+                return addex( p, q, p.x * qz2, q.x * pz2, p.y * qz2 * q.z, q.y * pz2 * p.z );
+            }
+    };
+
+    /**
      * Base struct for representing elliptic curve.
     */
     template<typename CurveT, typename FieldElementT, typename PointT>
@@ -960,11 +1414,41 @@ namespace ack {
          * @param x - scalar to multiply base point g with.
          * @return PointU - point on the curve.
         */
-        template<typename PointU = point_type, typename IntT>
-        PointU generate_point(const IntT &x) const
+        template<typename PointU = point_type, typename IntT = int_type>
+        [[nodiscard]] inline PointU generate_point(const IntT &x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .template generate_point<PointU>( x );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type>
+        [[nodiscard]] inline PointU generate_point(const std::string_view sx) const
+        {
+            return static_cast<const CurveT&>( *this )
+                .template generate_point<PointU>( sx );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string literal scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string literal scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type, std::size_t N>
+        [[nodiscard]] inline PointU generate_point(const char (&sx)[N]) const
+        {
+            return static_cast<const CurveT&>( *this )
+                .template generate_point<PointU>( sx );
         }
 
         /**
@@ -972,10 +1456,10 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr field_element_type make_field_element(IntT&& x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_field_element( std::move(x) );
         }
 
@@ -984,10 +1468,10 @@ namespace ack {
          * @param x the integer to convert
          * @return curve field element
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const IntT& x) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_field_element( x );
         }
 
@@ -998,10 +1482,10 @@ namespace ack {
          * @param verify if true, the point is verified to be valid point on the curve created by the curve generator point g.
          * @return curve point
         */
-        template<typename BigNumT = int_type>
-        [[nodiscard]] constexpr point_type make_point(BigNumT x, BigNumT y, bool verify = false) const
+        template<typename IntT = int_type>
+        [[nodiscard]] inline constexpr point_type make_point(IntT x, IntT y, bool verify = false) const
         {
-            return static_cast<const CurveT&>(*this)
+            return static_cast<const CurveT&>( *this )
                 .make_point( std::move(x), std::move(y), verify );
         }
 
@@ -1009,9 +1493,9 @@ namespace ack {
          * Verifies curve parameters.
          * @return true if curve parameters are valid.
         */
-        [[nodiscard]] bool verify() const
+        [[nodiscard]] inline bool verify() const
         {
-            return static_cast<const CurveT&>(*this).verify();
+            return static_cast<const CurveT&>( *this ).verify();
         }
     };
 
@@ -1019,33 +1503,35 @@ namespace ack {
      * Struct defines curve over a prime finite field GF(p)
      * with Weierstrass equation y^2 = x^3 + ax + b.
      *
-     * @tparam BigNumT  - big number type
+     * @tparam IntT  - integer type
      * @tparam CurveTag - the curve tag
     */
-    template<typename BigNumT, typename CurveTag>
+    template<typename IntT, typename CurveTag>
     struct ec_curve_fp :
         ec_curve_base<
-            ec_curve_fp<BigNumT, CurveTag>,
-            fp_element<BigNumT, CurveTag>,
-            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>
+            ec_curve_fp<IntT, CurveTag>,
+            fp_element<IntT, CurveTag>,
+            ec_point_fp<ec_curve_fp<IntT, CurveTag>>
         >
     {
-        using base_type = ec_curve_base<ec_curve_fp<BigNumT, CurveTag>,
-                            fp_element<BigNumT, CurveTag>,
-                            ec_point_fp<ec_curve_fp<BigNumT, CurveTag>>>;
+        using base_type = ec_curve_base<ec_curve_fp<IntT, CurveTag>,
+                            fp_element<IntT, CurveTag>,
+                            ec_point_fp<ec_curve_fp<IntT, CurveTag>>>;
 
         using curve_tag          = CurveTag;
-        using int_type           = BigNumT;
+        using int_type           = IntT;
         using field_element_type = typename base_type::field_element_type;
         using point_type         = typename base_type::point_type;
 
-        const BigNumT    p;      // curve prime
-        const BigNumT    a;      // curve coefficient
-        const BigNumT    b;      // curve coefficient
+        const IntT       p;      // curve prime
+        const IntT       a;      // curve coefficient
+        const IntT       b;      // curve coefficient
         const point_type g;      // generator point
-        const BigNumT    n;      // order of g
+        const IntT       n;      // order of g
         const uint32_t   h;      // cofactor, i.e.: h = #E(Fp) / n
                                  //     #E(Fp) - number of points on the curve
+        const bool a_is_minus_3; // cached a == p - 3
+        const bool a_is_zero;    // cached a == 0
 
         /**
          * Creates a curve from the given parameters.
@@ -1056,13 +1542,15 @@ namespace ack {
          * @param n - order of g
          * @param h - cofactor, i.e.: h = p / n
         */
-        constexpr ec_curve_fp(BigNumT p, BigNumT a, BigNumT b, std::pair<BigNumT, BigNumT> g, BigNumT n, uint32_t h):
+        inline constexpr ec_curve_fp(IntT p, IntT a, IntT b, std::pair<IntT, IntT> g, IntT n, uint32_t h):
             p( std::move(p) ),
             a( std::move(a) ),
             b( std::move(b) ),
             g( make_point( std::move(g.first), std::move(g.second) )),
             n( std::move(n) ),
-            h( h )
+            h( h ),
+            a_is_minus_3( a == ( p - 3) ),
+            a_is_zero( a.is_zero() )
         {}
 
         /**
@@ -1073,8 +1561,8 @@ namespace ack {
          * @param x - scalar to multiply base point g with.
          * @return PointT - point on the curve.
         */
-        template<typename PointT = point_type, typename IntT = BigNumT>
-        PointT generate_point(const IntT &x) const
+        template<typename PointT = point_type, typename IntNumT = IntT>
+        [[nodiscard]] PointT generate_point(const IntNumT& x) const
         {
             check( x > 0 && x < n, "x must be in range [1, n-1]" );
             if constexpr (std::is_same_v<PointT, point_type>) {
@@ -1082,6 +1570,34 @@ namespace ack {
             } else {
                 return PointT( g ) * x;
             }
+        }
+
+        /**
+         * Generates a point from base point g and given hex string scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type>
+        [[nodiscard]] PointU generate_point(const std::string_view sx) const
+        {
+            return generate_point<PointU>( int_type( sx ) );
+        }
+
+        /**
+         * Generates a point from base point g and given hex string literal scalar sx.
+         *
+         * @tparam PointU - point type to create.
+         *
+         * @param sx - hex string literal scalar to multiply base point g with.
+         * @return PointU - point on the curve.
+        */
+        template<typename PointU = point_type, std::size_t N>
+        [[nodiscard]] inline PointU generate_point(const char (&sx)[N]) const
+        {
+            return generate_point<PointU>( std::string_view( sx, N ) );
         }
 
         /**
@@ -1095,7 +1611,7 @@ namespace ack {
          * @return Field element
          *
         */
-        [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x) const
+        [[nodiscard]] constexpr field_element_type make_field_element(IntT&& x) const
         {
             return make_field_element( std::move(x), /*verify=*/ true );
         }
@@ -1111,7 +1627,7 @@ namespace ack {
          * @return Field element
          *
         */
-        [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x) const
+        [[nodiscard]] inline constexpr field_element_type make_field_element(const IntT& x) const
         {
             return make_field_element( x, /*verify=*/ true );
         }
@@ -1130,7 +1646,7 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(BigNumT&& x, BigNumT&& y, bool verify = false) const
+        [[nodiscard]] constexpr point_type make_point(IntT&& x, IntT&& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
@@ -1160,7 +1676,7 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(const BigNumT& x, const BigNumT& y, bool verify = false) const
+        [[nodiscard]] constexpr point_type make_point(const IntT& x, const IntT& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
@@ -1190,7 +1706,7 @@ namespace ack {
             //     return false;
             // }
 
-            // Verif p and n
+            // Verify p and n
             if ( p <= 3 || n <= 0 ) {
                 return false;
             }
@@ -1211,7 +1727,7 @@ namespace ack {
                 return false;
             }
 
-            // check that the discriminant is nonzero. If zero, the curve is singular.
+            // check that discriminant is nonzero. If zero, the curve is singular.
             if ( ( -16 * y2 ) == 0) {
                 return false;
             }
@@ -1240,17 +1756,17 @@ namespace ack {
         }
 
         private:
-            [[nodiscard]] inline constexpr bool is_valid_integer(const BigNumT& x) const
+            [[nodiscard]] inline constexpr bool is_valid_integer(const IntT& x) const
             {
                 return !x.is_negative() && x < p;
             }
 
-            inline constexpr void check_integer(const BigNumT& x, const char* error) const
+            inline constexpr void check_integer(const IntT& x, const char* error) const
             {
                 check( is_valid_integer( x ), error );
             }
 
-            [[nodiscard]] constexpr field_element_type make_field_element(BigNumT&& x, bool verify) const
+            [[nodiscard]] constexpr field_element_type make_field_element(IntT&& x, bool verify) const
             {
                 if ( verify ) {
                     check_integer( x, "Invalid field element value" );
@@ -1258,7 +1774,7 @@ namespace ack {
                 return field_element_type( std::move(x), p );
             }
 
-            [[nodiscard]] constexpr field_element_type make_field_element(const BigNumT& x, bool verify) const
+            [[nodiscard]] constexpr field_element_type make_field_element(const IntT& x, bool verify) const
             {
                 if ( verify ) {
                     check_integer( x, "Invalid field element value" );
@@ -1268,9 +1784,9 @@ namespace ack {
     };
 
     /**
-     * Fast multiplication of points and addition of points, i.e. a*P + b*Q
-     * Function uses Shamir's trick to calculate a*P + b*Q in one batch,
-     * thus the speedup shoule be ~2x.
+     * Fast multiplication of points and addition of points, i.e.: a*P + b*Q
+     * Function uses combination of non-adjacent form of number (NAF) and
+     * Shamir's trick to calculate a*P + b*Q in one batch, thus the speedup shoule be ~2.5x.
      *
      * @tparam PointT - point type
      * @tparam CurveT - curve type
@@ -1281,34 +1797,64 @@ namespace ack {
      * @param q - Second point
      * @return PointT - Result of a*P + b*Q
     */
-    template<typename PointT, typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] PointT ec_mul_add_fast(const IntT& a, const ec_point_base<PointT, CurveT>& p,
-                                         const IntT& b, const ec_point_base<PointT, CurveT>& q)
+    template <typename PointT, typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]] static PointT ec_mul_add_fast(const IntT &a, const ec_point_base<PointT, CurveT> &p,
+                                                const IntT &b, const ec_point_base<PointT, CurveT> &q)
     {
-        using bpt = ec_point_base<PointT, CurveT>;
-
-        auto s1_bits = a.bit_length();
-        auto s2_bits = b.bit_length();
-        int l = std::max(s1_bits, s2_bits) - 1;
-
-        const PointT pq_sum = p + q;
-        const bpt* points[4] = { nullptr, &p, &q, &pq_sum };
-
-        const auto get_point = [&](int i) {
-            return points[ a.test_bit( i ) | ( b.test_bit( i ) << 1 ) ];
-        };
-
-        PointT r;
-        auto point = get_point( l-- );
-        if (point) {
-            r = static_cast<const PointT&>( *point );
+        // Get the NAF representations of a and b.
+        auto a_naf = a.to_rnaf();
+        auto b_naf = b.to_rnaf();
+        if ( a_naf.size() < b_naf.size() ) {
+            a_naf.insert( a_naf.begin(), b_naf.size() - a_naf.size(), 0 );
+        } else if ( a_naf.size() > b_naf.size() ) {
+            b_naf.insert( b_naf.begin(), a_naf.size() - b_naf.size(), 0 );
         }
 
-        for( ; l >= 0; l-- ) {
+        // Precompute required points
+        const auto pneg         = -p;
+        const auto qneg         = -q;
+        const auto pnegqneg     = pneg + qneg;
+        const auto pqneg        = p + qneg;
+        const auto pqneg_inv    = -pqneg;
+        const auto pnegqneg_inv = -pnegqneg;
+
+        // Iterate reversed NAF representations of a and b,
+        // optimized for cases where p.z == 1 or q.z == 1.
+        PointT r;
+        for ( std::size_t i = 0; i < a_naf.size(); i++ ) {
             r = r.doubled();
-            auto point = get_point( l );
-            if (point) {
-                r += *point;
+            if ( a_naf[i] == 0 ) {
+                if ( b_naf[i] == 0 ) {
+                    continue;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += qneg;
+                }
+                else {
+                    r += q;
+                }
+            }
+            else if ( a_naf[i] < 0 ) {
+                if ( b_naf[i] == 0 ) {
+                    r += pneg;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += pnegqneg;
+                }
+                else {
+                    r += pqneg_inv;
+                }
+            }
+            else { // a_naf[i] > 0
+                if ( b_naf[i] == 0 ) {
+                    r += p;
+                }
+                else if ( b_naf[i] < 0 ) {
+                    r += pqneg;
+                }
+                else {
+                    r += pnegqneg_inv;
+                }
             }
         }
 

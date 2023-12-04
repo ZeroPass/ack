@@ -29,6 +29,7 @@
 #include <bit>
 #include <cstdlib>
 #include <cstddef>
+#include <vector>
 #include <type_traits>
 
 namespace ack {
@@ -1448,6 +1449,41 @@ namespace ack {
                 return data;
             }
 
+            /**
+             * Converts this integer to non-adjacent form (NAF).
+             * @return NAF representation of this integer.
+            */
+            [[nodiscard]] std::vector<char> to_naf() const
+            {
+                std::vector<char> nafv;
+                nafv.reserve( bit_length() + 1 );
+                auto num = *this;
+                while ( num > 0U ) {
+                    if ( num.is_odd() ) {
+                        int32_t nd;
+                        (num % 4).get_int32( nd );
+                        nd = 2 - nd;
+                        nafv.push_back( nd );
+                        num -= nd;
+                    } else {
+                        nafv.push_back( 0 );
+                    }
+                    num >>= 1;
+                }
+                return nafv;
+            }
+
+            /**
+             * Converts this integer to reversed non-adjacent form (NAF).
+             * @return reversed NAF representation of this integer.
+            */
+            [[nodiscard]] inline std::vector<char> to_rnaf() const
+            {
+                auto naf = to_naf();
+                std::reverse(naf.begin(), naf.end());
+                return naf;
+            }
+
             constexpr void clear()
             {
                 *this = 0;
@@ -1614,6 +1650,30 @@ namespace ack {
             constexpr bool is_even() const
             {
                 return !is_odd();
+            }
+
+            /**
+             * Extracts integer as int32_t.
+             * Integer can be extracted only if the bit size of number is less than or equal to 32 bit integer.
+             *
+             * @param n - Reference of type int32_t to receive extracted integer.
+             * @return true if integer could be extracted otherwise false.
+            */
+            constexpr bool get_int32(int32_t& n) const
+            {
+                static_assert( sizeof(word_t) == sizeof(uint32_t) );
+                if (word_length() > 1) {
+                    return false;
+                }
+
+                n = 0;
+                if (word_length() > 0) {
+                    n = buf_[0];
+                    if ( is_negative() && n > 0 ) {
+                        n = -n;
+                    }
+                }
+                return true;
             }
 
             constexpr const word_t* get_word() const // get pointer to word data
@@ -2470,13 +2530,13 @@ namespace ack {
      */
     template<std::size_t MaxBitSize>
     using fixed_bigint = bigint<fixed_word_buffer<get_word_size_from_bitsize(MaxBitSize)>>;
-    
+
     template <typename>
     struct is_bigint : std::false_type {};
 
     template <typename T>
     struct is_bigint<bigint<T>> : std::true_type {};
-    
+
     template<typename T>
     constexpr bool is_bigint_v = is_bigint<T>::value;
 }

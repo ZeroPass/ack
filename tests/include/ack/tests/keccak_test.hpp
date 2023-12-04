@@ -6,45 +6,12 @@
 
 #include <ack/keccak.hpp>
 #include <ack/tests/utils.hpp>
+#include <ack/tests/monte.hpp>
 #include <ack/types.hpp>
 #include <ack/utils.hpp>
 
 namespace ack::tests {
-    namespace  detail {
-        // NIST Monte Carlo test function
-        template<std::size_t HLen, typename Lambda>
-        std::array<fixed_bytes<HLen>, 100> monte_carlo_sha3(Lambda&& sha3_func, bytes seed) {
-            auto md = std::move(seed);
-            std::array<fixed_bytes<HLen>, 100> harray;
-            for ( std::size_t i = 0; i < 100; i++ ){
-                for( std::size_t j = 1; j < 1001; j++ ) {
-                    md = [](const eosio::fixed_bytes<HLen>& h) {
-                        auto bh = h.extract_as_byte_array();
-                        return bytes{ (byte_t*)bh.data(), (byte_t*)bh.data() + HLen };
-                    }
-                    ( sha3_func(md) );
-                }
-                std::copy_n( md.begin(), HLen, harray[i].begin() );
-            }
-            return harray;
-        };
-
-        constexpr auto monte_carlo_sha3_256 = [](bytes seed) {
-            return monte_carlo_sha3<32>(sha3_256, seed);
-        };
-
-        constexpr auto monte_carlo_sha3_384 = [](bytes seed) {
-            return monte_carlo_sha3<48>(sha3_384, seed);
-        };
-
-        constexpr auto monte_carlo_sha3_512 = [](bytes seed) {
-            return monte_carlo_sha3<64>(sha3_512, seed);
-        };
-    }
-
     EOSIO_TEST_BEGIN(sha3_256_test)
-        using namespace detail;
-
         // NIST FIPS 202 test vectors
         // https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss
         //
@@ -748,7 +715,7 @@ namespace ack::tests {
         // SHA3-256 tests are configured for BYTE oriented implementations
         // Length values represented in bits
         {
-            auto hashes = monte_carlo_sha3_256( "aa64f7245e2177c654eb4de360da8761a516fdc7578c3498c5e582e096b8730c"_hex );
+            auto hashes = sha3_256_monte_carlo_prng( "aa64f7245e2177c654eb4de360da8761a516fdc7578c3498c5e582e096b8730c"_hex );
             REQUIRE_EQUAL( hashes[0], "225cbac2be6f329d94228c5360a1c177bc495a761c442a1771b1d18555c309a5"_hex );
             REQUIRE_EQUAL( hashes[1], "96d364a1b1ced3dbbce6380093fb1ac77221abcee30faf16546ffad8fe1eef8c"_hex );
             REQUIRE_EQUAL( hashes[2], "8d81a67598ff73e2305ed53b1e6d58c799a1d1908abf81a15eab4bfd35b96e51"_hex );
@@ -1363,8 +1330,6 @@ namespace ack::tests {
     EOSIO_TEST_END
 
     EOSIO_TEST_BEGIN(sha3_384_test)
-        using namespace detail;
-
         // NIST FIPS 202 test vectors
         // https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss
         //
@@ -1909,7 +1874,7 @@ namespace ack::tests {
         // Length values represented in bits
         // Generated on Thu Jan 28 13:32:46 2016
         {
-            auto hashes = monte_carlo_sha3_384( "7a00791f6f65c21f1c97c58fa3c0520cfc85cd7e3d398cf01950819fa717195065a363e77d07753647cb0c130e9972ad"_hex );
+            auto hashes = sha3_384_monte_carlo_prng( "7a00791f6f65c21f1c97c58fa3c0520cfc85cd7e3d398cf01950819fa717195065a363e77d07753647cb0c130e9972ad"_hex );
             REQUIRE_EQUAL( hashes[0], "b2d4e10214bd7991e3a3e4772f5c7b390178e20c3ff882648a891e44b9d309d91bf5fab74c0bc155a7fac972a9b128a2"_hex );
             REQUIRE_EQUAL( hashes[1], "608db3176176effb7b7cceb8962bffc67584cc9e9860752f6644c7810cc83f4fdefa108bcf308d4137265fbb1ecf10fb"_hex );
             REQUIRE_EQUAL( hashes[2], "c6c0d9c39fbd7cab9b96085f65420d53c0e1ca4f8b79edda3177a20d7a605ee4bc4f1e2589979867507736c39280901f"_hex );
@@ -2524,8 +2489,6 @@ namespace ack::tests {
     EOSIO_TEST_END
 
     EOSIO_TEST_BEGIN(sha3_512_test)
-        using namespace detail;
-
         // NIST FIPS 202 test vectors
         // https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss
         //
@@ -2911,7 +2874,7 @@ namespace ack::tests {
         // Length values represented in bits
         // Generated on Thu Jan 28 13:32:47 2016
         {
-            auto hashes = monte_carlo_sha3_512( "764a5511f00dbb0eaef2eb27ad58d35f74f563b88f789ff53f6cf3a47060c75ceb455444cd17b6d438c042e0483919d249f2fd372774647d2545cbfad20b4d31"_hex );
+            auto hashes = sha3_512_monte_carlo_prng( "764a5511f00dbb0eaef2eb27ad58d35f74f563b88f789ff53f6cf3a47060c75ceb455444cd17b6d438c042e0483919d249f2fd372774647d2545cbfad20b4d31"_hex );
             REQUIRE_EQUAL( hashes[0], "83dd81285c36d86dde72631a1a1e0d9c12b0e2842d499a63b00de87f11839565b21d9416f154b72034b7fcd41d2f1d9eac184eec823547772826ed90c53d856e"_hex );
             REQUIRE_EQUAL( hashes[1], "5c37bb6fe060007ce3fca1e6d01ed1bdd6e737f043a2929548cf1b08224a193e03c7314be44a496c8ecaf8a7458770f59cd27336a38ffa40588539572ecb946f"_hex );
             REQUIRE_EQUAL( hashes[2], "1866d500dffa85d4bb2b466317b9f60290b6840a75788fab44c6b58225f4a9d77ab0238443190cf275435ffe896c207f34ea8c99327b5628d00cf32955ae7c90"_hex );

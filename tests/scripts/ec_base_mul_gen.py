@@ -1,8 +1,10 @@
 #!/bin/python
 # Author: Crt Vavros
 #
-# Generates test cases for EC base point multiplication from input file
-# Input file is list of test vectors for specific curve in format:
+# Generates test cases for EC base point multiplication from input file.
+#
+#
+# Input file is in text format with list of test vectors for specific curve in format:
 #
 #     Curve: <curve_name>
 #     -------------
@@ -25,7 +27,7 @@
 #     R.y = <result_y_coordinate>
 #
 
-import collections, enum, os, re, sys
+import  os, re, sys
 
 curve_pattern = re.compile(r"^Curve:", re.IGNORECASE)
 
@@ -44,7 +46,9 @@ curve_sizes = {
     'P-256'     : 256,
 }
 
-def parse_key_value(line):
+comment_chr = '#'
+
+def parse_key_value(line: str):
     s = line.split('=')
     if len(s) != 2:
         return None
@@ -58,7 +62,7 @@ def parse_key_value(line):
 
     return (s[0].strip(), v)
 
-def parse_file(file_path):
+def parse_file(file_path: str) -> dict:
     tv = {}
     with open(file_path) as f:
         state = 0
@@ -70,6 +74,8 @@ def parse_file(file_path):
         for line in f:
             line = line.strip()
             if len(line) == 0:
+                continue
+            if line[0] == comment_chr:
                 continue
 
             if curve_pattern.match(line):
@@ -95,16 +101,18 @@ def parse_file(file_path):
                 if state > 3:
                     tvs.append((k, rx, ry))
                     state = 1
+    if curve_name not in tv:
+        tv[curve_name] = tvs
     return tv
 
 def int_hex(i: int):
     return hex(i).lstrip('0x').upper()
 
-def indent(text:str, amount, ch=' '):
+def indent(text: str, amount: int, ch: str = ' '):
     padding = amount * ch
-    return ''.join(padding+line for line in text.splitlines(True))
+    return ''.join(padding + line for line in text.splitlines(True))
 
-def format_var(var: str, decl: bool, indent_size: int = 0, var_type = 'auto') -> str:
+def format_var(var: str, decl: bool, indent_size: int = 0, var_type: str = 'auto') -> str:
     str = f'{f"{var_type} " if decl else ""}{var};'
     if indent_size > 0:
         str = indent(str, indent_size)
@@ -116,7 +124,14 @@ def tv2str(tv: tuple, decl_vars: bool) -> str:
     test_str += format_var(f'k = bn_t( "{ int_hex( tv[0] ) }" )', decl_vars, indent_size) + '\n'
     test_str += format_var(f'r = curve.make_point( "{ int_hex( tv[1] ) }", "{ int_hex( tv[2] ) }", /*verify=*/ true )', decl_vars, indent_size) + '\n'
     test_str += indent('REQUIRE_EQUAL( curve.generate_point( k ), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point( "{ int_hex( tv[0] ) }" ), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point( "{ int_hex( tv[0] ) }"sv ), r )', indent_size) + '\n'
     test_str += indent('REQUIRE_EQUAL( curve.generate_point<point_proj_type>( k ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_proj_type>( "{ int_hex( tv[0] ) }" ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_proj_type>( "{ int_hex( tv[0] ) }"sv ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent('REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( k ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( "{ int_hex( tv[0] ) }" ).to_affine(), r )', indent_size) + '\n'
+    test_str += indent(f'REQUIRE_EQUAL( curve.generate_point<point_jacobi_type>( "{ int_hex( tv[0] ) }"sv ).to_affine(), r )', indent_size) + '\n'
     return test_str
 
 def main():
@@ -153,10 +168,12 @@ def main():
         for curve_name, tcs in test_cases.items():
             tname = f'ec_mul_{ curve_var[curve_name] }_test'
             print(f'EOSIO_TEST_BEGIN({tname})', file=f)
+            print(indent('using namespace std::string_view_literals;', indent_size), file=f)
             print(indent(f'using { curve_var[curve_name] }_t = std::remove_cv_t<decltype( ack::ec_curve::{ curve_var[curve_name] })>;', indent_size), file=f)
             print(indent(f'using bn_t = typename { curve_var[curve_name] }_t::int_type;', indent_size), file=f)
             print(indent(f'const auto& curve = ack::ec_curve::{ curve_var[curve_name] };', indent_size), file=f)
             print(indent(f'using point_proj_type = ack::ec_point_fp_proj<{ curve_var[curve_name] }_t>;', indent_size), file=f)
+            print(indent(f'using point_jacobi_type = ack::ec_point_fp_jacobi<{ curve_var[curve_name] }_t>;', indent_size), file=f)
             print(indent( '{', indent_size), file=f )
             print(indent( f'{ tcs.rstrip() }', indent_size), file=f )
             print(indent( '}', indent_size), file=f )

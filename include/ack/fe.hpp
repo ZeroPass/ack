@@ -703,12 +703,12 @@ namespace ack {
             friend Derived;
 
             field_element() = default;
-            constexpr inline Derived& underlying()
+            inline constexpr Derived& underlying()
             {
                 return static_cast<Derived&>( *this );
             }
 
-            constexpr inline const Derived& underlying() const
+            inline constexpr const Derived& underlying() const
             {
                 return static_cast<const Derived&>( *this );
             }

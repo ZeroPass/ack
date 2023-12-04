@@ -82,16 +82,38 @@ If configured correctly, you should be able to add the antelope.ck library to yo
 ```cpp
   #include <ack/ack.hpp>
 
-  // Calculate sum of 2 EC points on secp256k1 curve
+  // Calculate sum of 2 EC points on secp256k1 curve using affine coordinates
   const auto p1 = ack::ec_curve::secp256k1.make_point( p1_x, p1_y );
   const auto p2 = ack::ec_curve::secp256k1.generate_point( "85d0c2e48955214783ecf50a4f041" );
   const auto p3 = p1 + p2;
 
-  // triple the p3 point
+  // Triple the p3 point
   const auto p4 = p3 * 3;
 
-  // multiply the inverse of p4 by integer 0x73c5f6a67456ae48209b5a32d1b8
+  // Multiply the inverse of p4 by integer 0x73c5f6a67456ae48209b5a32d1b8
   const auto p5 = -p4 * "73c5f6a67456ae48209b5a32d1b8";
+  
+  // Generate 2 EC points on secp256r1 curve using Jacobi coordinates representation
+  using secp256r1_t     = decltype( ack::ec_curve::secp256r1 );
+  using point_r1_jacobi = ack::ec_point_fp_jacobi<secp256r1_t>;
+  
+  const auto p1         = ack::ec_curve::secp256k1.generate_point<point_r1_jacobi>( "5d0c2e48955214783ecf50a4f041" );
+  const auto p2_affine  = ack::ec_curve::secp256k1.make_point( p2_x, p2_y );
+  const auto p2         = point_r1_jacobi( p2_affine );
+  
+  // Calculate sum of 2 EC points on secp256r1 curve in Jacobi coordinates
+  const auto p3 = p1 + p2;
+
+  // Double point p3 
+  const auto p4 = p3 * 2; // or p3.doubled();
+  
+  // Verify point p4 is not identity and lies on the curve
+  eosio::check( !p4.is_identity(), "invalid point" );
+  eosio::check( p4.is_on_curve() , "invalid point" );
+  eosio::check( p4.is_valid()    , "invalid point" );
+  
+  // Convert point p4 to affine coordinates
+  const auto p4_affine = p4.to_affine();
 
   // Verify secp256k1 ECDSA-SHA256 signature
   auto pub_point = ack::ec_curve::secp256k1.make_point( pubkey_x, pubkey_y );
@@ -139,11 +161,14 @@ If configured correctly, you should be able to add the antelope.ck library to yo
     // Do something...
   }
 
+  // Calculate SHA384
+  hash384 mdsh384 = ack::sha384( byte_data );
+
   // Calculate SHA3-384
-  eosio::fixed_bytes<48> mdsh3 = ack::sha3_384( byte_data );
+  hash384 mdsh3 = ack::sha3_384( byte_data );
 
   // Calculate fixed size SHAKE-128 hash
-  eosio::checksum160 mdshk128 = ack::shake128_fixed<20>( byte_data );
+  hash160 mdshk128 = ack::shake128_fixed<20>( byte_data );
 
   // calculate var-long SHAKE-256 hash
   bytes mdshk256 = ack::shake256( byte_data, /*hash_len=*/16 );

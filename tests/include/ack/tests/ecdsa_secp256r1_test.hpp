@@ -10,7 +10,6 @@
 #include <ack/tests/utils.hpp>
 
 #include <eosio/crypto.hpp>
-#include <eosio/fixed_bytes.hpp>
 #include <eosio/tester.hpp>
 
 namespace ack::tests {
@@ -39,7 +38,7 @@ namespace ack::tests {
             constexpr bn_t sig_r = "BF96B99AA49C705C910BE33142017C642FF540C76349B9DAB72F981FD9347F4F";
             constexpr bn_t sig_s = "17C55095819089C2E03B9CD415ABDF12444E323075D98F31920B9E0F57EC871C";
 
-            auto digest = eosio::checksum256( from_hex( "D1B8EF21EB4182EE270638061063A3F3C16C114E33937F69FB232CC833965A94" ) );
+            auto digest = hash256( from_hex( "D1B8EF21EB4182EE270638061063A3F3C16C114E33937F69FB232CC833965A94" ) );
             bool result = true; // Signature is valid
             test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
         }
@@ -103,7 +102,7 @@ namespace ack::tests {
                 constexpr bn_t sig_r = "56CD9CF152BCCC3A64E41E2B2BF91ED0661E0821B14B50ABE93C05EA889AFED3";
                 constexpr bn_t sig_s = "F93452957106BAB410617E306D876BB58FA7D7B5A515AC6B6181D8D638651FC7";
 
-                auto digest = eosio::checksum256( from_hex( "797601B76D29603D167FA1062CC27B00BB0E39493BF3B7BBAFA610C2B24F4A20" ) );
+                auto digest = hash256( from_hex( "797601B76D29603D167FA1062CC27B00BB0E39493BF3B7BBAFA610C2B24F4A20" ) );
                 bool result = true; // Signature is valid
                 test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
             }
@@ -116,7 +115,7 @@ namespace ack::tests {
                 constexpr bn_t sig_r = "495D1499B6626EA994AF768FF960ACFAC3AF290F8C9816A158A7EE71BE895E79";
                 constexpr bn_t sig_s = "06783594BFE892D4C1DAA797F9B49D4C29B9F5131F9A203C717C0224329B18F9";
 
-                auto digest = eosio::checksum256( from_hex( "EF798CFF4C935DCA6CC19338F48FFD6185A7EB461216985FC3D72552F5B91836" ) );
+                auto digest = hash256( from_hex( "EF798CFF4C935DCA6CC19338F48FFD6185A7EB461216985FC3D72552F5B91836" ) );
                 bool result = true; // Signature is valid
                 test_ecdsa_verification( result, pubkey_point, digest, sig_r, sig_s, curve );
             }

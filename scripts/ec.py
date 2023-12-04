@@ -2,8 +2,10 @@ import collections
 import hashlib
 import random
 import binascii
+from typing import Optional, Tuple
 
 EllipticCurve = collections.namedtuple('EllipticCurve', 'name p a b g n h')
+ECPoint = Optional[Tuple[int, int]] # Optional means point at infinity
 
 secp256k1 = EllipticCurve(
     'secp256k1',
@@ -23,8 +25,8 @@ secp256k1 = EllipticCurve(
 
 secp256r1 = EllipticCurve(
     'secp256r1',
-    # Field ffffffff00000001000000000000000000000000ffffffffffffffffffffffff.
-    p=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f,
+    # Field characteristic.
+    p=0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff,
     # Curve coefficients.
     a=0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc,
     b=0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b,
@@ -37,9 +39,25 @@ secp256r1 = EllipticCurve(
     h=1,
 )
 
+brainpoolP256r1 = EllipticCurve(
+    'brainpoolP256r1',
+    # Field characteristic.
+    p=0xa9fb57dba1eea9bc3e660a909d838d726e3bf623d52620282013481d1f6e5377,
+    # Curve coefficients.
+    a=0x7d5a0975fc2c3057eef67530417affe7fb8055c126dc5c6ce94a4b44f330b5d9,
+    b=0x26dc5c6ce94a4b44f330b5d9bbd77cbf958416295cf7e1ce6bccdc18ff8c07b6,
+    # Base point.
+    g=(0x8bd2aeb9cb7e57cb2c4b482ffc81b7afb9de27e1e3bd23c23a4453bd9ace3262,
+       0x547ef835c3dac4fd97f8461a14611dc9c27745132ded8e545c1d54c72f046997),
+    # Subgroup order.
+    n=0xa9fb57dba1eea9bc3e660a909d838d718c397aa3b561a6f7901e0e82974856a7,
+    # Subgroup cofactor.
+    h=1,
+)
+
 
 # Modular arithmetic ##########################################################
-def inverse_mod(k, p):
+def inverse_mod(k: int, p: int) -> int:
     """Returns the inverse of k modulo p.
     This function returns the only integer x such that (x * k) % p == 1.
     k must be non-zero and p must be a prime.
@@ -72,20 +90,19 @@ def inverse_mod(k, p):
 
 # Functions that work on curve points #########################################
 
-def is_on_curve(point, curve):
+def ec_is_on_curve(point: ECPoint, curve: EllipticCurve) -> bool:
     """Returns True if the given point lies on the elliptic curve."""
     if point is None:
         # None represents the point at infinity.
         return True
 
     x, y = point
-
     return (y * y - x * x * x - curve.a * x - curve.b) % curve.p == 0
 
 # Point negation
-def point_neg(point, curve):
+def ec_neg(point, curve):
     """Returns -point."""
-    assert is_on_curve(point, curve)
+    assert ec_is_on_curve(point, curve)
 
     if point is None:
         # -0 = 0
@@ -94,13 +111,13 @@ def point_neg(point, curve):
     x, y = point
     result = (x, (curve.p - y) % curve.p)
 
-    assert is_on_curve(result, curve)
+    assert ec_is_on_curve(result, curve)
 
     return result
 
-def point_double(point, curve):
+def ec_double(point, curve):
     """Returns 2 * point."""
-    return point_add(point, point, curve)
+    return ec_add(point, point, curve)
     # assert is_on_curve(point, curve)
 
     # if point is None:
@@ -121,20 +138,20 @@ def point_double(point, curve):
 
 
 
-def point_add(point1, point2, curve):
+def ec_add(p: ECPoint, q: ECPoint, curve: EllipticCurve) -> ECPoint:
     """Returns the result of point1 + point2 according to the group law."""
-    assert is_on_curve(point1, curve)
-    assert is_on_curve(point2, curve)
+    assert ec_is_on_curve(p, curve)
+    assert ec_is_on_curve(q, curve)
 
-    if point1 is None:
+    if p is None:
         # 0 + point2 = point2
-        return point2
-    if point2 is None:
+        return q
+    if q is None:
         # point1 + 0 = point1
-        return point1
+        return p
 
-    x1, y1 = point1
-    x2, y2 = point2
+    x1, y1= p
+    x2, y2 = q
 
     if x1 == x2 and y1 != y2:
         # point1 + (-point1) = 0
@@ -149,36 +166,35 @@ def point_add(point1, point2, curve):
 
     x3 = (m * m - x1 - x2) % curve.p
     y3 = (y1 + m * (x3 - x1) ) % curve.p
-    result = (x3 % curve.p,
-              -y3 % curve.p)
+    R: ECPoint = (x3 % curve.p,
+             -y3 % curve.p)
 
-    assert is_on_curve(result, curve)
+    assert ec_is_on_curve(R, curve)
+    return R
 
-    return result
-
-def point_add_steps(point1, point2, curve):
+def ec_add_steps(p: ECPoint, q: ECPoint, curve: EllipticCurve) -> ECPoint:
     """Returns the result of point1 + point2 according to the group law."""
 
-    print("Input parameters:")
-    print("point1.x = ", hex(point1[0]))
-    print("point1.y = ", hex(point1[1]))
-    print("point2.x = ", hex(point2[0]))
-    print("point2.y = ", hex(point2[1]))
+    assert ec_is_on_curve(p, curve)
+    assert ec_is_on_curve(q, curve)
 
-    assert is_on_curve(point1, curve)
-    assert is_on_curve(point2, curve)
-
-    if point1 is None:
+    if p is None:
         # 0 + point2 = point2
         print("point1 is at infinity, returning point2")
-        return point2
-    if point2 is None:
+        return q
+    if q is None:
         # point1 + 0 = point1
         print("point2 is at infinity, returning point1")
-        return point1
+        return p
 
-    x1, y1 = point1
-    x2, y2 = point2
+    print("Input parameters:")
+    print("point1.x = ", hex(p[0]))
+    print("point1.y = ", hex(p[1]))
+    print("point2.x = ", hex(q[0]))
+    print("point2.y = ", hex(q[1]))
+
+    x1, y1 = p
+    x2, y2 = q
 
     if x1 == x2 and y1 != y2:
         # point1 + (-point1) = 0
@@ -188,15 +204,15 @@ def point_add_steps(point1, point2, curve):
     if x1 == x2:
         print("point1 == point2")
         # This is the case point1 == point2.
-        m = ((3 * x1 * x1 + curve.a) * inverse_mod(2 * y1, curve.p)) % curve.p
+        m: int = ((3 * x1 * x1 + curve.a) * inverse_mod(2 * y1, curve.p)) % curve.p
     else:
         # This is the case point1 != point2.
-        m = ((y1 - y2) * inverse_mod(x1 - x2, curve.p)) % curve.p
+        m: int = ((y1 - y2) * inverse_mod(x1 - x2, curve.p)) % curve.p
 
     print("m = ", hex(m))
 
     # calculate x3 = (m * m - x1 - x2) % curve.p
-    msqrx12 = (m * m) % curve.p
+    msqrx12: int = (m * m) % curve.p
     print("msqr = ", hex(msqrx12))
 
     msqrx12 = (msqrx12 - x1) % curve.p
@@ -219,21 +235,21 @@ def point_add_steps(point1, point2, curve):
 
     result = (x3 ,  y3)
 
-    assert is_on_curve(result, curve)
+    assert ec_is_on_curve(result, curve)
     print("y3= ", hex(y3))
 
     return result
 
-def scalar_mul(k, point, curve):
+def ec_mul(point: ECPoint, k: int, curve: EllipticCurve) -> ECPoint:
     """Returns k * point computed using the double and point_add algorithm."""
-    assert is_on_curve(point, curve)
+    assert ec_is_on_curve(point, curve)
 
     if k % curve.n == 0 or point is None:
         return None
 
     if k < 0:
         # k * point = -k * (-point)
-        return scalar_mul(-k, point_neg(point, curve), curve)
+        return ec_mul(ec_neg(point, curve), -k, curve)
 
     result = None
     addend = point
@@ -241,32 +257,32 @@ def scalar_mul(k, point, curve):
     while k:
         if k & 1:
             # Add.
-            result = point_add(result, addend, curve)
+            result = ec_add(result, addend, curve)
 
         # Double.
-        addend = point_add(addend, addend, curve)
+        addend = ec_add(addend, addend, curve)
 
         k >>= 1
 
-    assert is_on_curve(result, curve)
+    assert ec_is_on_curve(result, curve)
 
     return result
 
 
 # Uses Shamir's trick to compute the point R = a*P + b*Q
-def mul_add_fast(a, P, b, Q, curve):
+def ec_mul_add_fast(a: int, P: ECPoint, b: int, Q: ECPoint, curve: EllipticCurve) -> ECPoint:
     """
     Given two points P and Q and two integers a and b, computes the point R = a*P + b*Q
     using Shamir's trick.
     """
     if a == 0:
-        return scalar_mul(b, Q, curve)
+        return ec_mul(Q, b, curve)
     if b == 0:
-        return scalar_mul(a, P, curve)
+        return ec_mul(P, a, curve)
 
     # Handle the case when P and Q are the same point
     if P == Q:
-        return scalar_mul(a + b, P, curve)
+        return ec_mul(P, a + b, curve)
 
     # Neither a nor b should be greater than n, the order of the curve, but we'll check just in case
     n = curve.n
@@ -285,21 +301,21 @@ def mul_add_fast(a, P, b, Q, curve):
 
     # Compute R = a*P + b*Q using the binary representation of a and b.
     R = None
-    pq_sum = point_add(P, Q, curve)
+    pq_sum = ec_add(P, Q, curve)
     for i in range(max_len):
-        R = point_double(R, curve)
+        R = ec_double(R, curve)
         if a_bin[i] == '1' and b_bin[i] == '1':
-            R = point_add(R, pq_sum, curve)
+            R = ec_add(R, pq_sum, curve)
         elif a_bin[i] == '1':
-            R = point_add(R, P, curve)
+            R = ec_add(R, P, curve)
         elif b_bin[i] == '1':
-            R = point_add(R, Q, curve)
+            R = ec_add(R, Q, curve)
 
-    assert is_on_curve(R, curve)
+    assert ec_is_on_curve(R, curve)
     return R
 
 # Uses Shamir's trick to compute the point R = a*P + b*Q
-def mul_add_fast_steps(a, P, b, Q, curve):
+def ec_mul_add_fast_steps(a: int, P: ECPoint, b: int, Q: ECPoint, curve: EllipticCurve) -> ECPoint:
     """
     Given two points P and Q and two integers a and b, computes the point R = a*P + b*Q
     using Shamir's trick.
@@ -314,13 +330,13 @@ def mul_add_fast_steps(a, P, b, Q, curve):
 
 
     if a == 0:
-        return scalar_mul(b, Q, curve)
+        return ec_mul(Q, b, curve)
     if b == 0:
-        return scalar_mul(a, P, curve)
+        return ec_mul(P, a, curve)
 
     # Handle the case when P and Q are the same point
     if P == Q:
-        return scalar_mul(a + b, P, curve)
+        return ec_mul(P, a + b, curve)
 
     # Neither a nor b should be greater than n, the order of the curve, but we'll check just in case
     n = curve.n
@@ -342,10 +358,10 @@ def mul_add_fast_steps(a, P, b, Q, curve):
 
     # Compute R = a*P + b*Q using the binary representation of a and b.
     R = None
-    pq_sum = point_add(P, Q, curve)
+    pq_sum = ec_add(P, Q, curve)
     print("pq_sum: ", hex(pq_sum[0]), hex(pq_sum[1]))
     for i in range(max_len):
-        R = point_double(R, curve)
+        R = ec_double(R, curve)
         if R:
             print("R after double: ", hex(R[0]), hex(R[1]))
         else:
@@ -353,23 +369,23 @@ def mul_add_fast_steps(a, P, b, Q, curve):
 
         if a_bin[i] == '1' and b_bin[i] == '1':
             print("a and b test bit")
-            R = point_add(R, pq_sum, curve)
+            R = ec_add(R, pq_sum, curve)
         elif a_bin[i] == '1':
             print("a test bit")
-            R = point_add(R, P, curve)
+            R = ec_add(R, P, curve)
         elif b_bin[i] == '1':
             print("b test bit")
-            R = point_add(R, Q, curve)
+            R = ec_add(R, Q, curve)
 
         print("R after add: ", hex(R[0]), hex(R[1]))
         print("")
 
 
-    assert is_on_curve(R, curve)
+    assert ec_is_on_curve(R, curve)
 
     return R
 
-def ecdsa_verify(q, e, r, s, curve) -> bool:
+def ecdsa_verify(q: ECPoint, e: int, r: int, s: int, curve: EllipticCurve) -> bool:
     """Verifies an ECDSA signature."""
     if r < 1 or r > curve.n - 1:
         return False
@@ -379,14 +395,14 @@ def ecdsa_verify(q, e, r, s, curve) -> bool:
     w = inverse_mod(s, curve.n)
     u1 = (e * w) % curve.n
     u2 = (r * w) % curve.n
-    x, y = point_add(scalar_mul(u1, curve.g, curve), scalar_mul(u2, q, curve), curve)
+    x, y = ec_add(ec_mul(curve.g, u1, curve), ec_mul(q, u2, curve), curve)
 
     if x % curve.n == r:
         return True
     else:
         return False
 
-def ecdsa_verify_fast(q, e, r, s, curve) -> bool:
+def ecdsa_verify_fast(q: ECPoint, e: int, r: int, s: int, curve: EllipticCurve) -> bool:
     """Verifies an ECDSA signature."""
     if r < 1 or r > curve.n - 1:
         return False
@@ -397,7 +413,7 @@ def ecdsa_verify_fast(q, e, r, s, curve) -> bool:
     u1 = (e * w) % curve.n
     u2 = (r * w) % curve.n
 
-    x1, y1 = mul_add_fast(u1, curve.g, u2, q, curve)
+    x1, y1 = ec_mul_add_fast(u1, curve.g, u2, q, curve)
 
     # x2, y2 = point_add(scalar_mul(u1, curve.g, curve), scalar_mul(u2, q, curve), curve)
     # assert x1 == x2
@@ -408,7 +424,7 @@ def ecdsa_verify_fast(q, e, r, s, curve) -> bool:
     else:
         return False
 
-def ecdsa_verify_steps(q, e, r, s, curve) -> bool:
+def ecdsa_verify_steps(q: ECPoint, e: int, r: int, s: int, curve: EllipticCurve) -> bool:
     """Verifies an ECDSA signature."""
     print("Input parameters:")
     print("Q.x = ", hex(q_x))
@@ -437,7 +453,7 @@ def ecdsa_verify_steps(q, e, r, s, curve) -> bool:
     u2 = (r * w) % curve.n
     print("u2 = ", hex(u2))
 
-    x1, y1 = point_add(scalar_mul(u1, curve.g, curve), scalar_mul(u2, q, curve), curve)
+    x1, y1 = ec_add(ec_mul(curve.g, u1, curve), ec_mul(q, u2, curve), curve)
 
     print("x1 = ", hex(x1))
     print("y1 = ", hex(y1))
@@ -446,7 +462,7 @@ def ecdsa_verify_steps(q, e, r, s, curve) -> bool:
     print("Signature is", "valid" if valid else "invalid", "!")
     return valid
 
-def ecdsa_verify_fast_steps(q, e, r, s, curve) -> bool:
+def ecdsa_verify_fast_steps(q: ECPoint, e: int, r: int, s: int, curve: EllipticCurve) -> bool:
     """Verifies an ECDSA signature."""
     print("Input parameters:")
     print("Q.x = ", hex(q_x))
@@ -475,7 +491,7 @@ def ecdsa_verify_fast_steps(q, e, r, s, curve) -> bool:
     u2 = (r * w) % curve.n
     print("u2 = ", hex(u2))
 
-    x1, y1 = mul_add_fast_steps(u1, curve.g, u2, q, curve)
+    x1, y1 = ec_mul_add_fast_steps(u1, curve.g, u2, q, curve)
 
     print("x1 = ", hex(x1))
     print("y1 = ", hex(y1))

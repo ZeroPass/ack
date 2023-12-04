@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# tv generated code
+tests/tv/**/*.hpp
+
 # User-specific files
 *.rsuser
 *.suo
@@ -355,3 +358,6 @@ MigrationBackup/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Allow RSP test vectors
+!tests/tv/**/*.rsp

@@ -7,7 +7,7 @@
 namespace ack{
     /**
      * Function verifies ECDSA signature.
-     * 
+     *
      * The implementation follows the NIST FIPS 186-5, section 6.4.2: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
      * and cross-checked against:
      *  - SECG SEC1 v2.0, section 4.1.4: https://www.secg.org/sec1-v2.pdf#page=52
@@ -39,10 +39,10 @@ namespace ack{
             e -= curve.n;
         }
 
-        IntT w  = s.modinv( curve.n );
-        auto u1 = ( e * w ) % curve.n;
-        auto u2 = ( r * w ) % curve.n;
-        auto rr = ec_mul_add_fast( u1, ec_point_fp_proj( curve.g ), u2, ec_point_fp_proj( q ) )
+        const IntT w  = s.modinv( curve.n );
+        const auto u1 = ( e * w ) % curve.n;
+        const auto u2 = ( r * w ) % curve.n;
+        auto rr = ec_mul_add_fast( u1, ec_point_fp_jacobi( curve.g ), u2, ec_point_fp_jacobi( q ) )
             .to_affine();
 
         if ( rr.is_identity() ) {
@@ -70,7 +70,7 @@ namespace ack{
      * @return true if signature is valid, false otherwise.
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
-    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+    [[nodiscard]] inline bool ecdsa_verify(const ec_point_fp<CurveT>& q, const hash_t<HLen>& digest,
                                            const IntT& r, const IntT& s)
     {
         const auto bd = digest.extract_as_byte_array();
@@ -111,7 +111,7 @@ namespace ack{
      * @param error  - error message when verification fails
     */
     template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
-    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const eosio::fixed_bytes<HLen>& digest,
+    inline void assert_ecdsa(const ec_point_fp<CurveT>& q, const hash_t<HLen>& digest,
                              const IntT& r, const IntT& s, const char* error)
     {
         check( ecdsa_verify( q, digest, r, s ), error );

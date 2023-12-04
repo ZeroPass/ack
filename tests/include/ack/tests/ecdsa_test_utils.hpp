@@ -5,7 +5,6 @@
 #include <ack/ecdsa.hpp>
 #include <ack/tests/utils.hpp>
 
-#include <eosio/fixed_bytes.hpp>
 #include <eosio/tester.hpp>
 
 namespace ack::tests {
@@ -21,10 +20,11 @@ namespace ack::tests {
             // Test verification is invalid if data is changed
             auto dbad = digest;
             dbad.data()[0] ^= ( dbad.data()[0] << 0x10 ) >> 0x01;
-            auto dbadb = dbad.extract_as_byte_array();
-
-            REQUIRE_EQUAL( ecdsa_verify( q, bytes_view( (const byte_t*)dbadb.data(), HLen ), r, s ), false )
             REQUIRE_EQUAL( ecdsa_verify( q, dbad, r, s ), false )
+
+            const auto dbadb = dbad.extract_as_byte_array();
+            REQUIRE_EQUAL( ecdsa_verify( q, bytes_view( (const byte_t*)dbadb.data(), HLen ), r, s ), false )
+
             REQUIRE_ASSERT( "ECDSA signature verification failed", [&]() {
                 assert_ecdsa( q, bytes_view( (const byte_t*)dbadb.data(), HLen ), r, s,
                     "ECDSA signature verification failed"

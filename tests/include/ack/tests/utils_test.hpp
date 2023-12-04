@@ -617,61 +617,140 @@ namespace ack::tests {
             REQUIRE_EQUAL( ""_hex, bytes() )
 
             // Test returned required buffer size
+            REQUIRE_EQUAL( from_hex( "0", 1, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "0", 1, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "0" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "0" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "0" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
+
             REQUIRE_EQUAL( from_hex( "00", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "00", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "00" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "00" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "00" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "00" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "1", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "1", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "1" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "1" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "1" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "1", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "1" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "1" ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "01", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "01", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "01" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "01" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "01" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "01", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "01" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "01", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "2", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "2", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "2" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "2" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "2" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "2", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "2" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "2", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "02", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "02", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "02" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "02" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "02" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "02", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "02" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "02", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "3", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "3", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "3" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "3" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "3" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "3", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "3" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "3", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "03", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "03", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "03" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "03" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "03" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "03", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "03" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "03", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "7", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "7", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "7" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "7" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "7" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "7", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "7" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "7", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "07", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "07", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "07" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "07" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "07" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "07", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "07" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "07", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "F", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "F", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "F" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "F" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "F" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "F", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "F" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "F", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "0F", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "0F", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "0F" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "0F" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "0F" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0F", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "0F" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0F", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
+
+            REQUIRE_EQUAL( from_hex( "f", 2, nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( "f", 2, bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "f" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string( "f" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "f" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "f", 2 ), nullptr, 0 ), 1 ) // size 2 includes terminating 0
+            REQUIRE_EQUAL( from_hex( std::string_view( "f" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "f", 2 ), bytes(1).data(), 0 ), 1 ) // size 2 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "0f", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "0f", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "0f" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "0f" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "0f" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0f", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "0f" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0f", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "10", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "10", 2, bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "10" ), nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string( "10" ), bytes(1).data(), 0 ), 1 )
             REQUIRE_EQUAL( from_hex( std::string_view( "10" ), nullptr, 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "10", 3 ), nullptr, 0 ), 1 ) // size 3 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "10" ), bytes(1).data(), 0 ), 1 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "10", 3 ), bytes(1).data(), 0 ), 1 ) // size 3 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "20", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "20", 2, bytes(1).data(), 0 ), 1 )
@@ -755,112 +834,144 @@ namespace ack::tests {
             REQUIRE_EQUAL( from_hex( std::string( "000" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "000" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "000" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000", 4 ), nullptr, 0 ), 2 ) // size 4 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "000" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000", 4 ), bytes(1).data(), 0 ), 2 ) // size 4 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "001", 3, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "001", 3, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "001" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "001" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "001" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "001", 4 ), nullptr, 0 ), 2 ) // size 4 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "001" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "001", 4 ), bytes(1).data(), 0 ), 2 ) // size 4 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "100", 3, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "100", 3, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "100" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "100" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "100" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "100", 4 ), nullptr, 0 ), 2 ) // size 4 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "100" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "100", 4 ), bytes(1).data(), 0 ), 2 ) // size 4 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "fff", 3, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "fff", 3, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "fff" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "fff" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "fff" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "fff", 4 ), nullptr, 0 ), 2 ) // size 4 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "fff" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "fff", 4 ), bytes(1).data(), 0 ), 2 ) // size 4 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "0000", 4, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "0000", 4, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "0000" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "0000" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "0000" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0000", 5 ), nullptr, 0 ), 2 ) // size 5 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "0000" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0000", 5 ), bytes(1).data(), 0 ), 2 ) // size 5 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "0001", 4, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "0001", 4, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "0001" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "0001" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "0001" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0001", 5 ), nullptr, 0 ), 2 ) // size 5 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "0001" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "0001", 5 ), bytes(1).data(), 0 ), 2 ) // size 5 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "1000", 4, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "1000", 4, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "1000" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "1000" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "1000" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "1000", 5 ), nullptr, 0 ), 2 ) // size 5 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "1000" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "1000", 5 ), bytes(1).data(), 0 ), 2 ) // size 5 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "FFFF", 4, nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( "FFFF", 4, bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "FFFF" ), nullptr, 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string( "FFFF" ), bytes(1).data(), 0 ), 2 )
             REQUIRE_EQUAL( from_hex( std::string_view( "FFFF" ), nullptr, 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "FFFF", 5 ), nullptr, 0 ), 2 ) // size 5 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "FFFF" ), bytes(1).data(), 0 ), 2 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "FFFF", 5 ), bytes(1).data(), 0 ), 2 ) // size 5 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "00000", 5, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "00000", 5, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "00000" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "00000" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "00000" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00000", 6 ), nullptr, 0 ), 3 ) // size 6 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "00000" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00000", 6 ), bytes(1).data(), 0 ), 3 ) // size 6 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "00001", 5, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "00001", 5, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "00001" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "00001" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "00001" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00001", 6 ), nullptr, 0 ), 3 ) // size 6 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "00001" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "00001", 6 ), bytes(1).data(), 0 ), 3 ) // size 6 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "10000", 5, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "10000", 5, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "10000" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "10000" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "10000" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "10000", 6 ), nullptr, 0 ), 3 ) // size 6 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "10000" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "10000", 6 ), bytes(1).data(), 0 ), 3 ) // size 6 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "aBfCe", 5, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "aBfCe", 5, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "aBfCe" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "aBfCe" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "aBfCe" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "aBfCe", 6 ), nullptr, 0 ), 3 ) // size 6 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "aBfCe" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "aBfCe", 6  ), bytes(1).data(), 0 ), 3 ) // size 6 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "000000", 6, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "000000", 6, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "000000" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "000000" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "000000" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000000", 7 ), nullptr, 0 ), 3 ) // size 7 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "000000" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000000", 7 ), bytes(1).data(), 0 ), 3 ) // size 7 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "000001", 6, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "000001", 6, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "000001" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "000001" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "000001" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000001", 7 ), nullptr, 0 ), 3 ) // size 7 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "000001" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "000001", 7 ), bytes(1).data(), 0 ), 3 ) // size 7 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "100000", 6, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "100000", 6, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "100000" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "100000" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "100000" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "100000", 7 ), nullptr, 0 ), 3 ) // size 7 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "100000" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "100000", 7 ), bytes(1).data(), 0 ), 3 ) // size 7 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "ffffff", 6, nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( "ffffff", 6, bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "ffffff" ), nullptr, 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string( "ffffff" ), bytes(1).data(), 0 ), 3 )
             REQUIRE_EQUAL( from_hex( std::string_view( "ffffff" ), nullptr, 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "ffffff", 7 ), nullptr, 0 ), 3 ) // size 7 includes terminating 0
             REQUIRE_EQUAL( from_hex( std::string_view( "ffffff" ), bytes(1).data(), 0 ), 3 )
+            REQUIRE_EQUAL( from_hex( std::string_view( "ffffff", 7 ), bytes(1).data(), 0 ), 3 ) // size 7 includes terminating 0
 
             REQUIRE_EQUAL( from_hex( "0000000", 7, nullptr, 0 ), 4 )
             REQUIRE_EQUAL( from_hex( "0000000", 7, bytes(1).data(), 0 ), 4 )
@@ -976,7 +1087,9 @@ namespace ack::tests {
 
             // Edge case, hex sting with wrong length
             REQUIRE_EQUAL( from_hex( "000000000", 9, nullptr, 0 ), 5 )
+            REQUIRE_EQUAL( from_hex( "000000000", 10, nullptr, 0 ), 5 ) // size 10 includes terminating 0
             REQUIRE_EQUAL( from_hex( "000000000", 9, bytes(1).data(), 0 ), 5 )
+            REQUIRE_EQUAL( from_hex( "000000000", 10, bytes(1).data(), 0 ), 5 ) // size 10 includes terminating 0
             REQUIRE_EQUAL( from_hex( "000000000", 2, nullptr, 0 ), 1 )
             REQUIRE_EQUAL( from_hex( "000000000", 2, bytes(1).data(), 0 ), 1 )
 
@@ -1427,6 +1540,55 @@ namespace ack::tests {
             REQUIRE_EQUAL( "0000000000112233"_hex, bytes( { 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x22, 0x33 }))
             REQUIRE_EQUAL( "000000000000112233"_hex, bytes( { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x22, 0x33 }))
 
+            // Test terminating null
+            using svv = std::string_view;
+            REQUIRE_EQUAL( from_hex( "aB", 3 )                     , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex( svv( "aB", 3 ) )              , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex( "Ab", 3 )                     , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex( svv( "Ab", 3 ))               , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex( "aBc", 4 )                    , bytes( { 0x0a, 0xbc } ))
+            REQUIRE_EQUAL( from_hex(  svv( "aBc", 4 ))             , bytes( { 0x0a, 0xbc } ))
+            REQUIRE_EQUAL( from_hex( "AbC", 4 )                    , bytes( { 0x0a, 0xbc } ))
+            REQUIRE_EQUAL( from_hex( "ABc", 4 )                    , bytes( { 0x0a, 0xbc } ))
+            REQUIRE_EQUAL( from_hex( "aBC", 4 )                    , bytes( { 0x0a, 0xbc } ))
+            REQUIRE_EQUAL( from_hex( "aBcD", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "AbCd", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "ABcd", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "aBCd", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "abCD", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "AbcD", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "aBcD", 5 )                   , bytes( { 0xab, 0xcd } ))
+            REQUIRE_EQUAL( from_hex( "Ab0d6Cf", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( svv(  "Ab0d6Cf", 8 ))         , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "Ab0d6CF", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "Ab0D6CF", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "ab0d6CF", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "AB0d6Cf", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "AB0D6cF", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "AB0D6cf", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "aB0d6Cf", 8 )                , bytes( { 0x0a, 0xb0, 0xd6, 0xcf }))
+            REQUIRE_EQUAL( from_hex( "0123456789AbcDef", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( svv( "0123456789AbcDef", 17 )), bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789aBcDeF", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789ABcDeF", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789AbCdEf", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789aBCdEf", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789AbcDeF", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789aBcDEF", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789AbCDEF", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+            REQUIRE_EQUAL( from_hex( "0123456789ABCDEf", 17 )      , bytes( { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef } ))
+
+            REQUIRE_EQUAL( from_hex<1>( svv( "aB", 3 ) )              , fixed_bytes<1>({ 0xab }) )
+            REQUIRE_EQUAL( from_hex<2>( svv( "aBc", 4 ))              , fixed_bytes<2>({ 0x0a, 0xbc }) )
+            REQUIRE_EQUAL( from_hex<2>( svv( "aBcD", 5 ))             , fixed_bytes<2>({ 0xab, 0xcd }) )
+            REQUIRE_EQUAL( from_hex<4>( svv( "Ab0d6Cf", 8 ))          , fixed_bytes<4>({ 0x0a, 0xb0, 0xd6, 0xcf }) )
+            REQUIRE_EQUAL( from_hex<8>( svv( "0123456789AbcDef", 17 )), fixed_bytes<8>({ 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef }) )
+
+            // Edge case when terminating null is part of the string and the size of the string is set to terminating zero position
+            REQUIRE_EQUAL( from_hex( "aB\0caf2", 3 )            , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex( svv( "aB\0caf2", 3 ) )     , bytes( { 0xab } ))
+            REQUIRE_EQUAL( from_hex<1>( svv( "aB\0caf2", 3 ) ) , fixed_bytes<1>({ 0xab }) )
+
             // Failure cases
             REQUIRE_ASSERT( "Invalid hex character 'x'", [&]() {
                 from_hex( 'x');
@@ -1606,15 +1768,7 @@ namespace ack::tests {
             })
 
             REQUIRE_ASSERT( "Invalid hex character '<null>'", [&]() {
-                from_hex( "1234\0", 5 );
-            })
-
-            REQUIRE_ASSERT( "Invalid hex character '<null>'", [&]() {
-                from_hex( "1234\0" );
-            })
-
-            REQUIRE_ASSERT( "Invalid hex character '<null>'", [&]() {
-                from_hex( "1234\0aX", 5 );
+                from_hex( "1234\0aX", 7 );
             })
 
             REQUIRE_ASSERT( "Invalid hex character '<null>'", [&]() {

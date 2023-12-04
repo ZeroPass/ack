@@ -10,7 +10,7 @@
 
 namespace ack {
     template <typename T>
-    constexpr inline bool operator == (const std::span<T>& lhs, const std::span<T>& rhs) {
+    inline constexpr bool operator == (const std::span<T>& lhs, const std::span<T>& rhs) {
         if ( lhs.data() == rhs.data() ) {
             return lhs.size() == rhs.size();
         }
@@ -21,22 +21,22 @@ namespace ack {
     }
 
     template <typename T, typename U>
-    constexpr inline bool operator == (const std::span<T>& lhs, const U& rhs) {
+    inline constexpr bool operator == (const std::span<T>& lhs, const U& rhs) {
         return lhs == std::span<T>{ rhs };
     }
 
     template <typename T, typename U>
-    constexpr inline bool operator == (const U& lhs, const std::span<T>& rhs) {
+    inline constexpr bool operator == (const U& lhs, const std::span<T>& rhs) {
         return std::span<T>{ lhs } == rhs;
     }
 
     template <typename T>
-    constexpr inline bool operator != (const std::span<T>& lhs, const std::span<T>& rhs) {
+    inline constexpr bool operator != (const std::span<T>& lhs, const std::span<T>& rhs) {
         return !( lhs == rhs );
     }
 
     template <typename T, typename U>
-    constexpr inline bool operator != (const std::span<T>& lhs, const U& rhs) {
+    inline constexpr bool operator != (const std::span<T>& lhs, const U& rhs) {
         return lhs != std::span<T>{ rhs };
     }
 
