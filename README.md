@@ -3,7 +3,7 @@
 [![build](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml)
 [![tests](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml)
 
-[AntelopeIO](https://github.com/antelopeIO) Cryptography Library is a header-only library designed for use in smart contracts. The library includes implementations of ECC primitives and ECDSA verification algorithms, as well as RSA PKCS v1.5 & RSASSA-PSS signature verification algorithms and Keccak hash algorithms: SHA3-256, SHA3-384, SHA3-512, SHAKE-128, and SHAKE-256.
+[AntelopeIO](https://github.com/antelopeIO) Cryptography Library is a header-only library designed for use in smart contracts. The library includes implementations of ECC primitives and ECDSA verification algorithms, as well as RSA PKCS v1.5 & RSASSA-PSS signature verification algorithms, SHA-384 and Keccak hash algorithms: SHA3-256, SHA3-384, SHA3-512, SHAKE-128, and SHAKE-256.
 
 One of the key features of the library is its optimization of algorithm execution by minimizing heap allocations. The library achieves this by allocating most of the data on the stack and passing it around by pointers and references using `std::span`. Data structures are designed in a way that utilizes static polymorphism to minimize v-table emissions and runtime overhead. This design choice ensures that the library operates as efficiently as possible, making it well-suited for use in resource-constrained environments.
 
@@ -11,15 +11,17 @@ It should be noted that some parts of the underlying algorithm implementations, 
 
 # Algorithms
 ## ECC
-The library implements core elliptic curve primitives, such as curve and point, and supports basic EC arithmetic operations (addition, subtraction, and multiplication) for curves over a prime finite field GF(p). Points can be represented in both affine and homogeneous coordinate systems, providing flexibility for various use cases and applications. Furthermore, the library pre-defines two elliptic curves: `secp256k1` and `secp256r1`. 
+The library implements core elliptic curve primitives, such as curve and point, and supports basic EC arithmetic operations (addition, subtraction, and multiplication) for curves over a prime finite field GF(p). Points can be represented in affine, homogeneous and Jacobi coordinates, providing flexibility for various use cases and applications. Furthermore, the library pre-defines two elliptic curves: `secp256k1` and `secp256r1`. 
 
 In addition to the core EC primitives, the library also provides implementation for the ECDSA signature verification algorithm. This implementation follows the [NIST FIPS 186-5](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf) standard and has been cross-checked against the [SECG SEC1 v2.0](https://www.secg.org/sec1-v2.pdf) standard and the [BSI TR-03111 v2.10](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TR03111/BSI-TR-03111_V-2-1_pdf.pdf) standard.
 
 ### Elliptic Curve Primitives
 The [ack/ec.hpp](include/ack/ec.hpp) header file defines the following elliptic curve primitives:
-- `ec_point_fp` - represents a point in affine coordinate system for a curve over GF(p)
-- `ec_point_fp_proj` - represents a point in homogeneous coordinate system for a curve over GF(p)
+- `ec_point_fp` - represents a point in affine coordinates for a curve over GF(p)
+- `ec_point_fp_proj` - represents a point in homogeneous coordinates for a curve over GF(p)
+- `ec_point_fp_jacobi` - represents a point in Jacobi coordinates for a curve over GF(p)
 - `ec_curve_fp` - represents an elliptic curve over GF(p)
+- `ec_mul_add_fast` - function for fast multiplication and addition of 2 points with 2 scalars , i.e.: a*P + b*Q
 
 ### Pre-defined Elliptic Curves
 The [ack/ec_curve.hpp](include/ack/ec_curve.hpp) header file contains definitions for pre-defined elliptic curves.
@@ -53,23 +55,29 @@ and modular exponentiation function:
    By default `eosio::mod_exp` intrinsic is used if macro `ACK_NO_INTRINSICS=1` is not defined.
 
 ## Keccak hash algorithms
-Library implements 4 Keccak hashing algorithms: SHA3-256, SHA3-512, SHAKE-128 and SHAKE-256. The underlying base implementation was copied from the original authors. The code is hosted at [https://github.com/XKCP/XKCP](https://github.com/XKCP/XKCP)
+Library implements 5 Keccak hashing algorithms: SHA3-256, SHA3-384, SHA3-512, SHAKE-128 and SHAKE-256. The underlying base implementation was copied from the original authors. The code is hosted at [https://github.com/XKCP/XKCP](https://github.com/XKCP/XKCP)
 
 The [ack/keccak.hpp](include/ack/keccak.hpp) header file defines those 4 hash algorithms:
 - `sha3_256` - computes SHA3-256 hash
 - `sha3_384` - computes SHA3-384 hash
 - `sha3_512` - computes SHA3-512 hash
-- `shake128_fixed` - computes fixed size  SHAKE-128 hash
+- `shake128_fixed` - computes fixed size SHAKE-128 hash
 - `shake128` - computes var-long SHAKE-128 hash
 - `shake256_fixed` - computes fixed size SHAKE-256 hash
 - `shake256` - computes var-long SHAKE-256 hash
 
-# Algorithm testing
-The validity of algorithms was tested with FIPS 186-3 & 186-4 and FIPS 202 test vectors from the US National Institute of Standards and Technology - NIST. In addition, the RSA and ECDSA signature verification algorithms were tested using test vectors from Google's Wycheproof project. The tests can be found in [tests](tests/include/ack/tests/) folder. To compile the tests, configuring `cmake` with `-DACK_BUILD_TESTS=ON` (enabled by default).
+## SHA-2
+The [ack/sha.hpp](include/ack/sha.hpp) header file defines SHA-2 algorithm:
+- `sha384` - computes SHA-384 hash
 
-FIPS 186-4: [https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures)
+# Algorithm testing
+The validity of algorithms was tested with FIPS 180-4, FIPS 186-3 & 186-4 and FIPS 202 test vectors from the US National Institute of Standards and Technology - NIST. In addition, the RSA and ECDSA signature verification algorithms were tested using test vectors from Google's Wycheproof project. Tests can be found in the [tests](tests/include/ack/tests/) folder. To compile the tests, configure `cmake` with `-DACK_BUILD_TESTS=ON` (enabled by default).
+
+Test vectors:  
+FIPS 180-4: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#shavs](https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#shavs)
+<br>FIPS 186-4: [https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures)
+<br>FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
 <br>Project Wycheproof: [https://github.com/google/wycheproof](https://github.com/google/wycheproof)
-<br>Keccak SHA-3 FIPS 202: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss]( https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#sha3vsha3vss)
 
 # Use in project
 To use antelope.ck library in your project, it is recommended to use  [CMake](https://cmake.org/) and configure your project to use the external `ack` project. E.g.: using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html).
@@ -161,9 +169,12 @@ If configured correctly, you should be able to add the antelope.ck library to yo
     // Do something...
   }
 
-  // Calculate SHA384
+  // Calculate SHA-384
   hash384 mdsh384 = ack::sha384( byte_data );
 
+  // Calculate SHA3-256
+  hash256 mdsh3 = ack::sha3_256( byte_data );
+  
   // Calculate SHA3-384
   hash384 mdsh3 = ack::sha3_384( byte_data );
 
