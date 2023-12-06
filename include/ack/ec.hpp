@@ -12,7 +12,7 @@
 
 namespace ack {
     template<std::size_t N>
-    using ec_fixed_bigint = fixed_bigint<N * 2>; // 2x size required for multiplication
+    using ec_fixed_bigint = fixed_bigint<bitsize_to_wordsize(N) * word_bit_size * 2>; // 2x size required for multiplication
 
     // Affine coordinates representation of an elliptic curve point
     template<typename PointT, typename CurveT>
