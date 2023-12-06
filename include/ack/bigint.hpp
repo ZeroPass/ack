@@ -864,7 +864,7 @@ namespace ack {
                 size_t zn = xn;
                 const bool success = z.buf_.alloc(zn);
                 assert(success);
-                if (!success    ) {
+                if ( !success ) {
                     z.clear();
                     return;
                 }
@@ -1934,7 +1934,7 @@ namespace ack {
             static constexpr void shl(bigint& y, const bigint& x, std::size_t shift_bit)
             {
                 size_t xn = x.size();
-                size_t yn = xn + get_word_size_from_bitsize(shift_bit); /*(shift_bit + word_bit_size - 1) / word_bit_size;*/
+                size_t yn = xn + bitsize_to_wordsize(shift_bit); /*(shift_bit + word_bit_size - 1) / word_bit_size;*/
 
                 [[maybe_unused]] const bool success = y.buf_.alloc(yn);
                 assert(success);
@@ -2529,7 +2529,7 @@ namespace ack {
      *       The maximum size of a fixed_bigint can be 512 bits for all ECC & RSA operations.
      */
     template<std::size_t MaxBitSize>
-    using fixed_bigint = bigint<fixed_word_buffer<get_word_size_from_bitsize(MaxBitSize)>>;
+    using fixed_bigint = bigint<fixed_word_buffer<bitsize_to_wordsize(MaxBitSize)>>;
 
     template <typename>
     struct is_bigint : std::false_type {};

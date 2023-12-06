@@ -88,7 +88,7 @@ namespace ack {
      * @param bitsize - the number of bits
      * @return the number of words needed to store the given number of bits
     */
-    inline constexpr std::size_t get_word_size_from_bitsize(std::size_t bitsize) {
+    inline constexpr std::size_t bitsize_to_wordsize(std::size_t bitsize) {
         return (bitsize + word_bit_size - 1) / word_bit_size;
     }
 
