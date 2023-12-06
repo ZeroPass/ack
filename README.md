@@ -1,7 +1,8 @@
 # AntelopeIO Cryptography Kits
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![build](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml)
-[![tests](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![build](https://img.shields.io/github/actions/workflow/status/ZeroPass/ack/build.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/ZeroPass/ack/actions/workflows/build.yml)
+[![tests](https://img.shields.io/github/actions/workflow/status/ZeroPass/ack/tests.yml?label=Tests&branch=master&logo=github&style=for-the-badge)](https://github.com/ZeroPass/ack/actions/workflows/tests.yml)
+
 
 [AntelopeIO](https://github.com/antelopeIO) Cryptography Library is a header-only library designed for use in smart contracts. The library includes implementations of ECC primitives and ECDSA verification algorithms, as well as RSA PKCS v1.5 & RSASSA-PSS signature verification algorithms, SHA-384 and Keccak hash algorithms: SHA3-256, SHA3-384, SHA3-512, SHAKE-128, and SHAKE-256.
 
@@ -83,8 +84,7 @@ FIPS 180-4: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-P
 To use antelope.ck library in your project, it is recommended to use  [CMake](https://cmake.org/) and configure your project to use the external `ack` project. E.g.: using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html).
 If only pure WASM implementation is desired configure your CMake project with `ACK_NO_INTRINSICS=ON` option before including ack library. This will exclude specialized intrinsics such as `eosio::mod_exp` from being used by the library, and instead, a software implementation will be used.
 
-If configured correctly, you should be able to add the antelope.ck library to your [CMake](https://cmake.org/) project using command `add_library(<your_project> ack)` and include it in your code using the header file: `#include <ack/ack.hpp>`.  
-
+If configured correctly, you should be able to add the `ack` library to your [CMake](https://cmake.org/) project using command `add_library(<your_project> ack)` and include it in your code using the header file: `#include <ack/ack.hpp>`.  
 
 **Example:**
 ```cpp
