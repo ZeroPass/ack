@@ -1549,8 +1549,8 @@ namespace ack {
             g( make_point( std::move(g.first), std::move(g.second) )),
             n( std::move(n) ),
             h( h ),
-            a_is_minus_3( a == ( p - 3) ),
-            a_is_zero( a.is_zero() )
+            a_is_minus_3( this->a == ( this->p - 3) ),
+            a_is_zero( this->a.is_zero() )
         {}
 
         /**
