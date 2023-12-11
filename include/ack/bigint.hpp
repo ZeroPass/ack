@@ -823,7 +823,7 @@ namespace ack {
                 assert(xn >= yn);
 
                 // &x[0] and &y[0] will not change if z == x or z == y
-                const bool success = z.buf_.alloc(xn + 1);
+                const bool success = z.buf_.resize(xn + 1);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -844,8 +844,8 @@ namespace ack {
 
             static constexpr void uadd1(bigint& z, const buffer_type& x, size_t xn, word_t y)
             {
-                size_t zn = xn + 1;
-                const bool success = z.buf_.alloc(zn);
+                const size_t zn = xn + 1;
+                const bool success = z.buf_.resize(zn);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -861,8 +861,8 @@ namespace ack {
 
             static constexpr void usub1(bigint& z, const buffer_type& x, size_t xn, word_t y)
             {
-                size_t zn = xn;
-                const bool success = z.buf_.alloc(zn);
+                const size_t zn = xn;
+                const bool success = z.buf_.resize(zn);
                 assert(success);
                 if ( !success ) {
                     z.clear();
@@ -882,7 +882,7 @@ namespace ack {
             {
                 assert(xn >= yn);
 
-                const bool success = z.buf_.alloc(xn);
+                const bool success = z.buf_.resize(xn);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -976,7 +976,7 @@ namespace ack {
 
                 size_t qn = xn - yn + 1;
                 if (q) {
-                    const bool success = q->buf_.alloc(qn);
+                    const bool success = q->buf_.resize(qn);
                     assert(success);
                     if (!success) return false;
                 }
@@ -988,7 +988,7 @@ namespace ack {
                 word_t* qq = q ? &q->buf_[0] : nullptr;
                 size_t rn = detail::div(qq, qn, xx, xn, &y[0], yn);
 
-                const bool success = r.buf_.alloc(rn);
+                const bool success = r.buf_.resize(rn);
                 assert(success);
                 if (!success) {
                     return false;
@@ -1231,7 +1231,7 @@ namespace ack {
             {
                 static_assert( sizeof(word_t) == 4 );
                 is_neg_ = false;
-                [[maybe_unused]] const bool success = buf_.alloc(1);
+                [[maybe_unused]] const bool success = buf_.resize(1);
                 assert(success);
 
                 buf_[0] = x;
@@ -1252,7 +1252,7 @@ namespace ack {
             constexpr bigint& operator = (uint64_t x)
             {
                 is_neg_ = false;
-                [[maybe_unused]] const bool success = buf_.alloc(get_word_size<uint64_t>(1));
+                [[maybe_unused]] const bool success = buf_.resize(get_word_size<uint64_t>(1));
                 assert(success);
 
                 static_assert( sizeof(word_t) == 4 );
@@ -1335,7 +1335,7 @@ namespace ack {
                 }
 
                 size_t word_size = get_word_size<S>(size);
-                const bool success = buf_.alloc(word_size);
+                const bool success = buf_.resize(word_size);
                 if (!success) {
                     return false;
                 }
@@ -1392,7 +1392,7 @@ namespace ack {
                 // this implementation should be a little bit faster than set_array
 
                 size_t word_size   = get_word_size(data);
-                const bool success = buf_.alloc(word_size);
+                const bool success = buf_.resize(word_size);
                 if (!success) {
                     return false;
                 }
@@ -1526,7 +1526,7 @@ namespace ack {
 
                 std::size_t new_size = q + 1;
                 if ( new_size > size() ) {
-                    const bool success = buf_.alloc( new_size );
+                    const bool success = buf_.resize( new_size );
                     assert(success);
                     if (!success) {
                         clear();
@@ -1706,9 +1706,9 @@ namespace ack {
             {
                 const size_t xn = x.size();
                 const size_t yn = y.size();
-                size_t zn = xn + yn;
+                const size_t zn = xn + yn;
 
-                const bool success = z.buf_.alloc(zn);
+                const bool success = z.buf_.resize(zn);
                 assert(success);
                 if (!success) {
                     return false;
@@ -1757,10 +1757,10 @@ namespace ack {
 
             static constexpr void mulu1(bigint& z, const bigint& x, word_t y)
             {
-                size_t xn = x.size();
-                size_t zn = xn + 1;
+                const size_t xn = x.size();
+                const size_t zn = xn + 1;
 
-                const bool success = z.buf_.alloc(zn);
+                const bool success = z.buf_.resize(zn);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -1820,7 +1820,7 @@ namespace ack {
 
                 if (q) {
                     q->is_neg_ = xNeg ^ yNeg;
-                    const bool success = q->buf_.alloc(xn);
+                    const bool success = q->buf_.resize(xn);
                     assert(success);
                     if (!success) {
                         q->clear();
@@ -1887,7 +1887,7 @@ namespace ack {
                 assert(!x.is_neg_);
                 size_t xn = x.size();
                 if (q) {
-                    const bool success = q->buf_.alloc(xn);
+                    const bool success = q->buf_.resize(xn);
                     assert(success);
                     if (!success) {
                         q->clear();
@@ -1936,7 +1936,7 @@ namespace ack {
                 size_t xn = x.size();
                 size_t yn = xn + bitsize_to_wordsize(shift_bit); /*(shift_bit + word_bit_size - 1) / word_bit_size;*/
 
-                [[maybe_unused]] const bool success = y.buf_.alloc(yn);
+                [[maybe_unused]] const bool success = y.buf_.resize(yn);
                 assert(success);
 
                 detail::shift_left(&y.buf_[0], &x.buf_[0], shift_bit, xn);
@@ -1954,7 +1954,7 @@ namespace ack {
                 }
 
                 size_t yn = xn - shift_bit / word_bit_size;
-                [[maybe_unused]] const bool success = y.buf_.alloc(yn);
+                [[maybe_unused]] const bool success = y.buf_.resize(yn);
                 assert(success);
 
                 detail::shift_right(&y.buf_[0], &x.buf_[0], shift_bit, xn);
@@ -2007,7 +2007,7 @@ namespace ack {
                 size_t yn = py->size();
                 assert(xn >= yn);
 
-                const bool success = z.buf_.alloc(xn);
+                const bool success = z.buf_.resize(xn);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -2032,7 +2032,7 @@ namespace ack {
                 size_t yn = py->size();
                 assert(px->size() >= yn);
 
-                const bool success = z.buf_.alloc(yn);
+                const bool success = z.buf_.resize(yn);
                 assert(success);
                 if (!success) {
                     z.clear();
@@ -2056,7 +2056,7 @@ namespace ack {
             {
                 assert(!x.is_neg_);
 
-                [[maybe_unused]] const bool success = z.buf_.alloc(1);
+                [[maybe_unused]] const bool success = z.buf_.resize(1);
                 assert(success);
 
                 z.buf_[0] = x.buf_[0] & y;

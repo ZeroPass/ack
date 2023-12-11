@@ -18,9 +18,9 @@ namespace ack {
             using value_type = ValueType;
             using derived_type = Derived;
 
-            constexpr bool alloc(size_t n)
+            constexpr bool resize(size_t n)
             {
-                return static_cast<derived_type&>(*this).alloc(n);
+                return static_cast<derived_type&>(*this).resize(n);
             }
 
             constexpr void clear()
@@ -74,7 +74,7 @@ namespace ack {
             constexpr fixed_buffer& operator=(const fixed_buffer& rhs) = default;
             constexpr fixed_buffer& operator=(fixed_buffer&& rhs) = default;
 
-            constexpr bool alloc(size_t n)
+            constexpr bool resize(size_t n)
             {
                 if ( n > N ) {
                     return false;
