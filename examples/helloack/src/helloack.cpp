@@ -38,7 +38,7 @@ void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_
 void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
-    assert_rsa_sha1_assert( pubkey, md, sig,
+    assert_rsa_sha1( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-1 signature verification failed"
     );
 }
@@ -92,7 +92,7 @@ void helloack::check_rsa_pss_sha512(rsa_pss_public_key_view pubkey, bytes_view m
 void helloack::bt_rsa_1024_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha1::mod, rsa_1024_sha1::exp );
-    assert_rsa_sha1_assert( pubkey, rsa_1024_sha1::md, rsa_1024_sha1::sig,
+    assert_rsa_sha1( pubkey, rsa_1024_sha1::md, rsa_1024_sha1::sig,
         "RSA 1024 PKCS v1.5 SHA-1 signature verification failed"
     );
 }
@@ -101,7 +101,7 @@ void helloack::bt_rsa_1024_sha1()
 void helloack::bt_rsa_2048_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha1::mod, rsa_2048_sha1::exp );
-    assert_rsa_sha1_assert( pubkey, rsa_2048_sha1::md, rsa_2048_sha1::sig,
+    assert_rsa_sha1( pubkey, rsa_2048_sha1::md, rsa_2048_sha1::sig,
         "RSA 2048 PKCS v1.5 SHA-1 signature verification failed"
     );
 }

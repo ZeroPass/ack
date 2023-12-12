@@ -341,7 +341,7 @@ namespace ack {
     * @param signature - RSA PKCS1 v1.5 signature
     * @param error     - error message to use when verification fails
     */
-    inline void assert_rsa_sha1_assert(const rsa_public_key_view& pub_key, const hash160& digest, const bytes_view& signature, const char* error) {
+    inline void assert_rsa_sha1(const rsa_public_key_view& pub_key, const hash160& digest, const bytes_view& signature, const char* error) {
         eosio::check( verify_rsa_sha1( pub_key, digest, signature ), error );
     }
 

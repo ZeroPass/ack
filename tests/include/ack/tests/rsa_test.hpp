@@ -27,7 +27,7 @@ namespace ack::tests {
             auto d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA-1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA-1 signature verification failed"
                 );
             })
@@ -39,7 +39,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -50,7 +50,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "fe3fa1"_hex;
             m = "de4dc041a283c488187ef9b75e701ab0a25d6ab6e5cf9cc702ccf02cec05a04e37507acbda58cec933938a8b4b75a4425ce4b82590ebf3c30cb22f982dae5fdf11152ea85a95e32a2e45885a82dc4bbd9921247ac7a2b8b37ba97e157d6c20ae738424ffaaa0cb53137b394f8c0bd7c961fcf6de135cb53e589824cb62a7a963"_hex;
@@ -59,7 +59,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -71,7 +71,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -83,7 +83,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -96,7 +96,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -108,7 +108,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -119,7 +119,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "597bdf"_hex;
             m = "c18b5b1847b7e397c39a6f90402aefc1d727f11418f31f17aca308ac3956230286c510c3e01c228fbc091baa9d1236f1382b6b13d688eefdfbb0f99645d3cbad965df12f76cbc49eb2bd33be494dc29289a0d38676ba24ee6b979aaf04773d3c3a7983c5d06bd1abefe13f360d849c8a13adb2d7be33cad1458173603deb8098"_hex;
@@ -128,7 +128,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -140,7 +140,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -152,7 +152,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -165,7 +165,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -177,7 +177,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -189,7 +189,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -200,7 +200,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "6ff82f"_hex;
             m = "f2f47bb35772361b88df3595fb27bd1c4bc66da330e8d159afcf332a8e76b4890b749c6dce22ef991b0041214c55ca2a7f16bdf18c09d60f3a2a32fbb24e64d03306c55008c60b29b7471e787c29278cf5dde9ec1fc2549b818e579aa7f0f7afd2749e65eea6b554c47a74a271ebf9ca17e3989cd25b7386eec34a1157a494ae"_hex;
@@ -209,7 +209,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -221,7 +221,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -235,7 +235,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -246,7 +246,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "748d77"_hex;
             m = "02e74a1d1d61bc6c856a20fecdd64c6a011542b3e7629c1c843e2d3ee21de557115ff5e56c8134741d95c1b4e4efeace14224df8de2b3d48d1eb68c5a2dbb6c429fb7472ad0bb1ad61fee8182eace06eb3c7d1168b10c8f8ceca4c90da6f424053a30eeb6866fbbf588ddd523573f5f1e9ec1435767a03d682c423c412435174"_hex;
@@ -255,7 +255,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -267,7 +267,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -279,7 +279,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -291,7 +291,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -303,7 +303,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "0b8f69"_hex;
             m = "e88292f68268095c2d1059d6c671ee2cc3bc8734748f97a2896ceb22d56b8ea4512beaf7640e2f9a61a6f9cf526a2df0f4ae230602d20b98b6b989c18e7ca3854c60dd654006a231c9e2e61e1aee0a193aa0005a4e19af3b1b9f994bc74dbb9edf09b4689fb72aca6dac6aeca6664e4c9d7a6456e1cd4c34bf0762e708459e97"_hex;
@@ -312,7 +312,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -324,7 +324,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -336,7 +336,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -348,7 +348,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -360,7 +360,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -373,7 +373,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -384,7 +384,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "1e5e25"_hex;
             m = "59e84c0d700305007789dd765f33fc014241ef0fa4b406befcbdfaf27175d3a4e1ce097d27caeaa39eeb3bd3e1ea22b0d5ac445aea712a439d4fe93e42df02d9003687ed1d167f737b668c9963e0cb16820afcba3167e349faeeed8957bb179abc050c86d8508d1919e316f36e7dbfdb5044605603fef878198350fb3972db8e"_hex;
@@ -393,7 +393,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -405,7 +405,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -417,7 +417,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -429,7 +429,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -443,7 +443,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -454,7 +454,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "9fbb4f"_hex;
             m = "e4bc017c194430d1ae0798c2a122b56aedab0dc4f68cb81c27911fc3dabf040778e8c362e17cd7f20ea29f29f58762c6acf69204d22a4d112be029c18ab03184f49c2b9602ea1d75872f0f9873ad115ef7de8045ea51865c6cb5e0fbc934e4b1a002c27e44350a4262d76e76e439ca1a168b61ee07aa69e53339cbd75ef32476"_hex;
@@ -463,7 +463,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -475,7 +475,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -487,7 +487,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -499,7 +499,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -512,7 +512,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -524,7 +524,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -536,7 +536,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -548,7 +548,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -560,7 +560,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -571,7 +571,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             n = "d7a6b5b175afa3bb18fffeaee645a096d8ff28cf96e13dce6d753d3eef4c0cf605dd06f0d25d208da216eba09b3e7e59b304210e63118c5fbc3185f1b845d18bdbf113c4d65ad2880bb2a5eb5b4e7210df30296a4ed6cbc637595318e72e2a6439e4d244d63defad0d2a7d5c06518b0981fef4c916c533f3495c098b40254724fc5a44b0f1d23c3a275466100eb39de3dff6dd48e8322ac2251f3b1f09ae8e6a6136645acbf358e7baa89bc515a12e78cf0f6c9e257b816be1e7a3098b9c1d3b47a4c955b390dc576cca2f9b391b61af5e0eeba21addbe728c58eceb8e018573962ae069f91c538e3161e5765db7e15b352ba3978edbab3071104353d122024e1f3e31f6337dddaae90a2a646074b5691b95b7d82429192c897598a00d67639c326922407002d49432b3cdf84c095c021c4dbe53f7fbe80a497f75991d195122fdb672c67fc973626583202c8230a506f251600ab46435acf51ef6461bd55d0c14a76bb4f1c0b7e3c1affdf21dc8e514c2e8732779e62c3f1fd8626c4b80c683"_hex;
             e = "2fda05"_hex;
@@ -581,7 +581,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -593,7 +593,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -605,7 +605,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -616,7 +616,7 @@ namespace ack::tests {
             r = true; // Result = P
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
-            assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
+            assert_rsa_sha1( rsa_public_key_view(n, e), d, s, "Failed verifying RSA PKCS1.5 SHA1 signature" );
 
             e = "2fda05"_hex;
             m = "f7653ea73a08384cd5dc0f14daf59160b94ee19eb76b83109f3db3cfb446fb0febfe04a45774adc6e5385a1149798ecf386bbd7ad8eb5b7d7566393b75f711528ecf602136da73885ba0c5ee5569888919a482d9af891a76e6feb30c46b738a446a2f825bf82b51aa1d9f7b5e50ca614c2c2d8c4248de8845accc84b0ed0988c"_hex;
@@ -625,7 +625,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
@@ -637,7 +637,7 @@ namespace ack::tests {
             d = eosio::sha1( (const char*)m.data(), m.size() );
             REQUIRE_EQUAL( r, verify_rsa_sha1( rsa_public_key_view(n, e), d, s ));
             REQUIRE_ASSERT( "RSA PKCS1.5 SHA1 signature verification failed", [&]() {
-                assert_rsa_sha1_assert( rsa_public_key_view(n, e), d, s,
+                assert_rsa_sha1( rsa_public_key_view(n, e), d, s,
                     "RSA PKCS1.5 SHA1 signature verification failed"
                 );
             })
