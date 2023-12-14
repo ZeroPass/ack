@@ -40,6 +40,8 @@ The [ack/rsa.hpp](include/ack/rsa.hpp) header file defines the RSA PKCS v1.5 sig
 - `assert_rsa_sha1` - fails transaction if RSA signature is not valid for the provided SHA-1 hash.
 - `verify_rsa_sha256` - checks if RSA signature is valid for the provided SHA-256 hash.
 - `assert_rsa_sha256` - fails transaction if RSA signature is not valid for the provided SHA-256 hash.
+- `verify_rsa_sha384` - checks if RSA signature is valid for the provided SHA-384 hash.
+- `assert_rsa_sha384` - fails transaction if RSA signature is not valid for the provided SHA-384 hash.
 - `verify_rsa_sha512` - checks if RSA signature is valid for the provided SHA-512 hash.
 - `assert_rsa_sha512` - fails transaction if RSA signature is not valid for the provided SHA-512 hash.
 
@@ -48,6 +50,8 @@ the RSASSA-PSS signature verification functions for *SHA-1*, *SHA-256* and *SHA-
 - `assert_rsa_pss_sha1` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-1 hash.
 - `verify_rsa_pss_sha256` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-256 hash.
 - `assert_rsa_pss_sha256` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-256 hash.
+- `verify_rsa_pss_sha384` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-384 hash.
+- `assert_rsa_pss_sha384` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-384 hash.
 - `verify_rsa_pss_sha512` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-512 hash.
 - `assert_rsa_pss_sha512` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-512 hash.
 

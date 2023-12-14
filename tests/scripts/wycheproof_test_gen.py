@@ -5,19 +5,19 @@
 from asn1crypto.algos import DSASignature
 import enum, json, urllib.parse, urllib.request, os, sys
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 #supported_schemas  = ('rsassa_pkcs1_verify_schema.json', 'rsassa_pss_verify_schema.json', 'ecdsa_p1363_verify_schema.json', 'ecdsa_verify_schema.json')
-supported_hashes    = ('SHA-1', 'SHA-256', 'SHA-512', 'SHA3-256', 'SHA3-384', 'SHA3-512',)
+supported_hashes    = ('SHA-1', 'SHA-256', 'SHA-384', 'SHA-512', 'SHA3-256', 'SHA3-384', 'SHA3-512',)
 supported_mgfs      = ('MGF1',)
 unacceptable_flags  = ('MissingNull', )
 rsa_skip_tv_flags   = () # Skipped test vectors with these flags
 ecdsa_skip_tv_flags = ('BER',) # Skipped test vectors with these flags
 supported_curves    = ('secp256k1', 'secp256r1',)
 
-rsa_schemas         = ('rsassa_pkcs1_verify_schema.json', 'rsassa_pss_verify_schema.json',)
+rsa_schemas         = ('rsassa_pkcs1_verify_schema.json', 'rsassa_pss_verify_schema.json', 'rsassa_pss_with_parameters_verify_schema.json',)
 ecdsa_schemas       = ('ecdsa_p1363_verify_schema.json', 'ecdsa_verify_schema.json',)
-rsa_group_types     = ('RsassaPkcs1Verify', 'RsassaPssVerify', )
+rsa_group_types     = ('RsassaPkcs1Verify', 'RsassaPssVerify', 'RsassaPssWithParametersVerify' )
 ecdsa_group_types   = ('EcdsaP1363Verify', 'EcdsaVerify', )
 supported_schemas   = tuple( rsa_schemas + ecdsa_schemas )
 
@@ -47,45 +47,45 @@ class TestType(enum.Enum):
 
 class RsaTest:
     def __init__(self):
-        self.msg = ''
-        self.sig = ''
-        self.result = ''
-        self.comment = ''
+        self.msg: str  = ''
+        self.sig: str  = ''
+        self.result: str  = ''
+        self.comment: str  = ''
 
 class RsaTestVector:
     def __init__(self):
-        self.hash_algo = ''
-        self.n = ''
-        self.e = ''
+        self.hash_algo: str  = ''
+        self.n: str  = ''
+        self.e: str  = ''
         self.salt_len: Optional[int] = None
         self.tests: List[RsaTest] = []
 
 class RsaTestVectors:
     def __init__(self):
-        self.header   = ''
-        self.type     = TestType.Unknown
+        self.header: str    = ''
+        self.type: TestType = TestType.Unknown
         self.entries: List[RsaTestVector] = []
 
 class ECDSATest:
     def __init__(self):
-        self.msg = ''
-        self.r = ''
-        self.s = ''
-        self.result = ''
-        self.comment = ''
+        self.msg: str = ''
+        self.r: str = ''
+        self.s: str = ''
+        self.result: str = ''
+        self.comment: str = ''
 
 class ECDSATestVector:
     def __init__(self):
-        self.curve = ''
-        self.Qx = '' # x coordinate of the public key
-        self.Qy = '' # y coordinate of the public key
-        self.hash_algo = ''
+        self.curve: str = ''
+        self.Qx: str = '' # x coordinate of the public key
+        self.Qy: str = '' # y coordinate of the public key
+        self.hash_algo: str = ''
         self.tests: List[ECDSATest] = []
 
 class ECDSATestVectors:
     def __init__(self):
-        self.header   = ''
-        self.type     = TestType.Unknown
+        self.header: str    = ''
+        self.type: TestType = TestType.Unknown
         self.entries: List[ECDSATestVector] = []
 
 def is_url(path: str) -> bool:
@@ -95,7 +95,7 @@ def normalize_hash_algo(hash_algo: str) -> str:
     s = '_' if 'sha3' in hash_algo.lower() else ''
     return hash_algo.replace('-', s).lower()
 
-def normalized_hex_str(str, min_width=-1):
+def normalized_hex_str(str: str, min_width: int = -1) -> str:
     str = str.replace('-', '')
     str = str.replace('0x', '').replace('0X', '')
     if len(str) % 2 != 0:
@@ -105,7 +105,7 @@ def normalized_hex_str(str, min_width=-1):
             return '0' * (min_width - len(str)) + str
     return str
 
-def normalize_hex_integer(hex_int, byte_len = -1):
+def normalize_hex_integer(hex_int: str, byte_len: int = -1) -> str:
     if len(hex_int) == 0:
         return hex_int
     hex_int = normalized_hex_str(hex_int)
@@ -131,7 +131,7 @@ def skip_tv(flags: List[str], skip_flags: List[str]) -> bool:
             return True
     return False
 
-def parse_rsa_verify_tv(wptv_json: dict, type:TestType) -> Optional[RsaTestVector]:
+def parse_rsa_verify_tv(wptv_json: dict, type: TestType) -> Optional[RsaTestVector]:
     if wptv_json['type'] not in rsa_group_types:
         print(f"Info: Skipping test group with unsupported test group type: {wptv_json['type']}")
         return None
@@ -145,8 +145,15 @@ def parse_rsa_verify_tv(wptv_json: dict, type:TestType) -> Optional[RsaTestVecto
 
     tv = RsaTestVector()
     tv.hash_algo = normalize_hash_algo(wptv_json['sha'])
-    tv.n = normalize_hex_integer(wptv_json['n'])
-    tv.e = normalize_hex_integer(wptv_json['e'])
+
+    if 'publicKey' in wptv_json:
+        tv.n = normalize_hex_integer(wptv_json['publicKey']['modulus'])
+        tv.e = normalize_hex_integer(wptv_json['publicKey']['publicExponent'])
+    else:
+        # fallback to old format
+        tv.n = normalize_hex_integer(wptv_json['n'])
+        tv.e = normalize_hex_integer(wptv_json['e'])
+
     if type == TestType.SigVer_RSASSA_PSS and 'sLen' in wptv_json:
         slen = wptv_json['sLen']
         tv.salt_len = slen
@@ -187,20 +194,20 @@ def parse_rsa_verify(wp_json: dict) -> RsaTestVectors:
             tests.entries.append(tv)
     return tests
 
-def decode_ecdsa_sig(hex_sig, type):
+def decode_ecdsa_sig(hex_sig: str, type: str) -> Tuple[str, str]:
     req_hex_len = -1
     if type == 'EcdsaVerify': # ASN1 DER encoded
-        asn1_sig = DSASignature.load(bytes.fromhex(hex_sig), strict=True)
+        asn1_sig: DSASignature = DSASignature.load(bytes.fromhex(hex_sig), strict=True)
         if (len(asn1_sig) != 2):
             # The ration for this is that the ASN1 DER encoded signature test vectors
             # are strict and require only 2 integers, r and s, in the signature.
             raise ValueError('Invalid ASN1 DER encoded signature')
     else: # P1363 encoded
-        asn1_sig = DSASignature.from_p1363(bytes.fromhex(hex_sig))
+        asn1_sig: DSASignature = DSASignature.from_p1363(bytes.fromhex(hex_sig))
         if (len(hex_sig) % 2 == 0):
             req_hex_len = int(len(hex_sig) / 2)
-    r = asn1_sig['r'].native
-    s = asn1_sig['s'].native
+    r: int = asn1_sig['r'].native
+    s: int = asn1_sig['s'].native
 
     # Normalize r and s to be positive,
     # probably 'MissingZero' flag in ASN1 DER encoded test vector
@@ -249,7 +256,7 @@ def parse_ecdsa_verify_tv(wptv_json: dict) -> Optional[ECDSATestVector]:
 
         edt.msg = normalized_hex_str(t['msg'])
         try:
-            r,s = decode_ecdsa_sig(t['sig'], wptv_json['type'])
+            r, s = decode_ecdsa_sig(t['sig'], wptv_json['type'])
             edt.r = r
             edt.s = s
         except Exception as e:
@@ -288,7 +295,7 @@ def parse_ecdsa_verify(wp_json: dict) -> ECDSATestVectors:
             tests.entries.append(tv)
     return tests
 
-def format_var(var: str, decl: bool, indent_size: int = 0, var_type = 'auto') -> str:
+def format_var(var: str, decl: bool, indent_size: int = 0, var_type: str = 'auto') -> str:
     str = f'{f"{var_type} " if decl else ""}{var};'
     if indent_size > 0:
         str = indent(str, indent_size)
@@ -302,21 +309,21 @@ def result_success(result: str) -> bool:
         return True
     return result.startswith(('valid', 'acceptable')) and allowed_flags()
 
-def indent(text:str, amount, ch=' '):
+def indent(text: str, amount: int, ch: str = ' '):
     padding = amount * ch
     return ''.join(padding + line for line in text.splitlines(True))
 
-def comment(text:str, indent = 0, ch=' '):
+def comment(text: str, indent: int = 0, ch: str = ' '):
     padding = indent * ch
     return ''.join(padding + '// ' + line for line in text.splitlines(True))
 
 def get_hash_func_name(hash_algo: str) -> str:
-    if 'sha3' in hash_algo:
+    if 'sha3' in hash_algo or 'sha384' in hash_algo:
         return hash_algo
     return f'eosio::{ hash_algo }'
 
-def format_hash_func_call(hash_algo: str, msg_var_name) -> str:
-    if 'sha3'  in hash_algo:
+def format_hash_func_call(hash_algo: str, msg_var_name: str) -> str:
+    if 'sha3' in hash_algo or 'sha384' in hash_algo:
         return f'{ hash_algo }( { msg_var_name } )'
     return f'eosio::{ hash_algo }( (const char*){ msg_var_name }.data(), { msg_var_name }.size() )'
 
@@ -352,7 +359,7 @@ def rsa_tv2str(tv: RsaTestVector, decl_vars: bool) -> str:
 def rsapss_tv2str(tv: RsaTestVector, decl_vars: bool) -> str:
     test_str = format_var(f'n = "{tv.n }"_hex', decl_vars) + '\n'
     test_str += format_var(f'e = "{tv.e}"_hex', decl_vars) + '\n'
-    slen_val = f'std::optional({str(tv.salt_len)})' if tv.salt_len is not None else 'std::nullopt'
+    slen_val = f'std::optional({str(tv.salt_len)}U)' if tv.salt_len is not None else 'std::nullopt'
     test_str += format_var(f'l = {slen_val}', decl_vars) + '\n'
     test_str += '{\n'
 
@@ -365,12 +372,12 @@ def rsapss_tv2str(tv: RsaTestVector, decl_vars: bool) -> str:
         test_sig += format_var(f'd = { format_hash_func_call(tv.hash_algo, "m") }', decl_vars) + '\n'
         decl_vars = False
 
-        test_sig += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s ));\n'
+        test_sig += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s ));\n'
         if valid_sig:
-            test_sig += f'assert_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s, "Failed verifying RSA PSS MGF1 {tv.hash_algo.upper()} signature" );\n'
+            test_sig += f'assert_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s, "Failed verifying RSA PSS MGF1 {tv.hash_algo.upper()} signature" );\n'
         else:
             test_sig += (f'REQUIRE_ASSERT( "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed", [&]() {{\n' \
-            f'    assert_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s,\n' \
+            f'    assert_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s,\n' \
             f'        "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed"\n' \
             '    );\n' \
             '})\n')
@@ -403,7 +410,7 @@ def ecdsa_tv2str(tv: ECDSATestVector, decl_vars: bool) -> str:
     test_str += '\n}'
     return test_str
 
-def get_out_file_path(path):
+def get_out_file_path(path: str):
     if is_url(path):
         path = Path(urllib.parse.urlparse(path).path).stem
     return os.path.splitext(path)[0] +'.hpp'

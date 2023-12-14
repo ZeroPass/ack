@@ -3,9 +3,12 @@
 # Author: Crt Vavros
 
 import collections, enum, os, sys
+from typing import Dict, List, TextIO, Tuple, Optional
+
+supported_hashes = ['sha1', 'sha256', 'sha384', 'sha512']
 
 class TestType(enum.Enum):
-    Unknown    = -1,
+    Unknown          = -1,
     SigVer_RSAv15     = 1,
     SigVer_RSASSA_PSS = 2
 
@@ -22,14 +25,16 @@ class RsaTestVector:
         self.d = ''
         self.msg = ''
         self.sig = ''
-        self.salt_len = 0
+        self.salt_len: int = 0
         self.result = ''
+
+RsaTestEntries = Dict[str, List[RsaTestVector]] # dictionary {[mod = <bit:size>] : [MsgTestVector]}
 
 class RsaTestVectors(TestVectors):
     def __init__(self):
-        self.entries = None # dictionary {[mod = <bit:size>] : [MsgTestVector]}
+        self.entries: Optional[RsaTestEntries] = None
 
-def parse_header(file):
+def parse_header(file: TextIO) -> Tuple[str, TestType, int]:
     file.seek(0)
     header = ''
     type  = TestType.Unknown
@@ -45,22 +50,26 @@ def parse_header(file):
             #mod_len = round(int(line.strip('[]= L').strip()) / 8)
             return (header, type, num)
         elif len(line) != 0:
-            print(f'warning: unexpected end of header or corrupted header at line: {num + 1}')
-            return (header.strip(), num)
+            print(f'WARNING: unexpected end of header or corrupted header at line: {num + 1}')
+            return (header.strip(), type,  num)
+    print(f'ERROR: Reached end of a file while parsing file header')
+    return ("", type,  0)
 
-
-def normalized_hex_str(str):
+def normalized_hex_str(str: str) -> str:
     if len(str) % 2 != 0:
         return '0' + str
     return str
 
-def parse_rsa_test_vector_entries(file, current_line):
-    file.seek(current_line)
+def parse_rsa_test_vector_entries(file: TextIO, offest: int, type: TestType) -> Optional[RsaTestEntries]:
+    if type == TestType.Unknown:
+        return None
 
     key = ''
-    dictionary = {}
-    entries = []
+    dictionary: RsaTestEntries = {}
+    entries: List[RsaTestVector] = []
     tv = RsaTestVector()
+
+    file.seek(offest)
     for num, line in enumerate(file):
         line = line.strip()
         if line.startswith('[mod = '):
@@ -86,7 +95,7 @@ def parse_rsa_test_vector_entries(file, current_line):
             tv.sig = normalized_hex_str(line.replace('S ', '').strip('= '))
         elif line.startswith('SaltVal'):
             salt = normalized_hex_str(line.replace('SaltVal', '').strip('= '))
-            tv.salt_len = len(salt) / 2 if salt != '00' else 0
+            tv.salt_len = round(len(salt) / 2) if salt != '00' else 0
         elif line.startswith('Result'):
             tv.result = line.replace('Result', '').strip('= ')
             if not tv.result.startswith('P') and not tv.result.startswith('F'):
@@ -97,13 +106,13 @@ def parse_rsa_test_vector_entries(file, current_line):
 
     if len(key) != 0:
         dictionary[key] = entries
-    return dictionary
+    return dictionary if len(dictionary) else None
 
-def parse_rsp(file_path):
+def parse_rsp(file_path: str):
     header = ''
     with open(file_path) as f:
         header, type, end_line_num = parse_header(f)
-        entries = parse_rsa_test_vector_entries(f, end_line_num)
+        entries = parse_rsa_test_vector_entries(f, end_line_num, type)
         tests   = RsaTestVectors()
         tests.header   = header
         tests.type     = type
@@ -121,7 +130,12 @@ def tvrsa2str(tv: RsaTestVector, decl_vars: bool) -> str:
     test_str += format_var(f'm = "{tv.msg}"_hex', decl_vars) + '\n'
     test_str += format_var(f's = "{tv.sig}"_hex', decl_vars) + '\n'
     test_str += format_var(f"r = {('true' if tv.result == 'P' else 'false')}", decl_vars) + f'// Result = {tv.result}\n'
-    test_str += format_var(f'd = eosio::{tv.hash_algo}( (const char*)m.data(), m.size() )', decl_vars) + '\n'
+
+    if tv.hash_algo == 'sha384':
+        test_str += format_var(f'd = {tv.hash_algo}( m )', decl_vars) + '\n'
+    else:
+        test_str += format_var(f'd = eosio::{tv.hash_algo}( (const char*)m.data(), m.size() )', decl_vars) + '\n'
+
     test_str += f'REQUIRE_EQUAL( r, verify_rsa_{tv.hash_algo}( rsa_public_key_view(n, e), d, s ));\n'
     if tv.result == 'P':
         test_str += f'assert_rsa_{tv.hash_algo}( rsa_public_key_view(n, e), d, s, "Failed verifying valid RSA PKCS1.5 {tv.hash_algo.upper()} signature" );\n'
@@ -143,22 +157,27 @@ def tvrsapss2str(tv: RsaTestVector, decl_vars: bool) -> str:
     test_str += format_var(f'm = "{tv.msg}"_hex', decl_vars) + '\n'
     test_str += format_var(f's = "{tv.sig}"_hex', decl_vars) + '\n'
     test_str += format_var(f"r = {('true' if tv.result == 'P' else 'false')}", decl_vars) + f'// Result = {tv.result}\n'
-    test_str += format_var(f'd = eosio::{tv.hash_algo}( (const char*)m.data(), m.size() )', decl_vars) + '\n'
+
+    if tv.hash_algo == 'sha384':
+        test_str += format_var(f'd = {tv.hash_algo}( m )', decl_vars) + '\n'
+    else:
+        test_str += format_var(f'd = eosio::{tv.hash_algo}( (const char*)m.data(), m.size() )', decl_vars) + '\n'
+
     test_str += format_var(f'l = {str(int(tv.salt_len))}', decl_vars) + '\n'
-    test_str += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s ));\n'
+    test_str += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s ));\n'
     if tv.result == 'P':
-        test_str += f'assert_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s, "Failed verifying RSA PSS MGF1 {tv.hash_algo.upper()} signature" );\n'
+        test_str += f'assert_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s, "Failed verifying RSA PSS MGF1 {tv.hash_algo.upper()} signature" );\n'
     else:
         test_str += (f'REQUIRE_ASSERT( "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed", [&]() {{\n' \
-        f'    assert_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e, l), d, s,\n' \
+        f'    assert_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e, l), d, s,\n' \
         f'        "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed"\n' \
         f'    );\n' \
         '})\n')
 
         test_str += "\n// Test verification fails when salt len is not provided\n"
-        test_str += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e), d, s ));\n'
+        test_str += f'REQUIRE_EQUAL( r, verify_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e), d, s ));\n'
         test_str += (f'REQUIRE_ASSERT( "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed", [&]() {{\n' \
-        f'    assert_rsa_pss_{tv.hash_algo}( rsa_public_key_view(n, e), d, s,\n' \
+        f'    assert_rsa_pss_{tv.hash_algo}( rsa_pss_public_key_view(n, e), d, s,\n' \
         f'        "RSA PSS MGF1 {tv.hash_algo.upper()} signature verification failed"\n' \
         f'    );\n' \
         '})\n')
@@ -166,7 +185,7 @@ def tvrsapss2str(tv: RsaTestVector, decl_vars: bool) -> str:
     test_str += '\n'
     return test_str
 
-def indent(text:str, amount, ch=' '):
+def indent(text: str, amount: int, ch: str = ' '):
     padding = amount * ch
     return ''.join(padding+line for line in text.splitlines(True))
 
@@ -184,22 +203,26 @@ def main():
         print("Couldn't determine test(s) type", file=sys.stderr)
         return 1
 
-    out_file = os.path.splitext(sys.argv[1])[0]+'.hpp'
+    if tests.entries is None:
+        print("File contains no test cases!")
+        return 0
+
+    out_file = os.path.splitext(sys.argv[1])[0] + '.hpp'
     with open(out_file, "w") as f:
-        test_cases = collections.defaultdict(dict)
-        for key, entries in tests.entries.items():
+        test_cases: Dict[str, Dict[str, str]]  = collections.defaultdict(dict)
+        for mod_len, entries in tests.entries.items():
             for tv in entries:
-                if tv.hash_algo == 'sha1' or tv.hash_algo == 'sha256' or tv.hash_algo == 'sha512':
+                if tv.hash_algo in supported_hashes:
                     decl_vars = False
                     if tv.hash_algo not in test_cases:
                         decl_vars = True
-                    if key not in test_cases[tv.hash_algo]:
-                        test_cases[tv.hash_algo][key] = ''
+                    if mod_len not in test_cases[tv.hash_algo]:
+                        test_cases[tv.hash_algo][mod_len] = ''
                     match tests.type:
                         case TestType.SigVer_RSAv15:
-                            test_cases[tv.hash_algo][key] += tvrsa2str(tv, decl_vars)
+                            test_cases[tv.hash_algo][mod_len] += tvrsa2str(tv, decl_vars)
                         case TestType.SigVer_RSASSA_PSS:
-                            test_cases[tv.hash_algo][key] += tvrsapss2str(tv, decl_vars)
+                            test_cases[tv.hash_algo][mod_len] += tvrsapss2str(tv, decl_vars)
 
         print(f"/*\nGenerated from: '{sys.argv[1]}'\n", file=f)
         print(tests.header, file=f)
@@ -212,7 +235,7 @@ def main():
             print(indent('{', 4), file=f)
             for mod_len, tests in testsd.items():
                 print(indent(f'// {mod_len}', 8), file=f)
-                print(indent(f'{tests}', 8), file=f)
+                print(indent(f'{tests}', 8), file=f, end='')
             print(indent('}', 4), file=f)
             print(f'EOSIO_TEST_END // {tname}\n', file=f)
 

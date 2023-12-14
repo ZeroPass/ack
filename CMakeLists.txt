@@ -50,9 +50,10 @@ if ( ACK_BUILD_TESTS )
 
   include (CTest)
   enable_testing()
-  add_test( ack_tests ${CMAKE_BINARY_DIR}/tests/ack_tests )
+  add_test( ack_gen_tests ${CMAKE_BINARY_DIR}/tests/ack_gen_tests )
+  add_test( ack_rsa_tests ${CMAKE_BINARY_DIR}/tests/ack_rsa_tests )
+  add_test( ack_ecc_tests ${CMAKE_BINARY_DIR}/tests/ack_ecc_tests )
 endif( ACK_BUILD_TESTS )
-
 
 message( "No intrinsics................${ACK_NO_INTRINSICS}"    )
 message( "Building examples............${ACK_BUILD_EXAMPLES}"   )
