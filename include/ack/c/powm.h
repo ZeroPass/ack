@@ -316,7 +316,7 @@ extern "C" {
     *
     * CT: value or length of x does not leak.
     */
-    static uint32_t br_i32_bit_length(uint32_t *x, size_t xlen)
+    static uint32_t br_i32_bit_length(const uint32_t *x, size_t xlen)
     {
         uint32_t tw, twk;
 
@@ -881,7 +881,7 @@ extern "C" {
      * @return 0 if num < modulus, 1 if num >= modulus
      */
     static int greater_equal_modulus(const struct rsa_public_key *key,
-                                     uint32_t num[])
+                                     const uint32_t num[])
     {
         int i;
 

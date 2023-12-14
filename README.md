@@ -1,7 +1,8 @@
 # AntelopeIO Cryptography Kits
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![build](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/build.yml)
-[![tests](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/ZeroPass/antelope.ck/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![build](https://img.shields.io/github/actions/workflow/status/ZeroPass/ack/build.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/ZeroPass/ack/actions/workflows/build.yml)
+[![tests](https://img.shields.io/github/actions/workflow/status/ZeroPass/ack/tests.yml?label=Tests&branch=master&logo=github&style=for-the-badge)](https://github.com/ZeroPass/ack/actions/workflows/tests.yml)
+
 
 [AntelopeIO](https://github.com/antelopeIO) Cryptography Library is a header-only library designed for use in smart contracts. The library includes implementations of ECC primitives and ECDSA verification algorithms, as well as RSA PKCS v1.5 & RSASSA-PSS signature verification algorithms, SHA-384 and Keccak hash algorithms: SHA3-256, SHA3-384, SHA3-512, SHAKE-128, and SHAKE-256.
 
@@ -39,6 +40,8 @@ The [ack/rsa.hpp](include/ack/rsa.hpp) header file defines the RSA PKCS v1.5 sig
 - `assert_rsa_sha1` - fails transaction if RSA signature is not valid for the provided SHA-1 hash.
 - `verify_rsa_sha256` - checks if RSA signature is valid for the provided SHA-256 hash.
 - `assert_rsa_sha256` - fails transaction if RSA signature is not valid for the provided SHA-256 hash.
+- `verify_rsa_sha384` - checks if RSA signature is valid for the provided SHA-384 hash.
+- `assert_rsa_sha384` - fails transaction if RSA signature is not valid for the provided SHA-384 hash.
 - `verify_rsa_sha512` - checks if RSA signature is valid for the provided SHA-512 hash.
 - `assert_rsa_sha512` - fails transaction if RSA signature is not valid for the provided SHA-512 hash.
 
@@ -47,6 +50,8 @@ the RSASSA-PSS signature verification functions for *SHA-1*, *SHA-256* and *SHA-
 - `assert_rsa_pss_sha1` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-1 hash.
 - `verify_rsa_pss_sha256` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-256 hash.
 - `assert_rsa_pss_sha256` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-256 hash.
+- `verify_rsa_pss_sha384` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-384 hash.
+- `assert_rsa_pss_sha384` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-384 hash.
 - `verify_rsa_pss_sha512` - checks if RSASSA-PSS MGF1 signature is valid for the provided SHA-512 hash.
 - `assert_rsa_pss_sha512` - fails transaction if RSASSA-PSS MGF1 signature is not valid for the provided SHA-512 hash.
 
@@ -83,8 +88,7 @@ FIPS 180-4: [https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-P
 To use antelope.ck library in your project, it is recommended to use  [CMake](https://cmake.org/) and configure your project to use the external `ack` project. E.g.: using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) or copy the library folder to your project and point cmake to it with [add_subdirectory](https://cmake.org/cmake/help/latest/command/add_subdirectory.html).
 If only pure WASM implementation is desired configure your CMake project with `ACK_NO_INTRINSICS=ON` option before including ack library. This will exclude specialized intrinsics such as `eosio::mod_exp` from being used by the library, and instead, a software implementation will be used.
 
-If configured correctly, you should be able to add the antelope.ck library to your [CMake](https://cmake.org/) project using command `add_library(<your_project> ack)` and include it in your code using the header file: `#include <ack/ack.hpp>`.  
-
+If configured correctly, you should be able to add the `ack` library to your [CMake](https://cmake.org/) project using command `add_library(<your_project> ack)` and include it in your code using the header file: `#include <ack/ack.hpp>`.  
 
 **Example:**
 ```cpp

@@ -27,15 +27,15 @@ namespace ack {
     using hash384 = eosio::fixed_bytes<48>;
     using hash512 = eosio::checksum512;
 
-    static constexpr size_t word_bit_size = sizeof(word_t) * 8;
+    inline constexpr size_t word_bit_size = sizeof(word_t) * 8;
 
-    inline bytes make_bytes(const bytes_view& data) {
+    inline bytes make_bytes(const bytes_view data) {
         return bytes{ data.begin(), data.end() };
     }
 
     // bytes_view serializer specialization
     template<typename DataStream>
-    inline DataStream& operator<<(DataStream& ds, const bytes_view& data) {
+    inline DataStream& operator<<(DataStream& ds, const bytes_view data) {
         ds << eosio::unsigned_int( data.size() );
         ds.write( data.data(), data.size() );
         return ds;

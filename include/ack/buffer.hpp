@@ -18,9 +18,9 @@ namespace ack {
             using value_type = ValueType;
             using derived_type = Derived;
 
-            constexpr bool alloc(size_t n)
+            constexpr bool resize(size_t n)
             {
-                return static_cast<derived_type&>(*this).alloc(n);
+                return static_cast<derived_type&>(*this).resize(n);
             }
 
             constexpr void clear()
@@ -60,7 +60,6 @@ namespace ack {
 
         private:
             buffer_base() = default;
-
             friend derived_type;
     };
 
@@ -75,9 +74,9 @@ namespace ack {
             constexpr fixed_buffer& operator=(const fixed_buffer& rhs) = default;
             constexpr fixed_buffer& operator=(fixed_buffer&& rhs) = default;
 
-            constexpr bool alloc(size_t n)
+            constexpr bool resize(size_t n)
             {
-                if (n > N) {
+                if ( n > N ) {
                     return false;
                 }
                 size_ = n;
@@ -111,19 +110,19 @@ namespace ack {
 
             constexpr void swap(fixed_buffer& rhs)
             {
-                std::swap(data_, rhs.data_);
-                std::swap(size_, rhs.size_);
+                std::swap( data_, rhs.data_ );
+                std::swap( size_, rhs.size_ );
             }
 
             constexpr const T& operator[](size_t n) const
             {
-                check(n < size_, "fixed_buffer:operator[]: overflow");
+                check( n < size_, "fixed_buffer:operator[]: overflow" );
                 return data_[n];
             }
 
             constexpr T& operator[](size_t n)
             {
-                check(n < size_, "fixed_buffer:operator[]: overflow");
+                check( n < size_, "fixed_buffer:operator[]: overflow" );
                 return data_[n];
             }
 

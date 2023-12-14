@@ -270,7 +270,7 @@ namespace ack {
      * @param data - data to hash
      * @return 384-bit hash
     */
-    [[nodiscard]] inline hash384 sha384(const bytes_view& data)
+    [[nodiscard]] inline hash384 sha384(const bytes_view data)
     {
         using namespace internal_do_not_use;
         return truncate<sha384_hash_size>(

@@ -156,6 +156,24 @@
             ]
         },
         {
+            "name": "check_rsa_pss_sha384",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pubkey",
+                    "type": "rsa_pss_public_key_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
             "name": "check_rsa_pss_sha512",
             "base": "",
             "fields": [
@@ -193,6 +211,24 @@
         },
         {
             "name": "check_rsa_sha256",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pubkey",
+                    "type": "rsa_public_key_view"
+                },
+                {
+                    "name": "msg",
+                    "type": "bytes_view"
+                },
+                {
+                    "name": "sig",
+                    "type": "bytes_view"
+                }
+            ]
+        },
+        {
+            "name": "check_rsa_sha384",
             "base": "",
             "fields": [
                 {
@@ -337,6 +373,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "rsapsssha34",
+            "type": "check_rsa_pss_sha384",
+            "ricardian_contract": ""
+        },
+        {
             "name": "rsapsssha512",
             "type": "check_rsa_pss_sha512",
             "ricardian_contract": ""
@@ -349,6 +390,11 @@
         {
             "name": "rsasha2",
             "type": "check_rsa_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rsasha34",
+            "type": "check_rsa_sha384",
             "ricardian_contract": ""
         },
         {

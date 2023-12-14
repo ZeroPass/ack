@@ -5,6 +5,7 @@
 #include <eosio/tester.hpp>
 
 #include <ack/mgf.hpp>
+#include <ack/rsa.hpp>
 #include <ack/utils.hpp>
 #include <ack/tests/utils.hpp>
 
@@ -15,14 +16,14 @@ namespace ack::tests {
         auto tv_mgf_seed = "d6e168c5f256a2dcff7ef12facd390f393c7a88d"_hex;
         auto tv_mgf_mask = "0742ba966813af75536bb6149cc44fc256fd64064f0f352bafb940fda7b5e44bdf79665bc31dc5a62f70535e52c53015b9d37d41736de6808d10576cb636a9912ff3c1193439599e1b628774c50d9ccb78d82c42d1ea38aa0c449704071e92a05e4521ee47b8c36a4bcffe"_hex;
         auto mgf_mask    = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         // Test vector taken from bc-java
         tv_mgf_seed = "032e45326fa859a72ec235acff929b15d1372e30b207255f0611b8f785d764374152e0ac009e509e7ba30cd2f1778e113b64e135cf4e2292c75efe5288edfda4"_hex;
         tv_mgf_mask = "5f8de105b5e96b2e490ddecbd147dd1def7e3b8e0e6a26eb7b956ccb8b3bdc1ca975bc57c3989e8fbad31a224655d800c46954840ff32052cdf0d640562bdfadfa263cfccf3c52b29f2af4a1869959bc77f854cf15bd7a25192985a842dbff8e13efee5b7e7e55bbe4d389647c686a9a9ab3fb889b2d7767d3837eea4e0a2f04"_hex;
         mgf_mask    = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha1, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha1, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         // Test vector taken from bc-java
@@ -30,39 +31,39 @@ namespace ack::tests {
         tv_mgf_seed = "032e45326fa859a72ec235acff929b15d1372e30b207255f0611b8f785d764374152e0ac009e509e7ba30cd2f1778e113b64e135cf4e2292c75efe5288edfda4"_hex;
         tv_mgf_mask = "09e2decf2a6e1666c2f6071ff4298305e2643fd5f2c0a97b55ad3334fa2bdf3410a2403db42a8743cb989de86e668d168cbe6046e23ff26f741e87949a3bba1311ac179f819a3d18412e9eb45668f2923c087c1299005f8d5fd42ca257bc93e8fee0c5a0d2a8aa70185401fbbd99379ec76c663e9a29d0b70f3fe261a59cdc24"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         // Test vector taken fromftp://ftp.rsa.com/pub/pkcs/pkcs-1/pkcs-1v2-1d2-vec.zip
         tv_mgf_seed = "df1a896f9d8bc816d97cd7a2c43bad546fbe8cfe"_hex;
         tv_mgf_mask = "66e4672e836ad121ba244bed6576b867d9a447c28a6e66a5b87dee7fbc7e65af5057f86fae8984d9ba7f969ad6fe02a4d75f7445fefdd85b6d3a477c28d24ba1e3756f792dd1dce8ca94440ecb5279ecd3183a311fc89739a96643136e8b0f465e87a4535cd4c59b10028d"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha1, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha1, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         // Custom tests
         tv_mgf_seed = "666F6F"_hex; // foo
         tv_mgf_mask = "3bdaba83cff13337b323ac383ca3995863e922f511b931b9efd4e0118cfc70f08678390d67e3c12dbeb2d7a78bdfa597b5a3"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         tv_mgf_seed = "626172"_hex; // bar
         tv_mgf_mask = "382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         tv_mgf_seed = "666F6F626172"_hex; // foobar
         tv_mgf_mask = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask );
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask );
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
 
         // XOR-ing dest. and mask
         tv_mgf_mask = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
         mgf_mask = bytes( tv_mgf_mask.size() );
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -70,7 +71,7 @@ namespace ack::tests {
         tv_mgf_seed = "666F6F626172"_hex; // foobar
         tv_mgf_mask = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"_hex;
         mgf_mask    = "6159c6eeac0ee302c36ab82c81ce32f98aff0f8ac7971e6abcf8f5fb9b5cd675a346d5a776e03b8bc49ddc1994da8d2598c0"_hex;
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -78,7 +79,7 @@ namespace ack::tests {
         tv_mgf_seed = "666F6F626172"_hex; // foobar
         tv_mgf_mask = "597cb049281ec2ceeb96f425c9bb0d41bbdf9f446ed5f426f28ba8eb472e9d60fcd9b5ce8469ed96683d1798d1d862217221"_hex;
         mgf_mask    = "382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1"_hex;
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -86,7 +87,7 @@ namespace ack::tests {
         tv_mgf_seed = "77efd027a183e913b7d5383acb48e2f314ce9785"_hex;
         tv_mgf_mask = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012393183e18581e6924cd38f24192d1acc145633a"_hex;
         mgf_mask    = "5f411dc7db276125f05f7b8483bff6a872dffb210c669ac65c5caf78bbc66f96aa48d4244f1b89f0976e247796f2fa039d2d7818daf8dea329e18a303a59e586dfbe0b55d1d46dddb7e7544c29b47950726c1efacf3b9f8a8cfe839cee1850677fabc994abc1fd52fc7808"_hex;
-        mgf1( eosio::sha1, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha1, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -94,28 +95,28 @@ namespace ack::tests {
         tv_mgf_seed = "044b5469f89019e569c60ca370a911fcd0e84ff3eb188a8aabf72d6ad1a84003"_hex;
         tv_mgf_mask = "800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001507372afffebc2d67cd714e38e367776e34b377a"_hex;
         mgf_mask    = "7392855443865b317729299d536a59f5bd4ddd7de70af8762e72075ba8ccd0005c30ffa40f7bfcc9801befe2ad062162747fcd398f7106d402395a619309c582c1ac2c7f47d8467832841352ddc46d8af23809fd24d69e3ae39bd71b3574f6"_hex;
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
 
         tv_mgf_seed = "adf1e070c03428484d67626ff03d1dcfe6ff47a257499bca7d25f62175588181"_hex;
         tv_mgf_mask = "800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"_hex;
         mgf_mask    = "64c5cc3b67269c5cd2ce26703bb04628d725c54c9f21fe0061ebd1fb10f9a79492fa8fd7042ab7f5025c43f515968fad7d799fd3413d53e00e250bba8cbadea53364f1ceaeffe6bd20e011cb93b9997a4b778dc00c8ddad2b816f80d1baeeaee8ec7c346aabe37ea8fb77c62df246df916173870a3088d491922ad15af22357fc82b97093281eb2cf74bc8e13765fb20f1edd796f143b95ec628d32ac17060329fc91b96c7603ff11897c9b2201d502412969aa395346e72ef8b1dec0f54856584ab00f427d3d7a2152f7405d369a4aede9cdacdc657fcb925cdd541903d96a0343fa9b822835e436d9fd32b4b55939c951217b0573aa0f2ba77a450baff6711572a808d3bffee711ee8d66cba6e86abcc0fecd2e0fffe5b992c5696f1b9288e98bc537fa7b3a76be806d0ce0100fa1f718468539193f7583c4afd2ed6af94604d535eb4357fc02cc4df7a06b23e8adb729405bb2e71cfec649e7a6c6b46ba"_hex;
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
 
         tv_mgf_seed = "3a95619c6d59572246e7058a0cf75a286cd841e9cc7e9f7da3abbe24731b03e1"_hex;
         tv_mgf_mask = "8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d66f72f10b69001a5b59cf1092ad274d5056c4e95ccccfbe3b530dcb027e57d6"_hex;
         mgf_mask    = "67ed11639f2ac610ce9c96d24cc5f792bf2016d428be0abafa1156b38b4363a61ce32ac8d2dd6a40946864e7b7aef4ae26e46204fd78c4129d6f462c80982de80a2d290abbd42cb7ac4ac7ce075f107ba3b886e7c000f87989b7d41a546f706d961db3a82e7b2512dcd447d36608b1fd6a09c1cd6d612ef23b86af70f5596307a819cc67e9daba4383dd4ab5627b15bbf01c04b535f9d4e20c8bf1e030c2514269b73d1012c20d122e30e2d1601e6668c2b42fd289af506eb4c3d34dceab31b2009476f08e4966810d6d27fd7c83c6e5555be7eb43a9ad3185ba4af59e08ae"_hex;
-        mgf1( eosio::sha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha256, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
 
         tv_mgf_seed = "7967e9fb5f3147580392176e0ecea8895145302e03b70dc8e3e33484d1f4e8ed9d154dfe602deaa5099747a269c78116fa9fff5ab40934bef937b7dc03f4b6c8"_hex;
         tv_mgf_mask = "80000000000000000000000000000000000000000000000000000000000000000000000000000000000001d44bee9eb335dc0fee17bb22e8dc9c35ce06c504"_hex;
         mgf_mask    = "4cdd829525caba6791aad6c43e8d192c183d4e81e4fffb45916627f2d0ec9b4bc60542c775a8ef99f0025cf653ea1a90864b7badede3376d8bf2df1369b6bf"_hex;
-        mgf1( eosio::sha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -123,7 +124,7 @@ namespace ack::tests {
         tv_mgf_seed = "c0c520fa5447752daa85bff71cfb564bf23456a580cee22c09662f62bf36c49056be068c65062ec166374da4c8103cac12957021850a96f2d22eb9f34b72f696"_hex;
         tv_mgf_mask = "80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e536e467ed1f6a54ea19ebc7eb470ba6cd63ae16af600b42a74e0358b37fb0d3f3e8400015c904bb1091c47a15fc568ec27e6ea59ae4b892b2392451ace68245"_hex;
         mgf_mask    = "4ff97cf7164aa6e294f82132fcbda8ab8b28653c4e2f66a84b249547d0818615ce7f591fbe89b80c8401c23a12a0fe24009431906dc22835cb19a6aa1900da3981a231ae2747a561dd23d1070ca7d545b13eebbb6bc9049fc220a9516752772f8e913a52be9356612099e6b005025e44682abedb249c93856607a357a24f337e92b664d95ac7b6761dd5507a98fc12974dfb334a90c1f389ab3a1a6dc6cc2fab747151932221d8b3e666784fff41a52ee4b47f5e46f3229db538931756e187"_hex;
-        mgf1( eosio::sha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
@@ -131,7 +132,7 @@ namespace ack::tests {
         tv_mgf_seed = "87182417101232045334db4ad21da96760aa88a555a314ac64b2a024179bd65eb50865452aa4e4e40449db5ae39fbda4cb2103612a704d2d68d52223cf24084c"_hex;
         tv_mgf_mask = "80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"_hex;
         mgf_mask    = "6c589c7327cdd92cb23d217f9119ddfcee7b6e45577738b3650b1d18bb92295559e553e51b99df5401433f748b6a0b4b71281f37289b5168403e5139d4b2eb2a787aaa957279791c2c4102eba503c91ca5805ccc6a0e25a06803afa4c92a4980f2d3e91c32828799d572a593f2a85b2aaba8403e05a57c3e90b43d4124d8cab7b93753da8c057a95ff0a479822133be1bd940e97991fc724a6902f9b321e6b604e423d102a593421ba385a908130c67a1866a6dec649b3d951b4f8e7e9a31ac0dbede2f7670313226cb05110ebf90144bbf1acc61616ed483624db428bb1b25814eb1616d6a22abede9f2d3bea345677e4d6864e7ffd0ed1ab1a1b6b0247a48bafe1fbc48f63ff90068fea6abc04334df787a0e45ec4b3c714262a0fae341d468a4ed38914762658b4ad9df966f44adffb88862c619125cfa13a9b0711a03f"_hex;
-        mgf1( eosio::sha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
+        mgf1( ack::detail::eosiosha512, tv_mgf_seed, mgf_mask, [](auto dst, auto src, auto len){
             memxor( dst, src, len );
         });
         REQUIRE_EQUAL( mgf_mask, tv_mgf_mask );
