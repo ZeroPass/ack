@@ -5,6 +5,7 @@
 #include <ack/ec.hpp>
 #include <ack/ec_curve.hpp>
 #include <ack/ecdsa.hpp>
+#include <ack/sha.hpp>
 
 #include <helloack.hpp>
 #include <bt.hpp>
@@ -37,7 +38,7 @@ void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_
 [[eosio::action("rsasha1"), eosio::read_only]]
 void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha1( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-1 signature verification failed"
     );
@@ -46,34 +47,52 @@ void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_
 [[eosio::action("rsapsssha1"), eosio::read_only]]
 void helloack::check_rsa_pss_sha1(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_pss_sha1( pubkey, md, sig,
         "RSA PSS SHA-1 signature verification failed"
     );
 }
 
-[[eosio::action("rsasha2")]]
+[[eosio::action("rsasha2"), eosio::read_only]]
 void helloack::check_rsa_sha256(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha256( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-256 signature verification failed"
     );
 }
 
-[[eosio::action("rsapsssha2")]]
+[[eosio::action("rsapsssha2"), eosio::read_only]]
 void helloack::check_rsa_pss_sha256(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_pss_sha256( pubkey, md, sig,
         "RSA PSS SHA-256 signature verification failed"
+    );
+}
+
+[[eosio::action("rsasha34"), eosio::read_only]]
+void helloack::check_rsa_sha384(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
+{
+    const auto md = sha384( msg );
+    assert_rsa_sha384( pubkey, md, sig,
+        "RSA PKCS v1.5 SHA-384 signature verification failed"
+    );
+}
+
+[[eosio::action("rsapsssha34"), eosio::read_only]]
+void helloack::check_rsa_pss_sha384(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
+{
+    const auto md = sha384( msg );
+    assert_rsa_pss_sha384( pubkey, md, sig,
+        "RSA PSS SHA-384 signature verification failed"
     );
 }
 
 [[eosio::action("rsasha512"), eosio::read_only]]
 void helloack::check_rsa_sha512(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_sha512( pubkey, md, sig,
         "RSA PKCS v1.5 SHA-512 signature verification failed"
     );
@@ -82,7 +101,7 @@ void helloack::check_rsa_sha512(rsa_public_key_view pubkey, bytes_view msg, byte
 [[eosio::action("rsapsssha512"), eosio::read_only]]
 void helloack::check_rsa_pss_sha512(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
-    auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    const auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_rsa_pss_sha512( pubkey, md, sig,
         "RSA PSS SHA-512 signature verification failed"
     );

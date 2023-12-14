@@ -70,6 +70,26 @@ struct [[eosio::contract]] helloack : public eosio::contract {
     [[eosio::action("rsapsssha2"), eosio::read_only]]
     void check_rsa_pss_sha256(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig);
 
+     /**
+     * Action verifies RSA PKCS v1.5 SHA-384 signature.
+     * Action fails if signature is invalid
+     * @param pubkey - RSA public key
+     * @param msg    - signed message
+     * @param sig    - RSA PKCS v1.5 SHA-384 signature
+    */
+    [[eosio::action("rsasha34"), eosio::read_only]]
+    void check_rsa_sha384(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig);
+
+    /**
+     * Action verifies RSA PSS MGF1 SHA-384 signature.
+     * Action fails if signature is invalid
+     * @param pubkey - RSA-PSS public key
+     * @param msg    - signed message
+     * @param sig    - RSA-PSS MGF1 SHA-384 signature
+    */
+    [[eosio::action("rsapsssha34"), eosio::read_only]]
+    void check_rsa_pss_sha384(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig);
+
     /**
      * Action verifies RSA PKCS v1.5 SHA-512 signature.
      * Action fails if signature is invalid
