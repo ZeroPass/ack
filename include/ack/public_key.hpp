@@ -57,7 +57,7 @@ namespace ack {
         bytes_view exponent;
 
         constexpr rsa_public_key_view() {}
-        constexpr rsa_public_key_view( const bytes_view& mod, const bytes_view& exp ) :
+        constexpr rsa_public_key_view( const bytes_view mod, const bytes_view exp ) :
             modulus( mod ),
             exponent( exp )
         {}
@@ -74,16 +74,16 @@ namespace ack {
         std::optional<eosio::unsigned_int> pss_salt_len;
 
         constexpr rsa_pss_public_key_view() {}
-        constexpr rsa_pss_public_key_view( const bytes_view& mod, const bytes_view& exp ) :
+        constexpr rsa_pss_public_key_view( const bytes_view mod, const bytes_view exp ) :
             rsa_public_key_view{ mod, exp }
         {}
 
-        constexpr rsa_pss_public_key_view( const bytes_view& mod, const bytes_view& exp, std::optional<eosio::unsigned_int> salt_len ) :
+        constexpr rsa_pss_public_key_view( const bytes_view mod, const bytes_view exp, std::optional<eosio::unsigned_int> salt_len ) :
             rsa_public_key_view{ mod, exp },
             pss_salt_len( std::move(salt_len) )
         {}
 
-        constexpr rsa_pss_public_key_view( const bytes_view& mod, const bytes_view& exp, std::optional<uint32_t> salt_len ) :
+        constexpr rsa_pss_public_key_view( const bytes_view mod, const bytes_view exp, std::optional<uint32_t> salt_len ) :
             rsa_public_key_view{ mod, exp },
             pss_salt_len( salt_len.has_value()
                 ? std::optional<eosio::unsigned_int>{ salt_len.value() }
@@ -91,7 +91,7 @@ namespace ack {
             )
         {}
 
-        constexpr rsa_pss_public_key_view( const bytes_view& mod, const bytes_view& exp, uint32_t salt_len ) :
+        constexpr rsa_pss_public_key_view( const bytes_view mod, const bytes_view exp, uint32_t salt_len ) :
             rsa_public_key_view{ mod, exp },
             pss_salt_len( salt_len )
         {}

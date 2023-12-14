@@ -1286,11 +1286,11 @@ namespace ack {
 
             void print() const
             {
-                const auto data = to_bytes();
-                if (is_negative()) {
+                const auto d = to_bytes();
+                if ( is_negative() ) {
                     eosio::print("-");
                 }
-                eosio::printhex(data.data(), data.size());
+                eosio::printhex( d.data(), d.size() );
             }
 
             constexpr void swap(bigint& rhs) noexcept
@@ -1374,7 +1374,7 @@ namespace ack {
              * @param data - byte data in big-endian byte orientation. If data.size() is 0, this is set to 0.
              * @return true if successful i.e. can allocate data.size(), false otherwise.
             */
-            constexpr bool set_bytes(bytes_view data)
+            constexpr bool set_bytes(const bytes_view data)
             {
                 is_neg_ = false;
                 if (data.size() == 0) {
@@ -1444,9 +1444,9 @@ namespace ack {
             */
             bytes to_bytes() const
             {
-                bytes data(byte_length());
-                get_bytes(data); // TODO: add check fro error. Should probably never return false
-                return data;
+                bytes d( byte_length() );
+                get_bytes( d ); // TODO: add check for error. Should probably never return false
+                return d;
             }
 
             /**
@@ -1812,11 +1812,11 @@ namespace ack {
             static constexpr int div_mods1(bigint* q, const bigint& x, int y)
             {
                 assert(y != invalid_var);
-                bool xNeg = x.is_neg_;
-                bool yNeg = y < 0;
-                word_t absY = detail::cabs(y);
-                size_t xn   = x.size();
-                int r       = 0;
+                const bool xNeg   = x.is_neg_;
+                const bool yNeg   = y < 0;
+                const word_t absY = detail::cabs(y);
+                const size_t xn   = x.size();
+                int r = 0;
 
                 if (q) {
                     q->is_neg_ = xNeg ^ yNeg;
@@ -1846,8 +1846,8 @@ namespace ack {
             // TODO: make constexpr when udiv is constexpr
             static bool div_mod(bigint* q, bigint& r, const bigint& x, const bigint& y)
             {
-                bool xNeg = x.is_neg_;
-                bool qsign = xNeg ^ y.is_neg_;
+                const bool xNeg  = x.is_neg_;
+                const bool qsign = xNeg ^ y.is_neg_;
                 if (!udiv(q, r, x.buf_, x.size(), y.buf_, y.size())){
                     return false;
                 }
