@@ -43,27 +43,63 @@ namespace ack {
         };
         constexpr size_t pkcs1_v1_5_t_sha512_size = sha512_digest_info_prefix.size() + sizeof(hash512);
         static_assert( pkcs1_v1_5_t_sha512_size == 83 );
-    }
 
+        /**
+         * Functions check if signature representative s <= n - 1.
+         * @note function expects s to bi positive integer.
+         *
+         * @param s - signature representative
+         * @param n - public key modulus
+         * @return true if s < n else false.
+        */
+        inline bool is_s_valid(const bytes_view& s, std::span<const uint8_t> n) {
+            // Skip leading zeros of s
+            size_t sofs = 0;
+            while (sofs < s.size() && s[sofs] == 0x00) {
+                ++sofs;
+            }
 
-    void uECC_vli_clear(uint32_t *vli, uint32_t num_words) {
-        uint32_t i;
-        for (i = 0; i < num_words; ++i) {
-            vli[i] = 0;
+            // Check if s is zero
+            if ( sofs == s.size() ) {
+                return true;
+            }
+
+            // Skip leading zeros of n
+            size_t nofs = 0;
+            while (nofs < n.size() && n[nofs] == 0x00) {
+                ++nofs;
+            }
+
+            // Check if s is smaller than nofs
+            if (sofs < nofs) {
+                return true;
+            }
+
+            // Check if s is greater than n
+            if ( ( s.size() - sofs ) > ( n.size() - nofs ) ) {
+                return false;
+            }
+
+            // Check if s is smaller than n
+            if ( ( s.size() - sofs ) < ( n.size() - nofs ) ) {
+                return true;
+            }
+
+            // Compare the remaining bytes (s.size() == n.size())
+            #pragma unroll
+            for (; sofs < s.size(); ++sofs, ++nofs) {
+                if (s[sofs] < n[nofs]) {
+                    return true;
+                }
+                else if (s[sofs] > n[nofs]) {
+                    return false;
+                }
+            }
+
+            // s == n
+            return false;
         }
     }
-    void uECC_vli_bytesToNative(uint32_t *native,
-                                             const uint8_t *bytes,
-                                             int num_bytes) {
-        int i;
-        uECC_vli_clear(native, (num_bytes + (sizeof(uint32_t) - 1)) / sizeof(uint32_t));
-        for (i = 0; i < num_bytes; ++i) {
-            unsigned b = num_bytes - 1 - i;
-            native[b / sizeof(uint32_t)] |=
-                (uint32_t)bytes[i] << (8 * (b % sizeof(uint32_t)));
-        }
-    }
-
 
     /**
     * Returns result of modular exponentiation.
@@ -105,42 +141,6 @@ namespace ack {
 
         auto res = rsa_mod_exp_sw( (const uint8_t*)base, base_len, prop, (uint8_t *)out );
         rsa_free_key_prop( prop );
-
-        // assert(false);
-        // using rsa_int = bigint<8192>;
-        // rsa_int bn_base;
-
-        // // std::array<uint32_t, 32> aa_base;
-        // // uECC_vli_bytesToNative(aa_base.data(), (const uint8_t*)base, base_len);
-        // // bn_base.set_array(aa_base.data(), aa_base.size());
-
-        // if (!bn_base.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(base), base_len })) {
-        //     return 0;
-        // }
-
-        //  bigint<32> bn_exp;
-        // // // std::array<uint32_t, 1> aa_exp;
-        // // // uECC_vli_bytesToNative(aa_exp.data(), (const uint8_t*)exponent, exponent_len);
-        // // // bn_exp.set_array(aa_exp.data(), aa_exp.size());
-        // if (!bn_exp.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(exponent), exponent_len })) {
-        //     return 0;
-        // }
-
-        // //constexpr word_t expp = 555;
-
-        // rsa_int bn_mod;
-        // // std::array<uint32_t, 32> aa_mod;
-        // // uECC_vli_bytesToNative(aa_mod.data(), (const uint8_t*)modulus, modulus_len);
-        // // bn_mod.set_array(aa_mod.data(), aa_mod.size());
-        // if (!bn_mod.set_bytes(bytes_view{ reinterpret_cast<const byte_t*>(modulus), modulus_len })) {
-        //     return 0;
-        // }
-
-        // if (!bn_base.mod_exp(bn_exp, bn_mod)) {
-        //     return 0;
-        // }
-
-        // return bn_base.get_bytes(std::span<byte_t>{ reinterpret_cast<byte_t*>(out), out_len }) ? base_len : 0;
     #endif
         return res == 0 ? base_len : 0;
     }
@@ -171,13 +171,15 @@ namespace ack {
         return result;
     }
 
-    [[nodiscard]] inline bytes rsavp1(const rsa_public_key_view pub_key, const bytes_view& signature) {
-        // Note: Missing check for signature representative (integer between 0 and n - 1)
+    [[nodiscard]] inline bytes rsavp1(const rsa_public_key_view pub_key, const bytes_view signature) {
+        if ( !detail::is_s_valid( signature, pub_key.modulus ) ) {
+            return bytes();
+        }
         return powm( signature, pub_key.exponent, pub_key.modulus );
     }
 
     template<size_t t_len, typename Lambda>
-    [[nodiscard]] bool rsassa_pkcs1_v1_5_verify(const rsa_public_key_view& pub_key, const bytes_view& signature, Lambda&& gen_t)
+    [[nodiscard]] bool rsassa_pkcs1_v1_5_verify(const rsa_public_key_view& pub_key, const bytes_view signature, Lambda&& gen_t)
     {
         if ( signature.size() != pub_key.modulus.size() ) {
             ACK_LOG_DEBUG( "[ERROR] rsassa_pkcs1_v1_5_verify: invalid signature" );
