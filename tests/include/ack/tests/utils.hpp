@@ -2,6 +2,7 @@
 // Author: Crt Vavros
 #pragma once
 #include <eosio/fixed_bytes.hpp>
+#include <eosio/tester.hpp>
 
 #include <ack/span_ext.hpp>
 #include <ack/tests/sha1.hpp>

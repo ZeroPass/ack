@@ -6312,6 +6312,27 @@ namespace ack::tests {
                 REQUIRE_EQUAL( y, z )
             }
         }
+
+        // Jacobi symbol
+        {
+            using bn_t = fixed_bigint<512>;
+            const auto tvs = std::vector<std::tuple<bn_t, bn_t, int>>{
+                {   0U,   3U,  0 }, // m == 0
+                {   0U,   1U,  1 },
+                {   1U,   1U,  1 },
+                {   3U,  21U,  0 }, // gcd == 3
+                { 123U,   1U,  1 },
+                {  45U,  77U, -1 },
+                {  60U, 121U,  1 },
+                { "029d429f012f5808f71c",     "0cd0a8b60a81ee3b",  1 },
+                { "029d429f012f5808f71c", "0753412f6ff3f8f8463b", -1 },
+            };
+
+            for ( const auto& [m, n, r] : tvs ) {
+                REQUIRE_EQUAL( bn_t::jacobi( m, n ), r )
+                REQUIRE_EQUAL( m.jacobi( n )       , r )
+            }
+        }
     EOSIO_TEST_END
 
     EOSIO_TEST_BEGIN( bigint_test )

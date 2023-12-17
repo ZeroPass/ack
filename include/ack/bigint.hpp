@@ -1010,7 +1010,7 @@ namespace ack {
             static constexpr uint32_t count_trailing_zero(bigint& x)
             {
                 uint32_t s = 0;
-                while (x.is_even()) {
+                while ( x.is_even() ) {
                     x >>= 1;
                     s++;
                 }
@@ -2286,7 +2286,7 @@ namespace ack {
             }
 
             // TODO: make constexpr when gcd is constexpr
-            bigint gcd(const bigint& y)
+            bigint gcd(const bigint& y) const
             {
                 bigint z;
                 gcd(z, *this, y);
@@ -2303,69 +2303,104 @@ namespace ack {
             }
 
             // TODO: make constexpr when lcm is constexpr
-            bigint lcm(const bigint& y)
+            bigint lcm(const bigint& y) const
             {
                 bigint z;
                 lcm(z, *this, y);
                 return z;
             }
 
-            /*
-                 1 if m is quadratic residue modulo n (i.e., there exists an x s.t. x^2 = m mod n)
-                 0 if m = 0 mod n
-                -1 otherwise
-                @note return legendre_symbol(m, p) for m and odd prime p
+           /**
+            * Calculates the Legendre symbol (m/n) using the Jacobi symbol,
+            * where 'm' is an integer and 'n' is an odd prime.
+            *
+            * The Jacobi symbol is a generalization of the Legendre symbol and is used in number theory to
+            * determine whether a given integer 'm' is a quadratic residue modulo an odd positive integer 'n'.
+            * The result of the Legendre symbol is:
+            *
+            *    1 if 'm' is a quadratic residue modulo 'n' (i.e. there exists such x that m = x^2 mod n).
+            *    0 if 'm' is 0 or divisible by 'n'.
+            *   -1 if 'm' is a non-quadratic residue modulo 'n'.
+            *
+            * This function assumes 'n' is an odd positive integer and 'a' is an integer.
+            *
+            * @param m The integer for which the Jacobi symbol is calculated.
+            * @param n The odd positive integer modulo which the Jacobi symbol is computed.
+            * @return The Legendre symbol (m/n) as described above.
             */
             // TODO: make constexpr when quot_rem is constexpr
             static int jacobi(bigint m, bigint n)
             {
-                assert(n.is_odd());
+                assert( n.is_odd() );
                 if ( n.is_one() ) return 1;
-                if (m < 0 || m > n) {
-                    quot_rem(0, m, m, n); // m = m mod n
+                if ( m < 0 || m > n ) {
+                    quot_rem( 0, m, m, n) ; // m = m mod n
                 }
                 if ( m.is_zero() ) return 0;
                 if ( m.is_one() )  return 1;
-                if ( gcd(m, n) != 1 ) return 0;
+                if ( gcd( m, n ) != 1 ) return 0;
 
                 int j = 1;
                 bigint t;
-                goto START;
-                while (m != 1) {
-                    if ((m.get_low32bit() % 4) == 3 && (n.get_low32bit() % 4) == 3) {
-                        j = -j;
+                bool start = true;
+                do {
+                    if ( !start ) {
+                        if (( m.get_low32bit() % 4 ) == 3 && ( n.get_low32bit() % 4 ) == 3 ) {
+                            j = -j;
+                        }
+                        mod( t, n, m );
+                        n = m;
+                        m = t;
                     }
-                    mod(t, n, m);
-                    n = m;
-                    m = t;
-                START:
-                    int s = count_trailing_zero(m);
-                    uint32_t nmod8 = n.get_low32bit() % 8;
-                    if ((s % 2) && (nmod8 == 3 || nmod8 == 5)) {
-                        j = -j;
-                    }
-                }
-                // TODO: transform loop to this code
-                // bool start = true;
-                // do {
-                //     if (!start) {
-                //         if ((m.get_low32bit() % 4) == 3 && (n.get_low32bit() % 4) == 3) {
-                //             j = -j;
-                //         }
-                //         mod(t, n, m);
-                //         n = m;
-                //         m = t;
-                //     }
 
-                //     int s = count_trailing_zero(m);
-                //     uint32_t nmod8 = n.get_low32bit() % 8;
-                //     if ((s % 2) && (nmod8 == 3 || nmod8 == 5)) {
+                    const int s = count_trailing_zero( m );
+                    const uint32_t nmod8 = n.get_low32bit() % 8;
+                    if (( s % 2 ) && ( nmod8 == 3 || nmod8 == 5 )) {
+                        j = -j;
+                    }
+                    start = false;
+
+                } while ( m != 1 );
+
+                // goto START;
+                // while (m != 1) {
+                //     if (( m.get_low32bit() % 4 ) == 3 && ( n.get_low32bit() % 4 ) == 3) {
                 //         j = -j;
                 //     }
-                //     start = false;
-                // } while (m != 1)
+                //     mod( t, n, m );
+                //     n = m;
+                //     m = t;
+                // START:
+                //     int s = count_trailing_zero( m );
+                //     uint32_t nmod8 = n.get_low32bit() % 8;
+                //     if (( s % 2 ) && ( nmod8 == 3 || nmod8 == 5 )) {
+                //         j = -j;
+                //     }
+                // }
 
                 return j;
+            }
+
+            /**
+            * Calculates the Legendre symbol (this/n) using the Jacobi symbol,
+            * where 'this' is an integer and 'n' is an odd prime.
+            *
+            * The Jacobi symbol is a generalization of the Legendre symbol and is used in number theory to
+            * determine whether a given integer 'm' is a quadratic residue modulo an odd positive integer 'n'.
+            * The result of the Legendre symbol is:
+            *
+            *    1 if 'this' is a quadratic residue modulo 'n' (i.e. there exists such x that m = x^2 mod n).
+            *    0 if 'this' is 0 or divisible by 'n'.
+            *   -1 if 'this' is a non-quadratic residue modulo 'n'.
+            *
+            * This function assumes 'n' is an odd positive integer.
+            *
+            * @param n The odd positive integer modulo which the Jacobi symbol is computed.
+            * @return The Legendre symbol (this/n) as described above.
+            */
+            inline int jacobi(bigint n) const
+            {
+                return jacobi( *this, n );
             }
 
             constexpr bigint& operator++() { adds1(*this, *this, 1); return *this; }
