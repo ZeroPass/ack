@@ -100,7 +100,7 @@ namespace ack::tests {
                 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
             };
 
-            auto chunk = [&hash, &k](const uint8_t* chunk_data) {
+            auto chunk = [&hash](const uint8_t* chunk_data) {
                 uint32_t w[64] = {0};
 
                 for (int i = 0; i != 16; ++i) {
@@ -230,7 +230,7 @@ namespace ack::tests {
                 0x431d67c49c100d4c, 0x4cc5d4becb3e42b6, 0x597f299cfc657e2a,
                 0x5fcb6fab3ad6faec, 0x6c44198c4a475817};
 
-            auto chunk = [&hash, &k](const uint8_t* chunk_data) {
+            auto chunk = [&hash](const uint8_t* chunk_data) {
                 uint64_t w[80] = {0};
 
                 for ( int i = 0; i != 16; ++i ) {

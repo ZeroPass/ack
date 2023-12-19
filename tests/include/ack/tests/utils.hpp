@@ -10,6 +10,7 @@
 #include <ack/types.hpp>
 
 namespace ack::tests {
+    [[maybe_unused]]
     static void init_test_intrinsics() {
         using namespace eosio::native;
 

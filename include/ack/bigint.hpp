@@ -1021,8 +1021,8 @@ namespace ack {
                 const bigint* pm;
                 constexpr bool operator()(bigint& z, const bigint& x, const bigint& y) const
                 {
-                    bool success = mul(z, x, y);
-                    return success && mod(z, z, *pm);
+                    bool success = bigint::mul(z, x, y);
+                    return success && bigint::mod(z, z, *pm);
                 }
             };
 
@@ -1071,9 +1071,9 @@ namespace ack {
                     }
                 }
 
-                const size_t w = 4; // don't change
-                const size_t m = word_bit_size / w;
-                const size_t tblSize = (1 << w) - 1;
+                constexpr size_t w = 4; // don't change
+                constexpr size_t m = word_bit_size / w;
+                constexpr size_t tblSize = (1 << w) - 1;
                 bigint tbl[tblSize];
                 tbl[0] = x;
                 for (size_t i = 1; i < tblSize; i++) {
@@ -1100,7 +1100,7 @@ namespace ack {
                             }
                         }
 
-                        word_t idx = (v >> ((m - 1 - j) * w)) & tblSize;
+                        const word_t idx = (v >> ((m - 1 - j) * w)) & tblSize;
                         if (idx) {
                             if (!mul(z, z, tbl[idx - 1])) {
                                 return false;
@@ -1489,9 +1489,9 @@ namespace ack {
                 *this = 0;
             }
 
-            /*
-                return bit_size(abs(*this))
-                @note return 1 if zero
+            /**
+            * Returns number of bits to represent this.
+            * @return Number of bits.
             */
             constexpr std::size_t bit_length() const
             {
@@ -1510,7 +1510,7 @@ namespace ack {
             {
                 size_t q = i / word_bit_size;
                 size_t r = i % word_bit_size;
-                if (q >= size()) {
+                if ( q >= size() ) {
                     return false;
                 }
 
@@ -1639,7 +1639,7 @@ namespace ack {
 
             constexpr uint32_t get_low32bit() const
             {
-                return (uint32_t)buf_[0];
+                return static_cast<uint32_t>( buf_[0] );
             }
 
             constexpr bool is_odd() const
@@ -1870,6 +1870,14 @@ namespace ack {
                 return div_mod(0, r, x, y);
             }
 
+            [[maybe_unused]] inline bigint mod(const bigint& m) const
+            {
+                bigint r;
+                const bool ret = mod(r, *this, m);
+                check( ret, "mod failed" );
+                return r;
+            }
+
             static constexpr void divs1(bigint& q, const bigint& x, int y)
             {
                 div_mods1(&q, x, y);
@@ -2070,7 +2078,6 @@ namespace ack {
             // TODO: make constexpr when _pow is constexpr
             static bool pow(bigint& z, const bigint& x, const bigint& y)
             {
-                assert(!y.is_neg_);
                 if (y.is_neg_) {
                     return false;
                 }
@@ -2086,8 +2093,7 @@ namespace ack {
             // TODO: make constexpr when _pow is constexpr
             static bool pow(bigint& z, const bigint& x, int64_t y)
             {
-                assert(y >= 0);
-                if (y < 0) {
+                if ( y < 0 ) {
                     return false;
                 }
 
@@ -2100,6 +2106,22 @@ namespace ack {
                 return _pow(z, x, u, un, Mul, Sqr);
             }
 
+            [[maybe_unused]] inline bigint pow(const bigint& e) const
+            {
+                bigint r;
+                const bool ret = pow(r, *this, e);
+                check( ret, "pow failed" );
+                return r;
+            }
+
+            [[maybe_unused]] inline bigint pow(int64_t e) const
+            {
+                bigint r;
+                const bool ret = pow(r, *this, e);
+                check( ret, "pow failed" );
+                return r;
+            }
+
             /*
                 z = x ^ y mod m
                 REMARK y >= 0;
@@ -2109,7 +2131,6 @@ namespace ack {
             template<typename UBuffer>
             static bool modexp(bigint& z, const bigint& x, const bigint<UBuffer>& y, const bigint& m)
             {
-                assert(!y.is_neg_);
                 if (y.is_neg_) {
                     return false;
                 }
@@ -2134,6 +2155,22 @@ namespace ack {
                 mm.pm = &m;
                 sm.pm = &m;
                 return _pow(z, x, &y, 1, mm, sm);
+            }
+
+            [[maybe_unused]] inline bigint modexp(const bigint& e, const bigint& m) const
+            {
+                bigint r;
+                const bool ret = modexp(r, *this, e, m);
+                check( ret, "modexp failed" );
+                return r;
+            }
+
+            [[maybe_unused]] inline bigint modexp(const word_t e, const bigint& m) const
+            {
+                bigint r;
+                const bool ret = modexp(r, *this, e, m);
+                check( ret, "modexp failed" );
+                return r;
             }
 
             /*
