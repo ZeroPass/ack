@@ -193,13 +193,22 @@ namespace ack {
             return underlying().mul( x );
         }
 
-         /**
+        /**
          * Calculates square of this element.
          * @return R = this^2.
         */
         [[nodiscard]] Derived sqr() const
         {
             return underlying().sqr();
+        }
+
+        /**
+         * Calculates square root of this element.
+         * @return R = sqrt(this).
+        */
+        [[nodiscard]] Derived sqrt() const
+        {
+            return underlying().sqrt();
         }
 
         /**

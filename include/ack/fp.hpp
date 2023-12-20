@@ -92,6 +92,69 @@ namespace ack {
         {
             return ( a * b.modinv( p ) ) % p;
         }
+
+        template<typename BufferA, typename BufferC>
+        [[nodiscard]] inline bigint<BufferA> fp_sqrt(const bigint<BufferA>& n, const bigint<BufferC>& p)
+        {
+            // Check that n is indeed a square: (n | p) must be = 1
+            // The Legendre symbol (n | p) denotes the value of n^(p-1)/2 (mod p).
+            if ( n.jacobi( p ) != 1 ) {
+                return 0;
+            }
+
+            if (( p % 4 ) == 3 ) {
+                // sqrt(a) = a^((p + 1) / 4) (mod p)
+                return n.modexp( ( p + 1 ) / 4, p );
+            }
+
+            /* Fallback to general Tonelli-Shanks algorithm */
+
+            // Find q and s such that p - 1 = q2^s with q odd
+            auto q = p - 1;
+            std::size_t s = 0;
+            while ( q.is_even() ) {
+                s++;
+                q >>= 1;
+            }
+
+            // Find non-square z such that (z | p) = -1
+            bigint<BufferC> z = 2;
+            while ( z.jacobi( p ) != -1 ) { // TODO: Possible infinite loop
+                ++z;
+            }
+
+            auto c = z.modexp( q, p );
+            auto r = n.modexp(( q - 1 ) / 2, p );
+            auto t = ( r.sqr() % p ) * n % p;
+            r = n * r % p;
+
+            while ( t != 1 )
+            {
+                std::size_t m = 0;
+                z = t;
+                do
+                {
+                    m++;
+                    z = z.sqr() % p;
+                    if ( m == s ) {
+                        return 0;
+                    }
+                }
+                while ( z != 1 );
+
+                auto b = c;
+                for ( std::size_t i = 0; i < ( s - m - 1 ); i++ ) {
+                    b = b.sqr() % p;
+                }
+
+                c = b.sqr() % p;
+                s = m;
+                r = r * b % p;
+                t = t * c % p;
+            }
+
+            return r;
+        }
     }
 
     /** Checks if finite field element a is valid.
@@ -321,16 +384,38 @@ namespace ack {
      *       Out of range values are not checked and will produce wrong results.
      *
      * @tparam BufferA - Type of the finite field element.
-     * @tparam BufferC - Type of the prime modulus.
+     * @tparam BufferB - Type of the prime modulus.
      *
      * @param a - Finite field element.
      * @param p - Prime modulus of the finite field.
      * @return a * a mod p.
     */
-    template<typename BufferA, typename BufferC>
-    [[nodiscard]] inline bigint<BufferA> fp_sqr(const bigint<BufferA>& a, const bigint<BufferC>& p)
+    template<typename BufferA, typename BufferB>
+    [[nodiscard]] inline bigint<BufferA> fp_sqr(const bigint<BufferA>& a, const bigint<BufferB>& p)
     {
         return fp_mul( a, a, p );
+    }
+
+   /**
+    * Calculates the modular square root of an integer 'n' modulo odd prime 'p'.
+    * The function returns the first root, where r^2 == n (mod p), and not r^2 == -n (mod p).
+    * The caller is responsible for verifying if the returned root 'r' satisfies r^2 == n (mod p).
+    * If not, the caller should calculate r = p - r to get the correct root.
+    *
+    * @note This function has an optimization for the case where 'p' == 3 (mod 4).
+    *       In this case, the square root is efficiently computed.
+    *       If 'p' is not congruent to 3 modulo 4, the function uses a general
+    *       Tonelli-Shanks algorithm to find the modular square root.
+    *
+    * @param n - The integer for which the modular square root is calculated.
+    * @param p - The odd prime modulus.
+    * @return The first modular square root of 'n' modulo 'p', or 0 if no square root exists.
+    *
+    */
+    template<typename BufferA, typename BufferB>
+    [[nodiscard]] inline bigint<BufferA> fp_sqrt(const bigint<BufferA>& n, const bigint<BufferB>& p)
+    {
+        return detail::fp_sqrt<BufferA, BufferB>( n, p );
     }
 
     /**
@@ -379,7 +464,7 @@ namespace ack {
             }
 
             /**
-             * Constructs a one finite field element.
+             * Constructs a finite field element of value 1.
              * @note This instance doesn't have a valid modulus,
              *       so it can't be used for any operations.
              *       The returned instance is invalid and can be used only for comparison.
@@ -563,7 +648,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular addition of this finite field element and another one.
+             * Calculates modular addition of this finite field element and another one.
              * @param x - Finite field element to add.
              * @return (this + x) % modulus.
             */
@@ -573,7 +658,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular addition of this finite field element and big integer.
+             * Calculates modular addition of this finite field element and big integer.
              * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to add.
              * @return (this + x) % modulus.
@@ -585,7 +670,7 @@ namespace ack {
             }
 
             /**
-             *  Calculate modular addition of this finite field element and integer.
+             *  Calculates modular addition of this finite field element and integer.
              * @tparam IntU - Small integer type.
              * @param x - Integer to add.
              * @return (this + x) % modulus.
@@ -597,7 +682,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular subtraction of this finite field element and another one.
+             * Calculates modular subtraction of this finite field element and another one.
              * @param x - Finite field element to subtract.
              * @return (this - x) % modulus.
             */
@@ -607,7 +692,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular subtraction of this finite field element and big integer.
+             * Calculates modular subtraction of this finite field element and big integer.
              * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to subtract.
              * @return (this - x) % modulus.
@@ -619,7 +704,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular subtraction of this finite field element and integer.
+             * Calculates modular subtraction of this finite field element and integer.
              * @tparam IntU - Small integer type.
              * @param x - Integer to subtract.
              * @return (this - x) % modulus.
@@ -631,7 +716,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular multiplication of this finite field element and another one.
+             * Calculates modular multiplication of this finite field element and another one.
              * @param x - Finite field element to multiply.
              * @return (this * x) % modulus.
             */
@@ -641,7 +726,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular multiplication of this finite field element and big integer.
+             * Calculates modular multiplication of this finite field element and big integer.
              * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to multiply.
              * @return (this * x) % modulus.
@@ -659,7 +744,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular multiplication of this finite field element and integer.
+             * Calculates modular multiplication of this finite field element and integer.
              * @tparam IntU - Small integer type.
              * @param x - Integer to multiply.
              * @return (this * x) % modulus.
@@ -677,7 +762,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular square of this finite field element.
+             * Calculates modular square of this finite field element.
              * @return (this^2) % modulus.
             */
             [[nodiscard]] fp_element sqr() const
@@ -689,7 +774,23 @@ namespace ack {
             }
 
             /**
-             * Calculate modular division of this finite field element and another one.
+             * Calculates the modular square root of this finite field element.
+             * The function returns the first root, where r^2 == n (mod p), and not r^2 == -n (mod p).
+             * The caller is responsible for verifying if the returned root 'r' satisfies r^2 == n (mod p).
+             * If not, the caller should calculate r = p - r to get the correct root.
+             *
+             * @return  The first modular square root of this mod modulus, or 0 if no square root exists.
+            */
+            [[nodiscard]] fp_element sqrt() const
+            {
+                if ( v_.is_one() ) {
+                    return *this;
+                }
+                return fp_element( fp_sqrt( v_, *pm_ ), *pm_ );
+            }
+
+            /**
+             * Calculates modular division of this finite field element and another one.
              * @param x - Finite field element to divide.
              * @return (this / x) % modulus.
             */
@@ -699,7 +800,7 @@ namespace ack {
             }
 
             /**
-             * Calculate modular division of this finite field element and big integer.
+             * Calculates modular division of this finite field element and big integer.
              * @tparam BufferT - Buffer type of big integer.
              * @param x - Big integer to divide.
              * @return (this / x) % modulus.
