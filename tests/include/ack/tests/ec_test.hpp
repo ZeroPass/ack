@@ -4401,22 +4401,26 @@ namespace ack::tests {
     EOSIO_TEST_BEGIN( ec_mul_add_fast_test )
         using namespace detail;
         for_each_curve_do( []<typename CurveT>(const CurveT& c) {
-            using point_type      = typename CurveT::point_type;
-            using point_proj_type = ec_point_fp_proj<CurveT>;
-
             for ( int32_t i = 1; i < 101; i++) {
                 auto p  = c.g * i;
                 auto p_proj = ec_point_fp_proj( p );
+                auto p_jacobi = ec_point_fp_jacobi( p );
+
                 auto q  = c.g * (101 - i );
                 auto q_proj = ec_point_fp_proj( q );
+                auto q_jacobi = ec_point_fp_jacobi( q );
+
                 auto u1 = (i * ( c.n - 1 )) % c.n;
                 auto u2 = (i * ( c.n - 2 )) % c.n;
 
                 auto r      = p * u1 + q * u2;
                 auto r_proj = p_proj * u1 + q_proj * u2;
-                REQUIRE_EQUAL( r, r_proj.to_affine() );
+                auto r_jacobi = p_jacobi * u1 + q_jacobi * u2;
+                REQUIRE_EQUAL( r, r_proj.to_affine()   );
+                REQUIRE_EQUAL( r, r_jacobi.to_affine() );
                 REQUIRE_EQUAL( ec_mul_add_fast(u1, p, u2, q), r );
                 REQUIRE_EQUAL( ec_mul_add_fast(u1, p_proj, u2, q_proj), r_proj );
+                REQUIRE_EQUAL( ec_mul_add_fast(u1, p_jacobi, u2, q_jacobi), r_jacobi );
             }
         });
     EOSIO_TEST_END // ec_mul_add_fast_test
