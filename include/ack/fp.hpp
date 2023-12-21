@@ -449,6 +449,7 @@ namespace ack {
         public:
             using base_type = field_element<fp_element<IntT, PrimeFieldTag>, IntT, PrimeFieldTag>;
             using base_type::base_type;
+            using base_type::to_bytes;
 
             /**
              * Constructs a zero finite field element.
@@ -526,6 +527,18 @@ namespace ack {
             constexpr fp_element(fp_element&& other) = default;
             constexpr fp_element& operator=(const fp_element& other) = default;
             constexpr fp_element& operator=(fp_element&& other) = default;
+
+            /**
+             * Returns the max element bytes size.
+             * @return max element size.
+            */
+            constexpr std::size_t max_byte_length() const
+            {
+                if ( !is_valid()) {
+                    return 0;
+                }
+                return ( *pm_ - 1 ).byte_length();
+            }
 
             /**
              * Assigns big integer value to the finite field element.
@@ -636,6 +649,27 @@ namespace ack {
             constexpr bool is_negative() const
             {
                 return v_.is_negative();
+            }
+
+            /**
+             * Returns the byte-encoded representation of this object.
+             *
+             * @param len - The desired length of the byte-encoded representation
+             *        The full byte-encoded representation is returned if len is smaller
+             *        than the byte length of the original object.
+             *
+             * @return The byte-encoded representation of this object.
+            */
+            bytes to_bytes(std::size_t len) const
+            {
+                bytes ev;
+                if ( is_valid() ) {
+                    ev = v_.to_bytes();
+                    if ( len > ev.size() ) {
+                        ev = bytes( len - ev.size(), 0 ) + ev;
+                    }
+                }
+                return ev;
             }
 
             /**

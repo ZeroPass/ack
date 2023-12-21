@@ -51,4 +51,21 @@ namespace ack {
         ds.skip( s );
         return ds;
     }
+
+    template<typename T, typename AllocA = std::allocator<T>, typename AllocB = std::allocator<T>>
+    inline std::vector<T, AllocA> operator + (const std::vector<T, AllocA>& a, const std::vector<T, AllocB>& b)
+    {
+        std::vector<T, AllocA> c;
+        c.reserve(a.size() + b.size() );
+        std::copy( a.begin(), a.end(), std::back_inserter( c) );
+        std::copy( b.begin(), b.end(), std::back_inserter( c) );
+        return c;
+    }
+
+    template<typename T, typename AllocA = std::allocator<T>, typename AllocB = std::allocator<T>>
+    inline std::vector<T, AllocA>& operator += (std::vector<T, AllocA>& a, const std::vector<T, AllocB>& b)
+    {
+        a.insert( a.end(), b.begin(), b.end() );
+        return a;
+    }
 }

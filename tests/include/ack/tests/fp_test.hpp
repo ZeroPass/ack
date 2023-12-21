@@ -3552,6 +3552,117 @@ namespace ack::tests {
             fe /= b;
             REQUIRE_EQUAL( fe, "2F1F1FE098ED612AC09FE67F0DF9AE18AC979376C" )
         }
+
+        // misc
+        {
+            // encoding to bytes
+            auto mod = bn_t( "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f" );
+            auto fe = fpe_t( 0U, mod );
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "00"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "00"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000000"_hex )
+
+            fe = 1;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "01"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "01"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0001"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000001"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000001"_hex )
+
+            fe = 0x0f;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "0F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "0F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "000F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "00000F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "000000000000000000000000000000000000000000000000000000000000000F"_hex )
+
+            fe = 0xff;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "00FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "0000FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "00000000000000000000000000000000000000000000000000000000000000FF"_hex )
+
+            fe = 0x100;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000100"_hex )
+
+            fe = 0x1000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "001000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000001000"_hex )
+
+            fe = 0x10000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000010000"_hex )
+
+            fe = 0x100000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000100000"_hex )
+
+            fe = 0xffffff;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000FFFFFF"_hex )
+
+            fe = 0x1000000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000001000000"_hex )
+
+            fe = 0x10000000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000010000000"_hex )
+
+            fe = "2F1F1FE098ED612AC09FE67F0DF9AE18AC979376C";
+            REQUIRE_EQUAL( fe.to_bytes( 0 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 21 ), "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 22 ), "0002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 23 ), "000002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()    , "000000000000000000000002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+
+            fe = mod - 1;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 21 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 22 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 23 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 32 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 33 ), "00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 34 ), "0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()    , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+
+            // Should return empty bytes when invalid field element
+            fe = mod + 1;
+            REQUIRE_EQUAL( fe.to_bytes(), ""_hex )
+            REQUIRE_EQUAL( fpe_t::zero().to_bytes(), ""_hex )
+            REQUIRE_EQUAL( fpe_t::one().to_bytes(), ""_hex )
+        }
     EOSIO_TEST_END // fp_element_test
 
     EOSIO_TEST_BEGIN(fp_test)

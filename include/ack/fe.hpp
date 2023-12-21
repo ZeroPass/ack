@@ -37,6 +37,15 @@ namespace ack {
             return Derived::one();
         }
 
+       /**
+         * Returns the max element bytes size.
+         * @return max element size.
+        */
+        constexpr std::size_t max_byte_length() const
+        {
+            return underlying().max_byte_length();
+        }
+
         /**
          * Casts this element to big integer.
          * @return const reference to big integer representation of this element.
@@ -80,6 +89,30 @@ namespace ack {
         constexpr bool is_negative() const
         {
             return underlying().is_negative();
+        }
+
+        /**
+         * Returns the byte-encoded representation of this object.
+         *
+         * @param len - The desired length of the byte-encoded representation
+         *        The full byte-encoded representation is returned if len is smaller
+         *        than the byte length of the original object.
+         *
+         * @return The byte-encoded representation of this object.
+        */
+        bytes to_bytes(std::size_t len) const
+        {
+            return underlying().to_bytes( len );
+        }
+
+        /**
+         * Returns the byte-encoded representation of this object of size max_byte_length().
+         * @return The byte-encoded representation of this object.
+        */
+        bytes to_bytes() const
+        {
+            auto len = max_byte_length();
+            return to_bytes( len );
         }
 
         /**
