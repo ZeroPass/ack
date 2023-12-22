@@ -368,7 +368,7 @@ namespace ack {
     template<typename CurveT>
     struct ec_point_fp : ec_point_base<ec_point_fp<CurveT>, CurveT>
     {
-        static_assert( is_ec_curve_fp<CurveT> );
+        static_assert( is_ec_curve_fp<std::remove_cv_t<CurveT>> );
 
         using base_type          = ec_point_base<ec_point_fp<CurveT>, CurveT>;
         using int_type           = typename CurveT::int_type;
@@ -470,7 +470,7 @@ namespace ack {
                 return *this;
             }
 
-             // TODO: before this sub operation caused error in wasm:  memcpy with overlapping memory memcpy can only accept non-aliasing pointers
+            // TODO: before this sub operation caused error in wasm:  memcpy with overlapping memory memcpy can only accept non-aliasing pointers
             auto s = a.x - x;
             if ( s.is_zero() ) {
                 if ( y == a.y ) { // double point
@@ -1552,7 +1552,7 @@ namespace ack {
         /**
          * Generates a point from base point g and given scalar x.
          *
-         * @tparam PointT - point type to create.
+         * @tparam PointT - EC point type to create.
          *
          * @param x - scalar to multiply base point g with.
          * @return PointT - point on the curve.
@@ -1571,7 +1571,7 @@ namespace ack {
         /**
          * Generates a point from base point g and given hex string scalar sx.
          *
-         * @tparam PointU - point type to create.
+         * @tparam PointU - EC point type to create.
          *
          * @param sx - hex string scalar to multiply base point g with.
          * @return PointU - point on the curve.
@@ -1585,7 +1585,7 @@ namespace ack {
         /**
          * Generates a point from base point g and given hex string literal scalar sx.
          *
-         * @tparam PointU - point type to create.
+         * @tparam PointU - EC point type to create.
          *
          * @param sx - hex string literal scalar to multiply base point g with.
          * @return PointU - point on the curve.
@@ -1636,7 +1636,7 @@ namespace ack {
          * @note The returned point can be invalid, since the function allows
          *        creating points that were not generated with the generator point.
          *
-         * @tparam PointU - point type to make. Default affine point_type.
+         * @tparam PointU - EC point type to make. Default affine point_type.
          *
          * @param x - point x coordinate
          * @param y - point y coordinate
@@ -1644,7 +1644,7 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-       template<typename PointU = point_type>
+        template<typename PointU = point_type>
         [[nodiscard]] constexpr PointU make_point(IntT&& x, IntT&& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
@@ -1665,7 +1665,7 @@ namespace ack {
          * @note The returned point can be invalid, since the function allows
          *        creating points that were not generated with the generator point.
          *
-         * @tparam PointU - point type to make. Default affine point_type.
+         * @tparam PointU - EC point type to make. Default affine point_type.
          *
          * @param x - point x coordinate
          * @param y - point y coordinate
@@ -1684,6 +1684,156 @@ namespace ack {
                 verify
             );
             return point;
+        }
+
+        /**
+         * Solves the equation y = sqrt( x^3 + ax + b ) (mod p) and returns y.
+         *
+         * @param x   - field element x-coordinate.
+         * @param odd - True if the calculated y-coordinate should be odd.
+         * @return The y-coordinate, or 0 if no square root exists.
+        */
+        [[nodiscard]]
+        inline field_element_type compute_y(const field_element_type& x, const bool odd) const {
+            auto y = (( x * x + a ) * x + b ).sqrt();
+            if ( odd != y.value().test_bit( 0 )) {
+                y = -y;
+            }
+            return y;
+        }
+
+        /**
+         * Solves the equation y = sqrt( x^3 + ax + b ) (mod p) and returns y.
+         *
+         * @param x      - integer x-coordinate.
+         * @param odd    - True if the calculated y-coordinate should be odd.
+         * @param verify - True if x coordinate should be verified before calculating y. Default false.
+         * @return The y-coordinate, or 0 if no square root exists.
+        */
+        [[nodiscard]]
+        inline field_element_type compute_y(const IntT& x, const bool odd, bool verify = false) const {
+            return compute_y( make_field_element( x, verify ), odd );
+        }
+
+        /**
+         * Decompress point from provided x-coordinate.
+         * @tparam PointT - returned EC point type.
+         *
+         * @param x    - field element x-coordinate.
+         * @param yodd - True if the calculated y-coordinate should be odd.
+         * @return The decompressed EC point. If the y-coordinate cannot be computed, the point at infinity is returned.
+        */
+        template<typename PointT = point_type>
+        [[nodiscard]]
+        inline PointT decompress_point(field_element_type x, const bool yodd) const {
+            auto y = compute_y( x, yodd );
+            if ( y.is_zero() ) {
+                return PointT{};
+            }
+            return make_point<PointT>( std::move( x ), y );
+        }
+
+        /**
+         * Decompress point from provided x-coordinate.
+         * @tparam PointT - returned EC point type.
+         *
+         * @param x       - integer x-coordinate.
+         * @param yodd    - True if the calculated y-coordinate should be odd.
+         * @param verify  - True if x coordinate should be verified before calculating y. Default false.
+         * @return The decompressed EC point. If the y-coordinate cannot be computed, the point at infinity is returned.
+        */
+        template<typename PointT = point_type>
+        [[nodiscard]]
+        inline PointT decompress_point(const IntT& x, const bool yodd, bool verify = false) const {
+            return decompress_point<PointT>( make_field_element( x, verify ), yodd );
+        }
+
+        /**
+         * Encodes an EC point into its byte-encoded form.
+         *
+         * This function follows the SEC1-v2 standard for EC point encoding.
+         * The 'compress' parameter determines whether to use compressed or uncompressed
+         * point encoding. Compressed encoding includes only the x-coordinate, while uncompressed encoding
+         * includes both the x and y coordinates.
+         *
+         * Encoded Format: <type> | [x] | [y]
+         *   type:
+         *      0 - point at infinity, not coordinates is encoded
+         *      2 - compressed form  with only x-coordinate (even y-coordinate is derived)
+         *      3 - compressed form with only x-coordinate (odd y-coordinate is derived)
+         *      4 - uncompressed form with both x and y coordinates
+         *
+         * @see SEC1-v2 section '2.3.3 Elliptic-Curve-Point-to-Octet-String Conversion'
+         * https://www.secg.org/sec1-v2.pdf#page=16
+         *
+         * @param point    - The EC point to be encoded, represented as a `point_type` structure.
+         * @param compress - If true the encoded point will be in compressed form; otherwise, encodes it in uncompressed form.
+         * @return The byte-encoded form of the EC point.
+         */
+        [[nodiscard]] bytes encode_point(const point_type& point, bool compress) const
+        {
+            bytes epoint = { 0 };
+            if ( point.is_identity() ) {
+                return epoint;
+            }
+
+            if ( compress ) {
+                epoint[0] = 2 + point.y.value().test_bit( 0 );
+                epoint += point.x.to_bytes();
+            }
+            else {
+                epoint[0] = 4;
+                epoint += point.x.to_bytes() + point.y.to_bytes();
+            }
+            return epoint;
+        }
+
+        /**
+         * Decodes an EC point from its byte-encoded form.
+         *
+         * This function follows the SEC1-v2 standard for EC point encoding. The encoded point
+         * is expected to be in the format (type | x [| y]), where 'type' represents the encoding type or
+         * parity of the y-coordinate (if compressed form), and 'x' & 'y' are coordinates of the point.
+         *
+         * @see SEC1-v2 section '2.3.4 Octet-String-to-Elliptic-Curve-Point Conversion'
+         * https://www.secg.org/sec1-v2.pdf#page=17
+         *
+         * @see encode_point
+         *
+         * @note internally function halts if epoint is in invalid format or encoded coordinates are invalid.
+         *
+         * @tparam PointT - returned EC point type.
+         *
+         * @param epoint A bytes view of the encoded EC point (type | x [| y]).
+         * @return The decoded EC point of type PointT.
+         */
+        template<typename PointT = point_type>
+        [[nodiscard]] PointT decode_point(const bytes_view epoint) const
+        {
+            check( !epoint.empty(), "invalid encoded point" );
+
+            const auto type = epoint[0];
+            check( type <= 4 && type != 1, "invalid encoded point" );
+
+            const std::size_t plen = p.byte_length();
+            PointT P; // type 0 = point at infinity
+            switch ( type ) {
+                // 2.3.4.2
+                case 2:
+                case 3: {
+                    check( epoint.size() == plen + 1, "invalid encoded point" );
+                    P = decompress_point<PointT>( /*x=*/epoint.subspan( 1, plen ), /*yodd=*/type & 1 );
+                } break;
+                // 2.3.4.3
+                case 4: {
+                    check( epoint.size() == 2 * plen + 1, "invalid encoded point" );
+                    P = make_point<PointT>(
+                        epoint.subspan( 1, plen ),
+                        epoint.subspan( 1 + plen, plen )
+                    );
+                } break;
+            }
+            return P;
         }
 
         /**

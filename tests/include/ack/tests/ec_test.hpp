@@ -4418,8 +4418,293 @@ namespace ack::tests {
     }
     EOSIO_TEST_END // ec_keypair_secp256r1_test
 
-    EOSIO_TEST_BEGIN( ec_mul_add_fast_test )
+    EOSIO_TEST_BEGIN( ec_misc )
         using namespace detail;
+
+        // Test solving curve quadratic equation via `compute_y` function
+
+        {
+            // Test vectors were generated for sepc256r1 using OpenSSL 3.0.2
+            {
+                auto tv_x = "5cd5c3fb57668b0d6c85543fe480167324ff58a646adfb22a051913f125cf03a"_hex;
+                auto x = secp256r1.make_field_element( tv_x );
+                auto y = secp256r1.compute_y( x , /*odd=*/ true );
+                REQUIRE_EQUAL( y, "dbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+                y = secp256r1.compute_y( tv_x , /*odd=*/ true );
+                REQUIRE_EQUAL( y, "dbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+
+                tv_x = "ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a"_hex;
+                x = secp256r1.make_field_element( tv_x );
+                y = secp256r1.compute_y( x , /*odd=*/ false );
+                REQUIRE_EQUAL( y, "052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+                y = secp256r1.compute_y( tv_x , /*odd=*/ false );
+                REQUIRE_EQUAL( y, "052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+            }
+
+            // Test vectors were generated for secp256k1 using OpenSSL 3.0.2
+            {
+                auto tv_x = "d2e338aa2899f499525af33e7fe650867d07c31221e77b184161f728a3cfed42"_hex;
+                auto x = secp256k1.make_field_element( tv_x );
+                auto y = secp256k1.compute_y( x , /*odd=*/ true );
+                REQUIRE_EQUAL( y, "13dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+                y = secp256k1.compute_y( tv_x , /*odd=*/ true );
+                REQUIRE_EQUAL( y, "13dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+
+                tv_x = "c1ed2c8fa1fc2d913712547a5439c62ddb4dee08ccd1d585c0cdee87433c7ab3"_hex;
+                x = secp256k1.make_field_element( tv_x );
+                y = secp256k1.compute_y( x , /*odd=*/ false );
+                REQUIRE_EQUAL( y, "9e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+                y = secp256k1.compute_y( tv_x , /*odd=*/ false );
+                REQUIRE_EQUAL( y, "9e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+            }
+        }
+
+        // Test decompressing point from x-coordinate
+        // i.e.: point decompression
+        {
+            // Test vectors were generated for sepc256r1 using OpenSSL 3.0.2
+            {
+                auto tv_x = "5cd5c3fb57668b0d6c85543fe480167324ff58a646adfb22a051913f125cf03a"_hex;
+                auto x = secp256r1.make_field_element( tv_x );
+                auto p = secp256r1.decompress_point( x , /*odd=*/ true );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "dbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+                p = secp256r1.decompress_point( tv_x , /*odd=*/ true );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "dbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+
+                tv_x = "ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a"_hex;
+                x = secp256r1.make_field_element( "ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a"_hex );
+                p = secp256r1.decompress_point( x , /*odd=*/ false );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+                p = secp256r1.decompress_point( tv_x , /*odd=*/ false );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+            }
+
+            // Test vectors were generated for secp256k1 using OpenSSL 3.0.2
+            {
+                auto tv_x = "d2e338aa2899f499525af33e7fe650867d07c31221e77b184161f728a3cfed42"_hex;
+                auto x = secp256k1.make_field_element( tv_x );
+                auto p = secp256k1.decompress_point( x , /*odd=*/ true );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "13dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+                p = secp256k1.decompress_point( tv_x , /*odd=*/ true );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "13dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+
+                tv_x = "c1ed2c8fa1fc2d913712547a5439c62ddb4dee08ccd1d585c0cdee87433c7ab3"_hex;
+                x = secp256k1.make_field_element( tv_x );
+                p = secp256k1.decompress_point( x , /*odd=*/ false );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "9e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+                p = secp256k1.decompress_point( tv_x , /*odd=*/ false );
+                REQUIRE_EQUAL( p.x, x )
+                REQUIRE_EQUAL( p.y, "9e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+            }
+
+            // Test function decompress_point returns point at infinity when y coordinate can't be computed
+            REQUIRE_EQUAL( secp256k1.decompress_point( "0"_hex, false ).is_identity(), true )
+            REQUIRE_EQUAL( secp256k1.decompress_point( "0"_hex, true  ).is_identity(), true )
+            REQUIRE_EQUAL( secp256k1.decompress_point( secp256k1.make_field_element( "0"_hex ), false ).is_identity(), true )
+            REQUIRE_EQUAL( secp256k1.decompress_point( secp256k1.make_field_element( "0"_hex ), true  ).is_identity(), true )
+        }
+
+        // Test encoding/decoding EC point
+        {
+            // Test decoding point at infinity
+            REQUIRE_EQUAL( secp256k1.decode_point( "00"_hex ).is_identity(),  true )
+            REQUIRE_EQUAL( secp256r1.decode_point( "00"_hex ).is_identity(),  true )
+            REQUIRE_EQUAL( secp256k1.decode_point<secp256k1_point_proj>( "00"_hex ).is_identity(),  true )
+            REQUIRE_EQUAL( secp256k1.decode_point<secp256k1_point_jacobi>( "00"_hex ).is_identity(),  true )
+
+            // Test decoding point at infinity succeeds when additional data is appended to encode type (1st byte)
+            REQUIRE_EQUAL( secp256r1.decode_point( "00BADDA7A"_hex ).is_identity(),  true )
+
+            // Test decoding invalid point coordinates results in pointy at infinity
+            REQUIRE_EQUAL( secp256k1.decode_point( "020000000000000000000000000000000000000000000000000000000000000000"_hex ).is_identity(), true )
+            REQUIRE_EQUAL( secp256k1.decode_point( "030000000000000000000000000000000000000000000000000000000000000000"_hex ).is_identity(), true )
+            REQUIRE_EQUAL( secp256k1.decode_point( "0400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"_hex ).is_identity(), true )
+
+            // Test vectors were generated for secp256r1 using OpenSSL 3.0.2
+            {
+                auto tv = "035cd5c3fb57668b0d6c85543fe480167324ff58a646adfb22a051913f125cf03a"_hex;
+                auto p  = secp256r1.decode_point( tv );
+                REQUIRE_EQUAL( p.x, "5cd5c3fb57668b0d6c85543fe480167324ff58a646adfb22a051913f125cf03a"_hex )
+                REQUIRE_EQUAL( p.y, "dbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+
+                auto p_proj = secp256r1.decode_point<secp256r1_point_proj>( tv );
+                REQUIRE_EQUAL( p_proj.to_affine(), p )
+
+                auto p_jacobi = secp256r1.decode_point<secp256r1_point_jacobi>( tv );
+                REQUIRE_EQUAL( p_jacobi.to_affine(), p)
+
+
+                auto ep = secp256r1.encode_point( p, /*compressed=*/ false );
+                REQUIRE_EQUAL( ep, "045cd5c3fb57668b0d6c85543fe480167324ff58a646adfb22a051913f125cf03adbd82d3535a54276e9fff543420ee688c4e3affeaa44d1b6ca755325ffeead7d"_hex )
+
+                ep = secp256r1.encode_point( p, /*compressed=*/ true );
+                REQUIRE_EQUAL( ep, tv )
+            }
+
+            // Test vectors were generated for secp256r1 using OpenSSL 3.0.2
+            {
+                auto tv = "02ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a"_hex;
+                auto p  = secp256r1.decode_point( tv );
+                REQUIRE_EQUAL( p.x, "ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a"_hex )
+                REQUIRE_EQUAL( p.y, "052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+
+                auto p_proj = secp256r1.decode_point<secp256r1_point_proj>( tv );
+                REQUIRE_EQUAL( p_proj.to_affine(), p )
+
+                auto p_jacobi = secp256r1.decode_point<secp256r1_point_jacobi>( tv );
+                REQUIRE_EQUAL( p_jacobi.to_affine(), p)
+
+                auto ep = secp256r1.encode_point( p, /*compressed=*/ false );
+                REQUIRE_EQUAL( ep, "04ae5af2a936e7fe8dee15ea42c1a568687749b7025937277381993fcd9b80de7a052bd863421e18a159f38b69f5847a1a3bcc54441ee4bde043b740c91f24b6d2"_hex )
+
+                ep = secp256r1.encode_point( p, /*compressed=*/ true );
+                REQUIRE_EQUAL( ep, tv )
+            }
+
+            // Test vectors were generated for secp256k1 using OpenSSL 3.0.2
+            {
+                auto tv = "03d2e338aa2899f499525af33e7fe650867d07c31221e77b184161f728a3cfed42"_hex;
+                auto p  = secp256k1.decode_point( tv );
+                REQUIRE_EQUAL( p.x, "d2e338aa2899f499525af33e7fe650867d07c31221e77b184161f728a3cfed42"_hex )
+                REQUIRE_EQUAL( p.y, "13dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+
+                auto p_proj = secp256k1.decode_point<secp256k1_point_proj>( tv );
+                REQUIRE_EQUAL( p_proj.to_affine(), p )
+
+                auto p_jacobi = secp256k1.decode_point<secp256k1_point_jacobi>( tv );
+                REQUIRE_EQUAL( p_jacobi.to_affine(), p)
+
+                auto ep = secp256k1.encode_point( p, /*compressed=*/ false );
+                REQUIRE_EQUAL( ep, "04d2e338aa2899f499525af33e7fe650867d07c31221e77b184161f728a3cfed4213dcec036f6b04fad74ff8067213031d03c288f222962519ee7ef0c171e97d77"_hex )
+
+                ep = secp256k1.encode_point( p, /*compressed=*/ true );
+                REQUIRE_EQUAL( ep, tv )
+            }
+
+            // Test vectors were generated for secp256k1 using OpenSSL 3.0.2
+            {
+                auto tv = "02c1ed2c8fa1fc2d913712547a5439c62ddb4dee08ccd1d585c0cdee87433c7ab3"_hex;
+                auto p = secp256k1.decode_point( tv );
+                REQUIRE_EQUAL( p.x, "c1ed2c8fa1fc2d913712547a5439c62ddb4dee08ccd1d585c0cdee87433c7ab3"_hex )
+                REQUIRE_EQUAL( p.y, "9e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+
+                auto p_proj = secp256k1.decode_point<secp256k1_point_proj>( tv );
+                REQUIRE_EQUAL( p_proj.to_affine(), p )
+
+                auto p_jacobi = secp256k1.decode_point<secp256k1_point_jacobi>( tv );
+                REQUIRE_EQUAL( p_jacobi.to_affine(), p)
+
+                auto ep = secp256k1.encode_point( p, /*compressed=*/ false );
+                REQUIRE_EQUAL( ep, "04c1ed2c8fa1fc2d913712547a5439c62ddb4dee08ccd1d585c0cdee87433c7ab39e3bbc0096832c16a3d1c6573aa2160a2d6c276fc8a5fc74ddb3c92585ede554"_hex )
+
+                ep = secp256k1.encode_point( p, /*compressed=*/ true );
+                REQUIRE_EQUAL( ep, tv )
+            }
+
+            // Test vectors were generated for secp256k1 using OpenSSL 3.0.2
+            {
+                auto tv = "0200b824dd20143dc94d4242db1d14ae3dc08b732c5a3c90b4cf3c33475dc16674"_hex;
+                auto p = secp256k1.decode_point( tv );
+                REQUIRE_EQUAL( p.x, "b824dd20143dc94d4242db1d14ae3dc08b732c5a3c90b4cf3c33475dc16674"_hex )
+                REQUIRE_EQUAL( p.y, "56f4d5f1e4e9586a060926f5776f0f8d570d710589ae2d7126542167194a291e"_hex )
+
+                auto p_proj = secp256k1.decode_point<secp256k1_point_proj>( tv );
+                REQUIRE_EQUAL( p_proj.to_affine(), p )
+
+                auto p_jacobi = secp256k1.decode_point<secp256k1_point_jacobi>( tv );
+                REQUIRE_EQUAL( p_jacobi.to_affine(), p)
+
+                auto ep = secp256k1.encode_point( p, /*compressed=*/ false );
+                REQUIRE_EQUAL( ep, "0400b824dd20143dc94d4242db1d14ae3dc08b732c5a3c90b4cf3c33475dc1667456f4d5f1e4e9586a060926f5776f0f8d570d710589ae2d7126542167194a291e"_hex )
+
+                ep = secp256k1.encode_point( p, /*compressed=*/ true );
+                REQUIRE_EQUAL( ep, tv )
+            }
+
+            // Fail tests
+            {
+                // Invalid type test
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( bytes() );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "01"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "05"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "08"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "10"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "12"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "22"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "42"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "48"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "FC"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "FD"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "FE"_hex );
+                })
+
+                // Valid type but too little data to decode tests
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "02"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "03"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    auto p1 = secp256k1.decode_point( "04"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    // x-coord missing zero padding to match the length of curve's p
+                    auto p1 = secp256k1.decode_point( "02b824dd20143dc94d4242db1d14ae3dc08b732c5a3c90b4cf3c33475dc16674"_hex );
+                })
+
+                REQUIRE_ASSERT( "invalid encoded point", [&]() {
+                    // x-coord missing zero padding to match the length of curve's p
+                    auto p1 = secp256k1.decode_point( "04b824dd20143dc94d4242db1d14ae3dc08b732c5a3c90b4cf3c33475dc1667456f4d5f1e4e9586a060926f5776f0f8d570d710589ae2d7126542167194a291e"_hex );
+                })
+            }
+        }
+
+        // Test ec_mul_add_fast
         for_each_curve_do( []<typename CurveT>(const CurveT& c) {
             for ( int32_t i = 1; i < 101; i++) {
                 auto p  = c.g * i;
@@ -4455,6 +4740,6 @@ namespace ack::tests {
         EOSIO_TEST( ec_mul_secp256k1_test     )
         EOSIO_TEST( ec_mul_secp256r1_test     )
         EOSIO_TEST( ec_keypair_secp256r1_test )
-        EOSIO_TEST( ec_mul_add_fast_test      )
+        EOSIO_TEST( ec_misc                   )
     EOSIO_TEST_END
 }
