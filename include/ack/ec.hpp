@@ -828,10 +828,6 @@ namespace ack {
         [[nodiscard]] ec_point_fp_proj doubled() const
         {
             const auto& p = *this;
-            if ( p.is_identity() ) {
-                return p;
-            }
-
             if ( p.is_identity() || p.y == 0 ) {
                 return ec_point_fp_proj(); // identity
             }
@@ -1482,11 +1478,11 @@ namespace ack {
          * @param verify if true, the point is verified to be valid point on the curve created by the curve generator point g.
          * @return curve point
         */
-        template<typename IntT = int_type>
-        [[nodiscard]] inline constexpr point_type make_point(IntT x, IntT y, bool verify = false) const
+        template<typename PointU = point_type, typename IntT = int_type>
+        [[nodiscard]] inline constexpr PointU make_point(IntT x, IntT y, bool verify = false) const
         {
             return static_cast<const CurveT&>( *this )
-                .make_point( std::move(x), std::move(y), verify );
+                .template make_point<PointU>( std::move(x), std::move(y), verify );
         }
 
         /**
@@ -1633,12 +1629,14 @@ namespace ack {
         }
 
         /**
-         * Creates a point from a given pair of integers x & y.
+         * Creates a point from provided affine coordinates x & y.
          * @warning Returned point stores pointer to curve prime.
          *          The curve must outlive the point.
          * @note Expects x|y >= 0 and x|y < p
          * @note The returned point can be invalid, since the function allows
          *        creating points that were not generated with the generator point.
+         *
+         * @tparam PointU - point type to make. Default affine point_type.
          *
          * @param x - point x coordinate
          * @param y - point y coordinate
@@ -1646,29 +1644,28 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(IntT&& x, IntT&& y, bool verify = false) const
+       template<typename PointU = point_type>
+        [[nodiscard]] constexpr PointU make_point(IntT&& x, IntT&& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
-            auto p = point_type {
-                *this,
+            auto point = make_point<PointU>(
                 make_field_element( std::move(x) ),
-                make_field_element( std::move(y) )
-            };
-
-            if ( verify ) {
-                check( p.is_valid(), "Invalid point" );
-            }
-            return p;
+                make_field_element( std::move(y) ),
+                verify
+            );
+            return point;
         }
 
         /**
-         * Creates a point from a given pair of integers x & y.
+         * Creates a point from provided affine coordinates x & y.
          * @warning Returned point stores pointer to curve prime.
          *          The curve must outlive the point.
          * @note Expects x|y >= 0 and x|y < p
          * @note The returned point can be invalid, since the function allows
          *        creating points that were not generated with the generator point.
+         *
+         * @tparam PointU - point type to make. Default affine point_type.
          *
          * @param x - point x coordinate
          * @param y - point y coordinate
@@ -1676,20 +1673,17 @@ namespace ack {
          *                 Default is false. Slow operation, can be be performed also with call to point.is_valid() function.
          * @return Curve point
         */
-        [[nodiscard]] constexpr point_type make_point(const IntT& x, const IntT& y, bool verify = false) const
+        template<typename PointU = point_type>
+        [[nodiscard]] constexpr PointU make_point(const IntT& x, const IntT& y, bool verify = false) const
         {
             check_integer( x, "Invalid point x coordinate" );
             check_integer( y, "Invalid point y coordinate" );
-            auto p = point_type {
-                *this,
+            auto point = make_point<PointU>(
                 make_field_element( x, /*verify=*/ false ),
-                make_field_element( y, /*verify=*/ false )
-            };
-
-            if ( verify ) {
-                check( p.is_valid(), "Invalid point" );
-            }
-            return p;
+                make_field_element( y, /*verify=*/ false ),
+                verify
+            );
+            return point;
         }
 
         /**
@@ -1723,9 +1717,6 @@ namespace ack {
             auto afe = make_field_element( a, /*verify =*/ false );
             auto bfe = make_field_element( b, /*verify =*/ false );
             auto y2  = 4 * afe.sqr() * afe + 27 * bfe.sqr();
-            if ( y2 == 0 ) {
-                return false;
-            }
 
             // check that discriminant is nonzero. If zero, the curve is singular.
             if ( ( -16 * y2 ) == 0) {
@@ -1780,6 +1771,21 @@ namespace ack {
                     check_integer( x, "Invalid field element value" );
                 }
                 return field_element_type( x, p );
+            }
+
+            template<typename PointU>
+            [[nodiscard]] constexpr PointU make_point(field_element_type x, field_element_type y, bool verify = false) const
+            {
+                auto point = PointU{ point_type {
+                    *this,
+                    std::move( x ),
+                    std::move( y )
+                }};
+
+                if ( verify ) {
+                    check( point.is_valid(), "Invalid point" );
+                }
+                return point;
             }
     };
 
