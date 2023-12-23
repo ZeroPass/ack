@@ -608,6 +608,82 @@ struct rsa_2048_sha512 {
     };
 };
 
+struct brainpoolP256r1_sha256_tv {
+    // Google's Project Wycheproof
+    // https://github.com/google/wycheproof/blob/master/testvectors/ecdsa_brainpoolP256r1_sha256_p1363_test.json
+
+    constexpr static auto& curve = ack::ec_curve::brainpoolP256r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "019a2d9637743a63ddaefdbca0ee229a163b809b9b145e5313bbeb8defeab9d6",
+        "548caf89bf5ba49499404145651234336401b9b2843a579ed152e090f11b9e59"
+    );
+
+    static constexpr auto     h     = from_hex( "bb5a52f42f9c9261ed4361f59422a1e30036e7c32b270c8807a419feca605023" );
+    static constexpr int_type r     = "0a5f8c70ba2d0842d5d0f841f160ad15195769a8159bfe692634d73d469d111f";
+    static constexpr int_type s     = "426e857aad3ff7aa96e4d200c03b45f1846a36d089ee3917768ca1a0d6d4da6e";
+    static constexpr size_t   recid = 0;
+};
+
+struct brainpoolP320r1_sha384_tv {
+    // Google's Project Wycheproof
+    //https://github.com/google/wycheproof/blob/d9f6ec7d8bd8c96da05368999094e4a75ba5cb3d/testvectors_v1/ecdsa_brainpoolP320r1_sha384_p1363_test.json
+
+    constexpr static auto& curve = ack::ec_curve::brainpoolP320r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "0fcc8860cb26e262ca8b4ecb9c52f78d82a10a1d30dd0c8ecd7584ce80dbb75c488a062b64375500",
+        "1f27e676c26cd3488c1ef4ec3edd88cf8af78daf9036724b57e66da02cf7c676a53664becdfedc3b"
+    );
+
+    static constexpr auto     h     = from_hex( "f9b127f0d81ebcd17b7ba0ea131c660d340b05ce557c82160e0f793de07d38179023942871acb7002dfafdfffc8deace" );
+    static constexpr int_type r     = "85b1bc586bf5407f9c8ec3765fe02bd19380998c45892ccd5081a1bd8872a26cdaf403e6dbf34a6e";
+    static constexpr int_type s     = "833d6661b0576d61a80ffe4d3271c43b2a56c14b3bd90305923ccdcf7b3d988c07ebb1c4cc67381c";
+    static constexpr size_t   recid = 1;
+};
+
+struct brainpoolP384r1_sha384_tv {
+    // Google's Project Wycheproof
+    //https://github.com/google/wycheproof/blob/d9f6ec7d8bd8c96da05368999094e4a75ba5cb3d/testvectors_v1/ecdsa_brainpoolP384r1_sha384_p1363_test.json
+
+    constexpr static auto& curve = ack::ec_curve::brainpoolP384r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "192ed5ce547d2336911d3f6cecba227f08df077f6242a9147a914e854e6e32d325fd23ccc42921dc4a7e4c2eb71defd3",
+        "631e69079ba982e7a1cad0a39eff47fc6d6e3a280d081286b624886ba1f3069671ec1a29986d84fb79736d2799e6fc21"
+    );
+
+    static constexpr auto     h     = from_hex( "f9b127f0d81ebcd17b7ba0ea131c660d340b05ce557c82160e0f793de07d38179023942871acb7002dfafdfffc8deace" );
+    static constexpr int_type r     = "0e8e114a1c351405560bf8d47b166bfe957087a8003b353433b6144f7ee7d6f79c8dd14ef229fa7a2f2782bf33708b91";
+    static constexpr int_type s     = "83aa7ba485dc060df9922f9ccc5da29adb75d44671d18bad0636d2e09c5e2f95e892a79b9fd3b37e1f798b157b567a24";
+    static constexpr size_t   recid = 0;
+};
+
+struct brainpoolP512r1_sha512_tv {
+    // Google's Project Wycheproof
+    //https://github.com/google/wycheproof/blob/d9f6ec7d8bd8c96da05368999094e4a75ba5cb3d/testvectors_v1/ecdsa_brainpoolP512r1_sha512_p1363_test.json
+
+    constexpr static auto& curve = ack::ec_curve::brainpoolP512r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "67cea1bedf84cbdcba69a05bb2ce3a2d1c9d911d236c480929a16ad697b45a6ca127079fe8d7868671e28ef33bdf9319e2e51c84b190ac5c91b51baf0a980ba5",
+        "00a7e79006194b5378f65cbe625ef2c47c64e56040d873b995b5b1ebaa4a6ce971da164391ff619af3bcfc71c5e1ad27ee0e859c2943e2de8ef7c43d3c976e9b"
+    );
+
+    static constexpr auto     h     = from_hex( "43f800fbeaf9238c58af795bcdad04bc49cd850c394d3382953356b023210281757b30e19218a37cbd612086fbc158caa8b4e1acb2ec00837e5d941f342fb3cc" );
+    static constexpr int_type r     = "0bd2593447cc6c02caf99d60418dd42e9a194c910e6755ed0c7059acac656b04ccfe1e8348462ee43066823aee2fed7ca012e9890dfb69866d7ae88b6506f9c7";
+    static constexpr int_type s     = "44b42304e693796618d090dbcb2a2551c3cb78534611e61fd9d1a5c0938b5b8ec6ed53d2d28999eabbd8e7792d167fcf582492403a6a0f7cc94c73a28fb76b71";
+    static constexpr size_t   recid = 0;
+};
+
 struct secp256k1_sha256_tv
 {
     // Test vector from Google's Wycheproof RSA signature verification tests.
@@ -619,7 +695,7 @@ struct secp256k1_sha256_tv
 
     constexpr static auto& curve = ack::ec_curve::secp256k1;
     using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
-    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+    using int_type   = std::remove_cvref_t<decltype(curve)>::int_type;
 
     static constexpr auto pub_point = curve.make_point(
         "00b838ff44e5bc177bf21189d0766082fc9d843226887fc9760371100b7ee20a6f",
@@ -627,9 +703,10 @@ struct secp256k1_sha256_tv
     );
 
     // special case hash
-    static constexpr auto h     = from_hex( "9b6cd3b812610000000026941a0f0bb53255ea4c9fd0cb3426e3a54b9fc6965c" );
-    static constexpr int_type r = "2bdea41cda63a2d14bf47353bd20880a690901de7cd6e3cc6d8ed5ba0cdb1091";
-    static constexpr int_type s = "c31599433036064073835b1e3eba8335a650c8fd786f94fe235ad7d41dc94c7a";
+    static constexpr auto     h     = from_hex( "9b6cd3b812610000000026941a0f0bb53255ea4c9fd0cb3426e3a54b9fc6965c" );
+    static constexpr int_type r     = "2bdea41cda63a2d14bf47353bd20880a690901de7cd6e3cc6d8ed5ba0cdb1091";
+    static constexpr int_type s     = "c31599433036064073835b1e3eba8335a650c8fd786f94fe235ad7d41dc94c7a";
+    static constexpr size_t   recid = 0;
 };
 
 struct secp256r1_sha256_tv {
@@ -649,7 +726,54 @@ struct secp256r1_sha256_tv {
         "970eed7aa2bc48651545949de1dddaf0127e5965ac85d1243d6f60e7dfaee927"
     );
 
-    static constexpr auto     h = from_hex( "d1b8ef21eb4182ee270638061063a3f3c16c114e33937f69fb232cc833965a94" );
-    static constexpr int_type r = "bf96b99aa49c705c910be33142017c642ff540c76349b9dab72f981fd9347f4f";
-    static constexpr int_type s = "17c55095819089c2e03b9cd415abdf12444e323075d98f31920b9e0f57ec871c";
+    static constexpr auto     h     = from_hex( "d1b8ef21eb4182ee270638061063a3f3c16c114e33937f69fb232cc833965a94" );
+    static constexpr int_type r     = "bf96b99aa49c705c910be33142017c642ff540c76349b9dab72f981fd9347f4f";
+    static constexpr int_type s     = "17c55095819089c2e03b9cd415abdf12444e323075d98f31920b9e0f57ec871c";
+    static constexpr size_t   recid = 1;
+};
+
+struct secp384r1_sha384_tv {
+    // NIST FIPS 186-4 test vectors
+    // https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures
+    // CAVS 11.0
+    // "SigVer" information
+    // Curves/SHAs selected: P-384,SHA-384
+    // Generated on Wed Mar 16 16:16:55 2011
+
+    constexpr static auto& curve = ack::ec_curve::secp384r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "cb908b1fd516a57b8ee1e14383579b33cb154fece20c5035e2b3765195d1951d75bd78fb23e00fef37d7d064fd9af144",
+        "cd99c46b5857401ddcff2cf7cf822121faf1cbad9a011bed8c551f6f59b2c360f79bfbe32adbcaa09583bdfdf7c374bb"
+    );
+
+    static constexpr auto     h     = from_hex( "965b83f5d34f7443eb88e78fcc23479156c9cb0080dd68334dac0ad33ba8c774100e440063db28b40b51ac37705d4d70" );
+    static constexpr int_type r     = "33f64fb65cd6a8918523f23aea0bbcf56bba1daca7aff817c8791dc92428d605ac629de2e847d43cee55ba9e4a0e83ba";
+    static constexpr int_type s     = "4428bb478a43ac73ecd6de51ddf7c28ff3c2441625a081714337dd44fea8011bae71959a10947b6ea33f77e128d3c6ae";
+    static constexpr size_t   recid = 0;
+};
+
+struct secp521r1_sha512_tv {
+    // NIST FIPS 186-4 test vectors
+    // https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures
+    // CAVS 11.0
+    // "SigVer" information
+    // Curves/SHAs selected: P-521,SHA-512
+    // Generated on Wed Mar 16 16:16:55 2011
+
+    constexpr static auto& curve = ack::ec_curve::secp521r1;
+    using point_type = std::remove_cvref_t<decltype(curve)>::point_type;
+    using int_type = std::remove_cvref_t<decltype(curve)>::int_type;
+
+    static constexpr auto pub_point = curve.make_point(
+        "153eb2be05438e5c1effb41b413efc2843b927cbf19f0bc9cc14b693eee26394a0d8880dc946a06656bcd09871544a5f15c7a1fa68e00cdc728c7cfb9c448034867",
+        "143ae8eecbce8fcf6b16e6159b2970a9ceb32c17c1d878c09317311b7519ed5ece3374e7929f338ddd0ec0522d81f2fa4fa47033ef0c0872dc049bb89233eef9bc1"
+    );
+
+    static constexpr auto     h     = from_hex( "97ff5a81fc88f7ddd3bc58154ffd2695912fe50ce7c63b62bd798fb673c6aa49f54bc7301fb7bddc6edc51b7e0d0b4dec9f80851fff02a33671ad9a406bbabe5" );
+    static constexpr int_type r     = "0dd633947446d0d51a96a0173c01125858abb2bece670af922a92dedcec067136c1fa92e5fa73d7116ac9c1a42b9cb642e4ac19310b049e48c53011ffc6e7461c36";
+    static constexpr int_type s     = "0efbdc6a414bb8d663bb5cdb7c586bccfe7589049076f98cee82cdb5d203fddb2e0ffb77954959dfa5ed0de850e42a86f5a63c5a6592e9b9b8bd1b40557b9cd0cc0";
+    static constexpr size_t   recid = 1;
 };

@@ -13,6 +13,50 @@
 
 using namespace ack::ec_curve;
 
+[[eosio::action("ecdsabr1"), eosio::read_only]]
+void helloack::check_ecdsa_brainpoolP256_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP256r1)::int_type;
+    const auto pub_point = brainpoolP256r1.make_point( qx, qy );
+    const auto h = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP256r1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsabr132"), eosio::read_only]]
+void helloack::check_ecdsa_brainpoolP320_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP320r1)::int_type;
+    const auto pub_point = brainpoolP320r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP320r1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsabr13"), eosio::read_only]]
+void helloack::check_ecdsa_brainpoolP384_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP384r1)::int_type;
+    const auto pub_point = brainpoolP384r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP384r1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsabr15"), eosio::read_only]]
+void helloack::check_ecdsa_brainpoolP512_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP512r1)::int_type;
+    const auto pub_point = brainpoolP512r1.make_point( qx, qy );
+    const auto h = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP512r1 signature verification failed!"
+    );
+}
+
 [[eosio::action("ecdsak1"), eosio::read_only]]
 void helloack::check_ecdsa_secp256k1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
 {
@@ -32,6 +76,28 @@ void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_
     const auto h = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
     assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
       "ECDSA secp256r1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsar13"), eosio::read_only]]
+void helloack::check_ecdsa_secp384r1_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp384r1)::int_type;
+    const auto pub_point = secp384r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA secp384r1 signature verification failed!"
+    );
+}
+
+[[eosio::action("ecdsar15"), eosio::read_only]]
+void helloack::check_ecdsa_secp521r1_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp521r1)::int_type;
+    const auto pub_point = secp521r1.make_point( qx, qy );
+    const auto h = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA secp521r1 signature verification failed!"
     );
 }
 
@@ -188,6 +254,42 @@ void helloack::bt_rsa_2048_sha512()
     );
 }
 
+[[eosio::action("bteccbr1"), eosio::read_only]]
+void helloack::bt_ecc_brainpoolP256r1_sha256()
+{
+   using tv = brainpoolP256r1_sha256_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP256r1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccbr132"), eosio::read_only]]
+void helloack::bt_ecc_brainpoolP320r1_sha384()
+{
+   using tv = brainpoolP320r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP320r1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccbr13"), eosio::read_only]]
+void helloack::bt_ecc_brainpoolP384r1_sha384()
+{
+   using tv = brainpoolP384r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP384r1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccbr15"), eosio::read_only]]
+void helloack::bt_ecc_brainpoolP521r1_sha512()
+{
+   using tv = brainpoolP512r1_sha512_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpool512r1 signature verification failed!"
+   );
+}
+
 [[eosio::action("btecck1"), eosio::read_only]]
 void helloack::bt_ecc_secp256k1_sha256()
 {
@@ -203,5 +305,23 @@ void helloack::bt_ecc_secp256r1_sha256()
    using tv = secp256r1_sha256_tv;
    assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
       "ECDSA secp256r1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccr13"), eosio::read_only]]
+void helloack::bt_ecc_secp384r1_sha384()
+{
+   using tv = secp384r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA secp384r1 signature verification failed!"
+   );
+}
+
+[[eosio::action("bteccr15"), eosio::read_only]]
+void helloack::bt_ecc_secp521r1_sha512()
+{
+   using tv = secp521r1_sha512_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA secp384r1 signature verification failed!"
    );
 }

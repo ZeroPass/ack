@@ -7,7 +7,55 @@ struct [[eosio::contract]] helloack : public eosio::contract {
     using eosio::contract::contract;
 
     /**
-     * Action verifies sec256k1 ECDSA-SHA256 signature.
+     * Action verifies brainpoolP256r1 ECDSA-SHA256 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsabr1"), eosio::read_only]]
+    void check_ecdsa_brainpoolP256_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies brainpoolP320r1 ECDSA-SHA384 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsabr132"), eosio::read_only]]
+    void check_ecdsa_brainpoolP320_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies brainpoolP384r1 ECDSA-SHA384 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsabr13"), eosio::read_only]]
+    void check_ecdsa_brainpoolP384_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies brainpoolP512r1 ECDSA-SHA512 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsabr15"), eosio::read_only]]
+    void check_ecdsa_brainpoolP512_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies secp256k1 ECDSA-SHA256 signature.
      * Action fails if signature is invalid
      * @param qx - public key x coordinate of public key point
      * @param qy - public key y coordinate of public key point
@@ -29,6 +77,30 @@ struct [[eosio::contract]] helloack : public eosio::contract {
     */
     [[eosio::action("ecdsar1"), eosio::read_only]]
     void check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies secp384r1 ECDSA-SHA384 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsar13"), eosio::read_only]]
+    void check_ecdsa_secp384r1_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
+
+    /**
+     * Action verifies secp512r1 ECDSA-SHA512 signature.
+     * Action fails if signature is invalid
+     * @param qx - public key x coordinate of public key point
+     * @param qy - public key y coordinate of public key point
+     * @param msg - signed message
+     * @param r - signature r value
+     * @param s - signature s value
+    */
+    [[eosio::action("ecdsar15"), eosio::read_only]]
+    void check_ecdsa_secp521r1_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s);
 
     /**
      * Action verifies RSA PKCS v1.5 SHA-1 signature.
@@ -165,6 +237,30 @@ struct [[eosio::contract]] helloack : public eosio::contract {
     void bt_rsa_2048_sha512();
 
     /**
+     * Benchmark action for testing verification of 1 brainpoolP256r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr1"), eosio::read_only]]
+    void bt_ecc_brainpoolP256r1_sha256();
+
+    /**
+     * Benchmark action for testing verification of 1 brainpoolP320r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr132"), eosio::read_only]]
+    void bt_ecc_brainpoolP320r1_sha384();
+
+    /**
+     * Benchmark action for testing verification of 1 brainpoolP384r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr13"), eosio::read_only]]
+    void bt_ecc_brainpoolP384r1_sha384();
+
+    /**
+     * Benchmark action for testing verification of 1 brainpoolP512r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr15"), eosio::read_only]]
+    void bt_ecc_brainpoolP521r1_sha512();
+
+    /**
      * Benchmark action for testing verification of 1 secp256k1 ECDSA signature.
      */
     [[eosio::action("btecck1"), eosio::read_only]]
@@ -175,4 +271,16 @@ struct [[eosio::contract]] helloack : public eosio::contract {
      */
     [[eosio::action("bteccr1"), eosio::read_only]]
     void bt_ecc_secp256r1_sha256();
+
+    /**
+     * Benchmark action for testing verification of 1 secp384r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr13"), eosio::read_only]]
+    void bt_ecc_secp384r1_sha384();
+
+    /**
+     * Benchmark action for testing verification of 1 secp384r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr15"), eosio::read_only]]
+    void bt_ecc_secp521r1_sha512();
 };
