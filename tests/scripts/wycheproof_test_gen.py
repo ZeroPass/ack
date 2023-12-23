@@ -10,10 +10,12 @@ from typing import List, Optional, Tuple
 #supported_schemas  = ('rsassa_pkcs1_verify_schema.json', 'rsassa_pss_verify_schema.json', 'ecdsa_p1363_verify_schema.json', 'ecdsa_verify_schema.json')
 supported_hashes    = ('SHA-1', 'SHA-256', 'SHA-384', 'SHA-512', 'SHA3-256', 'SHA3-384', 'SHA3-512',)
 supported_mgfs      = ('MGF1',)
-unacceptable_flags  = ('MissingNull', )
-rsa_skip_tv_flags   = () # Skipped test vectors with these flags
-ecdsa_skip_tv_flags = ('BER',) # Skipped test vectors with these flags
-supported_curves    = ('secp256k1', 'secp256r1',)
+supported_curves    = ('brainpoolP256r1','brainpoolP320r1', 'brainpoolP384r1', 'brainpoolP512r1', 'secp256k1', 'secp256r1', 'secp384r1', 'secp521r1')
+
+unacceptable_flags     = ('MissingNull', )
+rsa_skip_tv_flags      = () # Skipped test vectors with these flags
+ecdsa_skip_tv_flags    = ('BER', 'BerEncodedSignature', 'SignatureSize', 'MissingZero', 'InvalidEncoding') # Skipped test vectors with these flags
+ecdsa_skip_tv_comments = ('r of size', 's of size')
 
 rsa_schemas         = ('rsassa_pkcs1_verify_schema.json', 'rsassa_pss_verify_schema.json', 'rsassa_pss_with_parameters_verify_schema.json',)
 ecdsa_schemas       = ('ecdsa_p1363_verify_schema.json', 'ecdsa_verify_schema.json',)
@@ -22,8 +24,14 @@ ecdsa_group_types   = ('EcdsaP1363Verify', 'EcdsaVerify', )
 supported_schemas   = tuple( rsa_schemas + ecdsa_schemas )
 
 curve_sizes = {
-    'secp256k1' : 256,
-    'secp256r1' : 256,
+    'brainpoolP256r1' : 256,
+    'brainpoolP320r1' : 320,
+    'brainpoolP384r1' : 384,
+    'brainpoolP512r1' : 521,
+    'secp256k1'       : 256,
+    'secp256r1'       : 256,
+    'secp384r1'       : 384,
+    'secp521r1'       : 521,
 }
 
 ans1_error_tests_to_skip = (
@@ -36,7 +44,6 @@ ans1_error_tests_to_skip = (
     'length of sequence = 2**32 - 1',
     'length of sequence = 2**40 - 1',
     'length of sequence = 2**64 - 1'
-
 )
 
 class TestType(enum.Enum):
@@ -225,11 +232,15 @@ def parse_ecdsa_verify_tv(wptv_json: dict) -> Optional[ECDSATestVector]:
         return None
     if len(wptv_json['tests']) == 0:
         return None
-    if 'key' not in wptv_json:
+
+    if 'key' in wptv_json:
+        key = wptv_json['key']
+    elif 'publicKey' in wptv_json:
+        key = wptv_json['publicKey']
+    else:
         print("Info: Skipping test group without raw public key")
         return None
 
-    key = wptv_json['key']
     if 'curve' not in key:
         print("Info: Skipping test group without curve")
         return None
@@ -248,6 +259,8 @@ def parse_ecdsa_verify_tv(wptv_json: dict) -> Optional[ECDSATestVector]:
 
     for t in wptv_json['tests']:
         if skip_tv(ecdsa_skip_tv_flags, t['flags']):
+            continue
+        if skip_tv(ecdsa_skip_tv_comments, t['comment']):
             continue
 
         edt = ECDSATest()

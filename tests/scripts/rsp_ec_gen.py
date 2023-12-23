@@ -5,29 +5,35 @@
 import collections, enum, os, re, sys
 from typing import Dict, List, TextIO, Tuple, Optional
 
-curve_pattern = re.compile(r"^\[P-[0-9]+]$", re.IGNORECASE)
-curve_hash_pattern = re.compile(r"^\[P-[0-9]+,[A-Za-z0-9-]+]$", re.IGNORECASE)
+curve_pattern      = re.compile(r"^\[[B,K,P]-[0-9]+]$", re.IGNORECASE)
+curve_hash_pattern = re.compile(r"^\[[B,K,P]-[0-9]+,[A-Za-z0-9-]+]$", re.IGNORECASE)
 
-supported_curves = ['P-256']
-supported_hashes = ['sha1', 'sha256', 'sha512']
+supported_curves = ['P-256','P-384', 'P-521']
+supported_hashes = ['sha1', 'sha256', 'sha384', 'sha512']
 
 curve_var = {
     'P-256' : 'secp256r1',
+    'P-384' : 'secp384r1',
+    'P-521' : 'secp521r1',
 }
 
 curve_sizes = {
     'P-256' : 256,
+    'P-384' : 384,
+    'P-521' : 521,
 }
 
 curve_primes = {
     'P-256' : 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f,
+    'P-384' : 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000ffffffff,
+    'P-521' : 0x01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
 }
 
 class TestType(enum.Enum):
     Unknown      = -1,
-    ECPKV        = 1,
-    ECKeyPair    = 2
-    SigVer_ECDSA = 3
+    ECPKV        =  1,
+    ECKeyPair    =  2
+    SigVer_ECDSA =  3
 
 class TestVectors:
     def __init__(self):
@@ -79,12 +85,12 @@ def normalized_hex_str(str: str):
         return '0' + str
     return str
 
-def parse_ec_test_vector_entries(file: TextIO, offest: int, type: TestType) -> Dict[str, List[EcTestVector]]:
+def parse_ec_test_vector_entries(file: TextIO, offest: int, type: TestType) -> Optional[ECTestEntries]:
     if type == TestType.Unknown:
-        return {}
+        return None
 
     key = ''
-    dictionary: Dict[str, List[EcTestVector]] = {}
+    dictionary: ECTestEntries = {}
     entries: List[EcTestVector] = []
     tv = EcTestVector()
     curve_name = ''
@@ -146,7 +152,7 @@ def parse_ec_test_vector_entries(file: TextIO, offest: int, type: TestType) -> D
 
     if len(key) != 0:
         dictionary[key] = entries
-    return dictionary
+    return dictionary if len(dictionary) else None
 
 def parse_rsp(file_path: str):
     header = ''
@@ -164,6 +170,16 @@ def format_var(var: str, decl: bool, indent_size: int = 0, var_type: str = 'auto
     if indent_size > 0:
         str = indent(str, indent_size)
     return str
+
+def get_hash_func_name(hash_algo: str) -> str:
+    if 'sha3' in hash_algo or 'sha384' in hash_algo:
+        return hash_algo
+    return f'eosio::{ hash_algo }'
+
+def format_hash_func_call(hash_algo: str, msg_var_name: str) -> str:
+    if 'sha3' in hash_algo or 'sha384' in hash_algo:
+        return f'{ hash_algo }( { msg_var_name } )'
+    return f'eosio::{ hash_algo }( (const char*){ msg_var_name }.data(), { msg_var_name }.size() )'
 
 def tvecpkv2str(tv: EcTestVector, decl_vars: bool) -> str:
     test_str = ''
@@ -221,7 +237,7 @@ def tvecdsa2str(tv: EcTestVector, decl_vars: bool) -> str:
     test_str += format_var(f'sig_r  = "{ tv.r }"', decl_vars, indent_size, 'bn_t') + '\n'
     test_str += format_var(f'sig_s  = "{ tv.s }"', decl_vars, indent_size, 'bn_t') + '\n'
     test_str += format_var(f"r = {('true' if tv.result == 'P' or tv.result[0] == 'P' else 'false')}", decl_vars, indent_size) + f' // Result = { tv.result }\n'
-    test_str += format_var(f'd = eosio::{ tv.hash_algo }( (const char*)m.data(), m.size() )', decl_vars, indent_size) + '\n'
+    test_str += format_var(f'd = { format_hash_func_call(tv.hash_algo, "m") }', decl_vars, indent_size) + '\n'
     test_str += indent('test_ecdsa_verification( r, pubkey, d, sig_r, sig_s, curve );', indent_size) + '\n'
     return test_str
 

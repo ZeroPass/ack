@@ -2603,6 +2603,9 @@ namespace ack {
     template<std::size_t MaxBitSize>
     using fixed_bigint = bigint<fixed_word_buffer<bitsize_to_wordsize(MaxBitSize)>>;
 
+    template<std::size_t MaxBitSize>
+    using bignum = bigint<word_buffer<bitsize_to_wordsize(MaxBitSize)>>;
+
     template <typename>
     struct is_bigint : std::false_type {};
 
