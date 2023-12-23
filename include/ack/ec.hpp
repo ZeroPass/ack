@@ -614,7 +614,7 @@ namespace ack {
     template<typename CurveT>
     struct ec_point_fp_proj : ec_point_base<ec_point_fp_proj<CurveT>, CurveT>
     {
-        static_assert( is_ec_curve_fp<CurveT> );
+        static_assert( is_ec_curve_fp<std::remove_cv_t<CurveT>> );
 
         using base_type          = ec_point_base<ec_point_fp_proj<CurveT>, CurveT>;
         using int_type           = typename CurveT::int_type;
@@ -969,7 +969,7 @@ namespace ack {
     template<typename CurveT>
     struct ec_point_fp_jacobi : ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>
     {
-        static_assert( is_ec_curve_fp<CurveT> );
+        static_assert( is_ec_curve_fp<std::remove_cv_t<CurveT>> );
 
         using base_type          = ec_point_base<ec_point_fp_jacobi<CurveT>, CurveT>;
         using int_type           = typename CurveT::int_type;
@@ -1528,6 +1528,7 @@ namespace ack {
                                  //     #E(Fp) - number of points on the curve
         const bool a_is_minus_3; // cached a == p - 3
         const bool a_is_zero;    // cached a == 0
+        const IntT p_minus_n;    // cached p - n; used for checking the maximum negative point coordinate
 
         /**
          * Creates a curve from the given parameters.
@@ -1546,7 +1547,8 @@ namespace ack {
             n( std::move(n) ),
             h( h ),
             a_is_minus_3( this->a == ( this->p - 3) ),
-            a_is_zero( this->a.is_zero() )
+            a_is_zero( this->a.is_zero() ),
+            p_minus_n( this->p - this->n )
         {}
 
         /**

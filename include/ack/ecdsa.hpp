@@ -16,10 +16,10 @@ namespace ack{
      * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
      * @tparam IntT   - integer type, default is curve integer type
      *
-     * @param q     - public key point. Note: point validity should be checked before calling this function.
-     * @param msg   - message to verify. Note: msg is truncated to curve.n byte length.
-     * @param r     - signature r value
-     * @param s     - signature s value
+     * @param q   - public key point. Note: point validity should be checked before calling this function.
+     * @param msg - message to verify. Note: msg is truncated to curve.n byte length.
+     * @param r   - signature r value
+     * @param s   - signature s value
      * @return true if signature is valid, false otherwise.
     */
     template<typename CurveT, typename IntT = typename CurveT::int_type>
@@ -42,18 +42,18 @@ namespace ack{
         const IntT w  = s.modinv( curve.n );
         const auto u1 = ( e * w ) % curve.n;
         const auto u2 = ( r * w ) % curve.n;
-        auto rr = ec_mul_add_fast( u1, ec_point_fp_jacobi( curve.g ), u2, ec_point_fp_jacobi( q ) )
+        auto R = ec_mul_add_fast( u1, ec_point_fp_jacobi( curve.g ), u2, ec_point_fp_jacobi( q ) )
             .to_affine();
 
-        if ( rr.is_identity() ) {
+        if ( R.is_identity() ) {
             return false;
         }
 
-        if ( rr.x >= curve.n ) {
-            rr.x -= curve.n;
+        if ( R.x >= curve.n ) {
+            R.x -= curve.n;
         }
 
-        return rr.x == r;
+        return R.x == r;
     }
 
     /**
@@ -115,5 +115,106 @@ namespace ack{
                              const IntT& r, const IntT& s, const char* error)
     {
         check( ecdsa_verify( q, digest, r, s ), error );
+    }
+
+    /**
+     * Function recovers public key from given message and ECDSA signature.
+     * Implementation is modified version of SEC 1 v2.0, section 4.1.6 'Public Key Recovery Operation':
+     * https://www.secg.org/sec1-v2.pdf#page=53
+     *
+     * @note This function currently works only for curve.h == 1.
+     *
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
+     *
+     * @param curve  - Elliptic curve
+     * @param msg    - message
+     * @param r      - signature r value
+     * @param s      - signature s value
+     * @param recid  - recovery id of the public key Q. (recid  <= 3)
+     * @param verify - Performs additional verifications
+     *
+     * @return recovered EC public key point Q, or point at infinity if Q can't be calculated.
+    */
+    template<typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]]
+    static ec_point_fp<CurveT> ecdsa_recover(const CurveT& curve, const bytes_view msg, const IntT& r, const IntT& s,
+                                             const std::size_t recid, const bool verify = false)
+    {
+        if ( r < 1 || r >= curve.n || s < 1 || s >= curve.n || ( recid & 3 ) != recid ) {
+            return ec_point_fp<CurveT>();
+        }
+
+        const auto yodd       = recid  & 1;
+        const auto second_key = recid >> 1;
+
+        // Sanity check, the second key is expected to be negative
+        if ( second_key && r >= curve.p_minus_n ) {
+            return ec_point_fp<CurveT>();
+        }
+
+        auto e = IntT( msg.subspan( 0, std::min( curve.n.byte_length(), msg.size() )));
+        if ( e > curve.n ) {
+            e -= curve.n;
+        }
+
+        // Calculate R, 1.1 - 1.3
+        // 1.1. Let x = r + jn.
+        const auto R = (second_key)
+            ? curve.decompress_point( r + curve.n, yodd )
+            : curve.decompress_point( r, yodd );
+
+        if ( R.is_identity() ) {
+            return R;
+        }
+
+        if ( verify ) {
+            // 1.4 nR == O
+            if ( !( R * curve.n ).is_identity() ) {
+                return ec_point_fp<CurveT>();
+            }
+        }
+
+        // 1.6.1 Compute Q = r^-1 (sR -  eG)
+        //               Q = r^-1 (sR + -eG)
+        //
+        // We precompute w = r^-1, ew = -ew and sw = sw
+        // so that we can then efficiently compute: Q = ew * G + sw * R
+        const IntT w  = r.modinv( curve.n );
+        const auto ew = (( curve.n - e ) * w ) % curve.n;
+        const auto sw = ( s * w ) % curve.n;
+        return ec_mul_add_fast( ew, ec_point_fp_jacobi( curve.g ), sw, ec_point_fp_jacobi( R ) )
+            .to_affine();
+    }
+
+    /**
+     * Function recovers public key from given message and ECDSA signature.
+     * Implementation is modified version of SEC 1 v2.0, section 4.1.6 'Public Key Recovery Operation':
+     * https://www.secg.org/sec1-v2.pdf#page=53
+     *
+     * @note function works currently only for curve.h = 1
+     *
+     * @tparam HLen   - digest length
+     * @tparam CurveT - elliptic curve type. Required to be a curve over prime field.
+     * @tparam IntT   - integer type, default is curve integer type
+     *
+     * @param curve  - Elliptic curve
+     * @param digest - message digest. Note: digest is truncated to curve.n byte length.
+     * @param r      - signature r value
+     * @param s      - signature s value
+     * @param recid  - recovery id of the public key Q. (recid  <= 3)
+     * @param verify - Performs additional verifications
+     *
+     * @return recovered EC public key point Q, or point at infinity if Q can't be calculated.
+    */
+    template<std::size_t HLen, typename CurveT, typename IntT = typename CurveT::int_type>
+    [[nodiscard]]
+    static ec_point_fp<CurveT> ecdsa_recover(const CurveT& curve, const hash_t<HLen>& digest,
+                                             const IntT& r, const IntT& s,
+                                             const std::size_t recid, const bool verify = false)
+    {
+        const auto bd = digest.extract_as_byte_array();
+        const auto m  = bytes_view( reinterpret_cast<const byte_t*>( bd.data() ), HLen );
+        return ecdsa_recover( curve, m, r, s, recid, verify );
     }
 }
