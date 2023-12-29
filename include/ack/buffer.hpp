@@ -70,13 +70,13 @@ namespace ack {
         public:
             using value_type = T;
 
-            constexpr fixed_buffer() = default;
-            constexpr fixed_buffer(const fixed_buffer& rhs) = default;
-            constexpr fixed_buffer(fixed_buffer&& rhs) = default;
-            constexpr fixed_buffer& operator=(const fixed_buffer& rhs) = default;
-            constexpr fixed_buffer& operator=(fixed_buffer&& rhs) = default;
+            constexpr fixed_buffer() noexcept = default;
+            constexpr fixed_buffer(const fixed_buffer& rhs) noexcept = default;
+            constexpr fixed_buffer(fixed_buffer&& rhs) noexcept = default;
+            constexpr fixed_buffer& operator=(const fixed_buffer& rhs) noexcept = default;
+            constexpr fixed_buffer& operator=(fixed_buffer&& rhs) noexcept = default;
 
-            constexpr bool resize(size_t n)
+            constexpr bool resize(size_t n) noexcept
             {
                 if ( n > N ) {
                     return false;
@@ -85,12 +85,12 @@ namespace ack {
                 return true;
             }
 
-            constexpr void clear()
+            constexpr void clear() noexcept
             {
                 size_ = 0;
             }
 
-            constexpr T* data()
+            constexpr T* data() noexcept
             {
                 return data_.data();
             }
@@ -100,17 +100,17 @@ namespace ack {
                 return data_.data();
             }
 
-            constexpr std::size_t size() const
+            constexpr std::size_t size() const noexcept
             {
                 return size_;
             }
 
-            constexpr std::size_t max_size() const
+            constexpr std::size_t max_size() const noexcept
             {
                 return N;
             }
 
-            constexpr void swap(fixed_buffer& rhs)
+            constexpr void swap(fixed_buffer& rhs) noexcept
             {
                 std::swap( data_, rhs.data_ );
                 std::swap( size_, rhs.size_ );
@@ -138,6 +138,7 @@ namespace ack {
      * @warning if buffer is resized over the size of stack allocated memory (N)
      *          data is re-allocated on the heap, and this data is never released
      *          due to constexpr constrains which prohibits defining custom destructor.
+     *          You have to manually call `clear` to free heap allocated memory.
      *          The flexbuffer should be used only in short lived environments like WASM.
     */
     template<typename T, std::size_t N>
@@ -145,18 +146,71 @@ namespace ack {
         public:
             using value_type = T;
 
-            constexpr flexbuffer() = default;
-            constexpr flexbuffer(const flexbuffer& rhs) = default;
-            constexpr flexbuffer(flexbuffer&& rhs) = default;
-            constexpr flexbuffer& operator=(const flexbuffer& rhs) = default;
-            constexpr flexbuffer& operator=(flexbuffer&& rhs) = default;
+            constexpr flexbuffer() noexcept = default;
+            constexpr flexbuffer(const flexbuffer& rhs)
+            {
+                sdata_ = rhs.sdata_;
+                size_  = rhs.size_;
+                dsize_ = rhs.dsize_;
+                if ( !std::is_constant_evaluated() ) {
+                    if ( rhs.ddata_ ) {
+                        ddata_ = new T[dsize_];
+                        memcpy( ddata_, rhs.ddata_ , dsize_ * sizeof( T ));
+                    }
+                }
+            }
 
-            // ~flex_buffer()  // destructor deleted otherwise flex_buffer can't be constructed at compile time
+            constexpr flexbuffer(flexbuffer&& rhs) noexcept
+            {
+                sdata_ = std::move( rhs.sdata_ );
+                size_  = rhs.size_;
+                dsize_ = rhs.dsize_;
+                ddata_ = rhs.ddata_;
+
+                rhs.size_  = 0;
+                rhs.dsize_ = 0;
+                rhs.ddata_ = nullptr;
+            }
+
+            constexpr flexbuffer& operator=(const flexbuffer& rhs)
+            {
+                if ( &rhs != this ) {
+                    this->clear();
+                    sdata_ = rhs.sdata_;
+                    size_  = rhs.size_;
+                    dsize_ = rhs.dsize_;
+                    if ( !std::is_constant_evaluated() ) {
+                        if ( rhs.ddata_ ) {
+                            ddata_ = new T[dsize_];
+                            memcpy( ddata_, rhs.ddata_ , dsize_ * sizeof( T ));
+                        }
+                    }
+                }
+                return *this;
+            }
+
+            constexpr flexbuffer& operator=(flexbuffer&& rhs) noexcept
+            {
+                if ( &rhs != this ) {
+                    this->clear();
+                    sdata_ = std::move( rhs.sdata_ );
+                    size_  = rhs.size_;
+                    dsize_ = rhs.dsize_;
+                    ddata_ = rhs.ddata_;
+
+                    rhs.size_  = 0;
+                    rhs.dsize_ = 0;
+                    rhs.ddata_ = nullptr;
+                }
+                return *this;
+            }
+
+            // constexpr ~flex_buffer()  // destructor deleted otherwise flex_buffer can't be constructed at compile time
             // {
             //     if ( std::is_constant_evaluated() ) {
-            //     if ( ddata_ ) {
-            //         delete[] ddata_;
-            //     }
+            //         if ( ddata_ ) {
+            //             delete[] ddata_;
+            //         }
             //     }
             // }
 
@@ -168,19 +222,18 @@ namespace ack {
                     }
                 }
                 else {
-                    if ( n > N && n > dsize ) {
-
+                    if ( n > N && n > dsize_ ) {
                         bool scpy = ( ddata_ == nullptr );
                         T* pold = ddata_;
 
-                        dsize += std::max( N, n );
-                        ddata_ = new T[dsize];
+                        dsize_ += std::max( N, n );
+                        ddata_ = new T[dsize_];
 
                         if ( scpy ) {
                             memcpy( ddata_, sdata_.data(), N * sizeof( T ));
                         }
-                        else{
-                            memcpy( ddata_, pold, (dsize - std::max( N, n )) * sizeof( T ));
+                        else {
+                            memcpy( ddata_, pold, (dsize_ - std::max( N, n )) * sizeof( T ));
                             delete[] pold;
                             pold = nullptr;
                         }
@@ -193,7 +246,14 @@ namespace ack {
 
             constexpr void clear()
             {
-                size_ = 0;
+                if ( !std::is_constant_evaluated() ) {
+                    if ( ddata_ ) {
+                        delete [] ddata_;
+                        ddata_ = nullptr;
+                    }
+                }
+                dsize_ = 0;
+                size_  = 0;
             }
 
             constexpr T* data()
@@ -203,7 +263,7 @@ namespace ack {
 
             constexpr const T* data() const
             {
-                return ddata_? ddata_ : sdata_.data();
+                return ddata_ ? ddata_ : sdata_.data();
             }
 
             constexpr std::size_t size() const
@@ -220,7 +280,7 @@ namespace ack {
             {
                 std::swap( sdata_, rhs.sdata_ );
                 if ( !std::is_constant_evaluated() ) {
-                    std::swap( dsize, rhs.dsize );
+                    std::swap( dsize_, rhs.dsize_ );
                     std::swap( ddata_, rhs.ddata_ );
                 }
                 std::swap( size_, rhs.size_ );
@@ -251,8 +311,8 @@ namespace ack {
         private:
             std::array<T, N> sdata_ = {};
             T* ddata_ = nullptr; // replace with std::vector<T> when C++20 constexpr ctor is supported
-            std::size_t size_ = 0;
-            std::size_t dsize = 0;
+            std::size_t size_  = 0;
+            std::size_t dsize_ = 0;
     };
     template<std::size_t N>
     using fixed_word_buffer = fixed_buffer<word_t, N>;

@@ -1282,7 +1282,7 @@ namespace ack {
             {
                 if (&rhs != this)
                 {
-                    buf_    = std::move(rhs.buf_);
+                    buf_    = std::move( rhs.buf_ );
                     size_   = rhs.size_;
                     is_neg_ = rhs.is_neg_;
                 }

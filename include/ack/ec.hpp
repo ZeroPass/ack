@@ -1697,7 +1697,7 @@ namespace ack {
         */
         [[nodiscard]]
         inline field_element_type compute_y(const field_element_type& x, const bool odd) const {
-            auto y = (( x * x + a ) * x + b ).sqrt();
+            auto y = (( x.sqr() + a ) * x + b ).sqrt();
             if ( odd != y.value().test_bit( 0 )) {
                 y = -y;
             }
