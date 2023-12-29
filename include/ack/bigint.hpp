@@ -1022,7 +1022,10 @@ namespace ack {
                 constexpr bool operator()(bigint& z, const bigint& x, const bigint& y) const
                 {
                     bool success = bigint::mul(z, x, y);
-                    return success && bigint::mod(z, z, *pm);
+                    bigint u;
+                    success = success && bigint::mod(u, z, *pm);
+                    z = std::move( u );
+                    return success;
                 }
             };
 
@@ -1031,7 +1034,9 @@ namespace ack {
                 constexpr bool operator()(bigint& y, const bigint& x) const
                 {
                     bool success = bigint::sqr(y, x);
-                    success = success && bigint::mod(y, y, *pm);
+                    bigint u; // storing result in temp var avoids pointer aliasing
+                    success = success && bigint::mod(u, y, *pm);
+                    y = std::move( u );
                     return success;
                 }
             };
