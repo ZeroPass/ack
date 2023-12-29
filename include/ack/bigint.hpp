@@ -509,7 +509,7 @@ namespace ack {
                 }
                 else {
                     //word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
-                    word_t t[sizeof(word_t) * yn];
+                    word_t t[yn];
                     qv = x[yn - 1] / (yTop + 1);
                     mul_word_n(t, y, qv, yn);
                     sub(x, x, t);
@@ -539,7 +539,7 @@ namespace ack {
             }
 
             //word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
-            word_t t[sizeof(word_t) * yn];
+            word_t t[yn];
             //word_t* t = (word_t*)alloca(sizeof(word_t) * yn);
             word_t rev = 0;
             // rev = M/2 M / yTop where M = 1 << word_bit_size
@@ -640,11 +640,11 @@ namespace ack {
             const size_t shift = word_bit_size - 1 - yTopBit;
             if (shift) {
                 //word_t* yShift = (word_t* )__builtin_alloca(sizeof(word_t) * yn);
-                word_t yShift[sizeof(word_t) * yn];
+                word_t yShift[yn];
                 //word_t* yShift = (word_t* )alloca(sizeof(word_t) * yn);
                 shl_n(yShift, y, shift, yn);
                 //word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * (xn + 1));
-                word_t xx[sizeof(word_t) * (xn + 1)];
+                word_t xx[xn + 1];
                 //word_t* xx = (word_t*)alloca(sizeof(word_t) * (xn + 1));
                 word_t v = shl_n(xx, x, shift, xn);
                 if (v) {
@@ -982,7 +982,7 @@ namespace ack {
                 }
 
                 //word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
-                word_t xx[sizeof(word_t) * xn];
+                word_t xx[xn];
                 detail::copy_n(xx, &x[0], xn);
 
                 word_t* qq = q ? &q->buf_[0] : nullptr;
@@ -1073,10 +1073,10 @@ namespace ack {
 
                 constexpr size_t w = 4; // don't change
                 constexpr size_t m = word_bit_size / w;
-                constexpr size_t tblSize = (1 << w) - 1;
-                bigint tbl[tblSize];
+                constexpr size_t tbl_size = (1 << w) - 1;
+                bigint tbl[tbl_size];
                 tbl[0] = x;
-                for (size_t i = 1; i < tblSize; i++) {
+                for (size_t i = 1; i < tbl_size; i++) {
                     if (!mul(tbl[i], tbl[i - 1], x)) {
                         return false;
                     }
@@ -1100,7 +1100,7 @@ namespace ack {
                             }
                         }
 
-                        const word_t idx = (v >> ((m - 1 - j) * w)) & tblSize;
+                        const word_t idx = (v >> ((m - 1 - j) * w)) & tbl_size;
                         if (idx) {
                             if (!mul(z, z, tbl[idx - 1])) {
                                 return false;
