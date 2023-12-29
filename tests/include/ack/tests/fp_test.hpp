@@ -383,6 +383,175 @@ namespace ack::tests {
             REQUIRE_EQUAL( fp_mul( bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11DCB29F14BACCFF196CE3F0AD2" ), -bn_t( "6AA11DCB29F14BACCFF196CE3F0AD2" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), -bn_t( "1A945B1E1A80601352171738E860E7922A6EBAAA6") )
         }
 
+        // fp_sqr
+        {
+            REQUIRE_EQUAL( fp_sqr( bn_t( 0 ), bn_t( 10 ) ), 0 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 1 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 2 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 3 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 4 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 5 ), bn_t( 10 ) ), 5 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 6 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 7 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 8 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 9 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 10 ), bn_t( 10 ) ), 0 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 11 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 12 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 13 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 14 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 15 ), bn_t( 10 ) ), 5 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 16 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 17 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 18 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 19 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 20 ), bn_t( 10 ) ), 0 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( 21 ), bn_t( 10 ) ), 1 )
+
+            REQUIRE_EQUAL( fp_sqr( bn_t( -1 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -2 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -3 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -4 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -5 ), bn_t( 10 ) ), 5 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -6 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -7 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -8 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -9 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -10 ), bn_t( 10 ) ), 0 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -11 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -12 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -13 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -14 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -15 ), bn_t( 10 ) ), 5 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -16 ), bn_t( 10 ) ), 6 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -17 ), bn_t( 10 ) ), 9 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -18 ), bn_t( 10 ) ), 4 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -19 ), bn_t( 10 ) ), 1 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -20 ), bn_t( 10 ) ), 0 )
+            REQUIRE_EQUAL( fp_sqr( bn_t( -21 ), bn_t( 10 ) ), 1 )
+
+            // Big numbers
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6A9E8EA23CB63C228F31" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "2C67B052BA023CE9E8FDB4FD5866C975511BC761") )
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6AA11DCB29F14BACCFF1" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "2C69D212BBBE3CE8824379FD4E8F6C414ABFA0E1") )
+
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6A9E8EA23CB63C228F31AD9268B4097F1" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "39FEFE5D80C16D765627970811925B885C5EE895B") )
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6AA11DCB29F14BACCFF196CE3F0AD2" )   , bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "61A073DF655912F0BD29C66FCD1FA82267512A555") )
+
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11DCB29F14BACCFF196CE3F0AD2" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "63221D108A0978A6D626C73774B45F2CBFF75E686") )
+            REQUIRE_EQUAL( fp_sqr( bn_t( "6AA11DCB29F14BACCFF196CE3F0AD2" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "61A073DF655912F0BD29C66FCD1FA82267512A555") )
+
+            REQUIRE_EQUAL( fp_sqr( -bn_t( "6A9E8EA23CB63C228F31AD9268B4097F1" ), bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "39FEFE5D80C16D765627970811925B885C5EE895B") )
+            REQUIRE_EQUAL( fp_sqr( -bn_t( "6AA11DCB29F14BACCFF196CE3F0AD2" )   , bn_t( "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11" ) ), bn_t( "61A073DF655912F0BD29C66FCD1FA82267512A555") )
+        }
+
+        // fp_sqrt
+        {
+            const auto test_sqrt = [](const bn_t& a, const bn_t& p) {
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( a, p ), p ), a )
+            };
+
+            const auto test_sqrt_neg = [](const bn_t& a, const bn_t& p) {
+                REQUIRE_EQUAL( p - fp_sqrt( fp_sqr( a, p ), p ), a )
+            };
+
+            // Test cases where p % 4 != 3
+            // i.e.: general Tonelli–Shanks algorithm
+            {
+                bn_t p = 17;
+                test_sqrt( 1, p );
+                test_sqrt( 2, p );
+                test_sqrt( 4, p );
+                test_sqrt( 6, p );
+                test_sqrt( 7, p );
+                test_sqrt( 8, p );
+                test_sqrt( 12, p );
+                test_sqrt( 14, p );
+
+                // special cases (negated roots, invalid roots)
+                test_sqrt( 0, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 3 ), p ), p ), 14 )
+                test_sqrt_neg( 3, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 5 ), p ), p ), 12 )
+                test_sqrt_neg( 5, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 9 ), p ), p ),  8 )
+                test_sqrt_neg( 9, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 10 ), p ), p ), 7 )
+                test_sqrt_neg( 10, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 11 ), p ), p ), 6 )
+                test_sqrt_neg( 11, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 13 ), p ), p ), 4 )
+                test_sqrt_neg( 13, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 15 ), p ), p ), 2 )
+                test_sqrt_neg( 15, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 16 ), p ), p ), 1 )
+                test_sqrt_neg( 16, p);
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 17 ), p ), p ), 0 )
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 18 ), p ), p ), 1 )
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 19 ), p ), p ), 2 )
+
+                // Additional tests
+                test_sqrt( 7, 13 );
+                test_sqrt( 37, 101 );
+                test_sqrt( 651, 1009 );
+                test_sqrt( 174, 1009 );
+                REQUIRE_EQUAL( fp_sqrt( bn_t( 1032 ) , bn_t( 1009 )), 0 )
+
+                test_sqrt( 378633312, 1000000009 );
+                test_sqrt( 378633312, 1000000009 );
+                test_sqrt( "15f73ba6b33d469cb81975ea86c422a33be005070c", "446c3b15f9926687d2c40534fdb564000000000241" );
+            }
+
+            // Test cases where p % 4 == 3
+            {
+                bn_t p = 11;
+                test_sqrt( 1, 11 );
+                test_sqrt( 3, 11 );
+                test_sqrt( 4, 11 );
+                test_sqrt( 5, 11 );
+                test_sqrt( 9, 11 );
+
+                // special cases (negated roots, invalid roots)
+                test_sqrt( 0, 11 );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 2 ), p ), p ), 9 )
+                test_sqrt_neg( 2, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 6 ), p ), p ), 5 )
+                test_sqrt_neg( 6, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 7 ), p ), p ), 4 )
+                test_sqrt_neg( 7, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 8 ), p ), p ), 3 )
+                test_sqrt_neg( 8, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 10 ), p ), p ), 1 )
+                test_sqrt_neg( 10, p );
+
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 11 ), p ), p ), 0 )
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 12 ), p ), p ), 1 )
+                REQUIRE_EQUAL( fp_sqrt( fp_sqr( bn_t( 13 ), p ), p ), 9 )
+
+                // Additional tests
+                test_sqrt( 791399408049ULL, 1000000000039ULL );
+
+                // secp256r1 G.y and p
+                test_sqrt( "4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5", "ffffffff00000001000000000000000000000000ffffffffffffffffffffffff" );
+
+                // secp256k1 G.y and p
+                test_sqrt( "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f" );
+            }
+        }
+
         // fp_div tests
         {
             REQUIRE_EQUAL( fp_div( bn_t( 0 ), bn_t( 1 ), bn_t( 10 ) ), 0 )
@@ -2270,7 +2439,6 @@ namespace ack::tests {
             fe *= 65536;
             REQUIRE_EQUAL( fe, 8 )
 
-
             REQUIRE_EQUAL( fpe_t( -1, modulus ).mul( fpe_t( -1, modulus ) ), 1 )
             REQUIRE_EQUAL( fpe_t( -1, modulus ).mul( bn_t( -1 ) )          , 1 )
             REQUIRE_EQUAL( fpe_t( -1, modulus ).mul( -1 )                  , 1 )
@@ -2767,6 +2935,181 @@ namespace ack::tests {
             REQUIRE_EQUAL( fe, -bn_t( "1A945B1E1A80601352171738E860E7922A6EBAAA6") )
         }
 
+        // fp_sqr
+        {
+            bn_t modulus = 10;
+
+            REQUIRE_EQUAL( fpe_t( bn_t(0), modulus ).sqr(), 0 );
+            REQUIRE_EQUAL( fpe_t( bn_t(1), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(2), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(3), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(4), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(5), modulus ).sqr(), 5 );
+            REQUIRE_EQUAL( fpe_t( bn_t(6), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(7), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(8), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(9), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(10), modulus ).sqr(), 0 );
+            REQUIRE_EQUAL( fpe_t( bn_t(11), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(12), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(13), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(14), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(15), modulus ).sqr(), 5 );
+            REQUIRE_EQUAL( fpe_t( bn_t(16), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(17), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(18), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(19), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(20), modulus ).sqr(), 0 );
+            REQUIRE_EQUAL( fpe_t( bn_t(21), modulus ).sqr(), 1 );
+
+            REQUIRE_EQUAL( fpe_t( bn_t(-1), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-2), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-3), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-4), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-5), modulus ).sqr(), 5 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-6), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-7), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-8), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-9), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-10), modulus ).sqr(), 0 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-11), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-12), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-13), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-14), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-15), modulus ).sqr(), 5 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-16), modulus ).sqr(), 6 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-17), modulus ).sqr(), 9 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-18), modulus ).sqr(), 4 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-19), modulus ).sqr(), 1 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-20), modulus ).sqr(), 0 );
+            REQUIRE_EQUAL( fpe_t( bn_t(-21), modulus ).sqr(), 1 );
+
+            // Big numbers
+            modulus = "6A9E8EA23CB63C228F31AD9268B4097F156D6AA11";
+
+            REQUIRE_EQUAL(fpe_t( bn_t("6A9E8EA23CB63C228F31"), modulus ).sqr(), bn_t("2C67B052BA023CE9E8FDB4FD5866C975511BC761"))
+            REQUIRE_EQUAL(fpe_t( bn_t("6AA11DCB29F14BACCFF1"), modulus ).sqr(), bn_t("2C69D212BBBE3CE8824379FD4E8F6C414ABFA0E1"))
+
+            REQUIRE_EQUAL(fpe_t( bn_t("6A9E8EA23CB63C228F31AD9268B4097F1"), modulus ).sqr(), bn_t("39FEFE5D80C16D765627970811925B885C5EE895B"))
+            REQUIRE_EQUAL(fpe_t( bn_t("6AA11DCB29F14BACCFF196CE3F0AD2"), modulus ).sqr(), bn_t("61A073DF655912F0BD29C66FCD1FA82267512A555"))
+
+            REQUIRE_EQUAL(fpe_t( bn_t("6A9E8EA23CB63C228F31AD9268B4097F156D6AA11DCB29F14BACCFF196CE3F0AD2" ), modulus).sqr(), bn_t("63221D108A0978A6D626C73774B45F2CBFF75E686"))
+            REQUIRE_EQUAL(fpe_t( bn_t("6AA11DCB29F14BACCFF196CE3F0AD2"), modulus ).sqr(), bn_t("61A073DF655912F0BD29C66FCD1FA82267512A555"))
+
+            REQUIRE_EQUAL(fpe_t( -bn_t("6A9E8EA23CB63C228F31AD9268B4097F1"), modulus ).sqr(), bn_t("39FEFE5D80C16D765627970811925B885C5EE895B"))
+            REQUIRE_EQUAL(fpe_t( -bn_t("6AA11DCB29F14BACCFF196CE3F0AD2"), modulus ).sqr(), bn_t("61A073DF655912F0BD29C66FCD1FA82267512A555"))
+        }
+
+        // fp_sqrt
+        {
+            const auto test_sqrt = [](const bn_t& a, const bn_t& p) {
+                REQUIRE_EQUAL( fpe_t( a, p ).sqr().sqrt(), a )
+            };
+
+            const auto test_sqrt_neg = [](const bn_t& a, const bn_t& p) {
+                REQUIRE_EQUAL( -fpe_t( a, p ).sqr().sqrt(), a )
+            };
+
+            // Test cases where p % 4 != 3
+            // i.e.: general Tonelli–Shanks algorithm
+            {
+                bn_t p = 17;
+                test_sqrt( 1, p );
+                test_sqrt( 2, p );
+                test_sqrt( 4, p );
+                test_sqrt( 6, p );
+                test_sqrt( 7, p );
+                test_sqrt( 8, p );
+                test_sqrt( 12, p );
+                test_sqrt( 14, p );
+
+                // special cases (negated roots, invalid roots)
+                test_sqrt( 0, p );
+
+                REQUIRE_EQUAL(fpe_t(bn_t(3), p).sqr().sqrt(), 14);
+                test_sqrt_neg(3, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(5), p).sqr().sqrt(), 12);
+                test_sqrt_neg(5, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(9), p).sqr().sqrt(), 8);
+                test_sqrt_neg(9, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(10), p).sqr().sqrt(), 7);
+                test_sqrt_neg(10, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(11), p).sqr().sqrt(), 6);
+                test_sqrt_neg(11, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(13), p).sqr().sqrt(), 4);
+                test_sqrt_neg(13, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(15), p).sqr().sqrt(), 2);
+                test_sqrt_neg(15, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(16), p).sqr().sqrt(), 1);
+                test_sqrt_neg(16, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(17), p).sqr().sqrt(), 0);
+                REQUIRE_EQUAL(fpe_t(bn_t(18), p).sqr().sqrt(), 1);
+                REQUIRE_EQUAL(fpe_t(bn_t(19), p).sqr().sqrt(), 2);
+
+                // Additional tests
+                test_sqrt( 7, 13 );
+                test_sqrt( 37, 101 );
+                test_sqrt( 651, 1009 );
+                test_sqrt( 174, 1009 );
+
+                p = bn_t( 1009 );
+                REQUIRE_EQUAL( fpe_t( bn_t( 1032 ) , p).sqrt(), 0 )
+
+                test_sqrt( 378633312, 1000000009 );
+                test_sqrt( 378633312, 1000000009 );
+                test_sqrt( "15f73ba6b33d469cb81975ea86c422a33be005070c", "446c3b15f9926687d2c40534fdb564000000000241" );
+            }
+
+            // Test cases where p % 4 == 3
+            {
+                bn_t p = 11;
+                test_sqrt( 1, 11 );
+                test_sqrt( 3, 11 );
+                test_sqrt( 4, 11 );
+                test_sqrt( 5, 11 );
+                test_sqrt( 9, 11 );
+
+                // special cases (negated roots, invalid roots)
+                test_sqrt( 0, 11 );
+
+                REQUIRE_EQUAL(fpe_t(bn_t(2), p).sqr().sqrt(), 9);
+                test_sqrt_neg(2, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(6), p).sqr().sqrt(), 5);
+                test_sqrt_neg(6, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(7), p).sqr().sqrt(), 4);
+                test_sqrt_neg(7, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(8), p).sqr().sqrt(), 3);
+                test_sqrt_neg(8, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(10), p).sqr().sqrt(), 1);
+                test_sqrt_neg(10, p);
+
+                REQUIRE_EQUAL(fpe_t(bn_t(11), p).sqr().sqrt(), 0);
+                REQUIRE_EQUAL(fpe_t(bn_t(12), p).sqr().sqrt(), 1);
+                REQUIRE_EQUAL(fpe_t(bn_t(13), p).sqr().sqrt(), 9);
+
+                // Additional tests
+                test_sqrt( 791399408049ULL, 1000000000039ULL );
+
+                // secp256r1 G.y and p
+                test_sqrt( "4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5", "ffffffff00000001000000000000000000000000ffffffffffffffffffffffff" );
+
+                // secp256k1 G.y and p
+                test_sqrt( "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f" );
+            }
+        }
+
         // Division tests
         {
             bn_t modulus = 10;
@@ -3208,6 +3551,117 @@ namespace ack::tests {
             fe  = fpe_t( a, modulus );
             fe /= b;
             REQUIRE_EQUAL( fe, "2F1F1FE098ED612AC09FE67F0DF9AE18AC979376C" )
+        }
+
+        // misc
+        {
+            // encoding to bytes
+            auto mod = bn_t( "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f" );
+            auto fe = fpe_t( 0U, mod );
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "00"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "00"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000000"_hex )
+
+            fe = 1;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "01"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "01"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0001"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000001"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000001"_hex )
+
+            fe = 0x0f;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "0F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "0F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "000F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "00000F"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "000000000000000000000000000000000000000000000000000000000000000F"_hex )
+
+            fe = 0xff;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "00FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "0000FF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "00000000000000000000000000000000000000000000000000000000000000FF"_hex )
+
+            fe = 0x100;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "0100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "000100"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000000100"_hex )
+
+            fe = 0x1000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "1000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "001000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000001000"_hex )
+
+            fe = 0x10000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "010000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000010000"_hex )
+
+            fe = 0x100000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "100000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000100000"_hex )
+
+            fe = 0xffffff;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "FFFFFF"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000000FFFFFF"_hex )
+
+            fe = 0x1000000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "01000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000001000000"_hex )
+
+            fe = 0x10000000;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ), "10000000"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()   , "0000000000000000000000000000000000000000000000000000000010000000"_hex )
+
+            fe = "2F1F1FE098ED612AC09FE67F0DF9AE18AC979376C";
+            REQUIRE_EQUAL( fe.to_bytes( 0 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ) , "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 21 ), "02F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 22 ), "0002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 23 ), "000002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()    , "000000000000000000000002F1F1FE098ED612AC09FE67F0DF9AE18AC979376C"_hex )
+
+            fe = mod - 1;
+            REQUIRE_EQUAL( fe.to_bytes( 0 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 1 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 2 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 3 ) , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 21 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 22 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 23 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 32 ), "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 33 ), "00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes( 34 ), "0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+            REQUIRE_EQUAL( fe.to_bytes()    , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2E"_hex )
+
+            // Should return empty bytes when invalid field element
+            fe = mod + 1;
+            REQUIRE_EQUAL( fe.to_bytes(), ""_hex )
+            REQUIRE_EQUAL( fpe_t::zero().to_bytes(), ""_hex )
+            REQUIRE_EQUAL( fpe_t::one().to_bytes(), ""_hex )
         }
     EOSIO_TEST_END // fp_element_test
 

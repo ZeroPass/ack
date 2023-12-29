@@ -13,7 +13,46 @@
 
 using namespace ack::ec_curve;
 
-[[eosio::action("ecdsak1"), eosio::read_only]]
+void helloack::check_ecdsa_brainpoolP256_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP256r1)::int_type;
+    const auto pub_point = brainpoolP256r1.make_point( qx, qy );
+    const auto h = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP256r1 signature verification failed!"
+    );
+}
+
+void helloack::check_ecdsa_brainpoolP320_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP320r1)::int_type;
+    const auto pub_point = brainpoolP320r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP320r1 signature verification failed!"
+    );
+}
+
+void helloack::check_ecdsa_brainpoolP384_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP384r1)::int_type;
+    const auto pub_point = brainpoolP384r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP384r1 signature verification failed!"
+    );
+}
+
+void helloack::check_ecdsa_brainpoolP512_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(brainpoolP512r1)::int_type;
+    const auto pub_point = brainpoolP512r1.make_point( qx, qy );
+    const auto h = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA brainpoolP512r1 signature verification failed!"
+    );
+}
+
 void helloack::check_ecdsa_secp256k1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
 {
     using int_type = typename decltype(secp256k1)::int_type;
@@ -24,7 +63,6 @@ void helloack::check_ecdsa_secp256k1_sha256(bytes_view qx, bytes_view qy, bytes_
     );
 }
 
-[[eosio::action("ecdsar1"), eosio::read_only]]
 void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
 {
     using int_type = typename decltype(secp256r1)::int_type;
@@ -35,7 +73,26 @@ void helloack::check_ecdsa_secp256r1_sha256(bytes_view qx, bytes_view qy, bytes_
     );
 }
 
-[[eosio::action("rsasha1"), eosio::read_only]]
+void helloack::check_ecdsa_secp384r1_sha384(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp384r1)::int_type;
+    const auto pub_point = secp384r1.make_point( qx, qy );
+    const auto h = sha384( msg );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA secp384r1 signature verification failed!"
+    );
+}
+
+void helloack::check_ecdsa_secp521r1_sha512(bytes_view qx, bytes_view qy, bytes_view msg, bytes_view r, bytes_view s)
+{
+    using int_type = typename decltype(secp521r1)::int_type;
+    const auto pub_point = secp521r1.make_point( qx, qy );
+    const auto h = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
+    assert_ecdsa( pub_point, h, int_type( r ), int_type( s ),
+      "ECDSA secp521r1 signature verification failed!"
+    );
+}
+
 void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -44,7 +101,6 @@ void helloack::check_rsa_sha1(rsa_public_key_view pubkey, bytes_view msg, bytes_
     );
 }
 
-[[eosio::action("rsapsssha1"), eosio::read_only]]
 void helloack::check_rsa_pss_sha1(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha1( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -53,7 +109,6 @@ void helloack::check_rsa_pss_sha1(rsa_pss_public_key_view pubkey, bytes_view msg
     );
 }
 
-[[eosio::action("rsasha2"), eosio::read_only]]
 void helloack::check_rsa_sha256(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -62,7 +117,6 @@ void helloack::check_rsa_sha256(rsa_public_key_view pubkey, bytes_view msg, byte
     );
 }
 
-[[eosio::action("rsapsssha2"), eosio::read_only]]
 void helloack::check_rsa_pss_sha256(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha256( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -71,7 +125,6 @@ void helloack::check_rsa_pss_sha256(rsa_pss_public_key_view pubkey, bytes_view m
     );
 }
 
-[[eosio::action("rsasha34"), eosio::read_only]]
 void helloack::check_rsa_sha384(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = sha384( msg );
@@ -80,7 +133,6 @@ void helloack::check_rsa_sha384(rsa_public_key_view pubkey, bytes_view msg, byte
     );
 }
 
-[[eosio::action("rsapsssha34"), eosio::read_only]]
 void helloack::check_rsa_pss_sha384(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = sha384( msg );
@@ -89,7 +141,6 @@ void helloack::check_rsa_pss_sha384(rsa_pss_public_key_view pubkey, bytes_view m
     );
 }
 
-[[eosio::action("rsasha512"), eosio::read_only]]
 void helloack::check_rsa_sha512(rsa_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -98,7 +149,6 @@ void helloack::check_rsa_sha512(rsa_public_key_view pubkey, bytes_view msg, byte
     );
 }
 
-[[eosio::action("rsapsssha512"), eosio::read_only]]
 void helloack::check_rsa_pss_sha512(rsa_pss_public_key_view pubkey, bytes_view msg, bytes_view sig)
 {
     const auto md = eosio::sha512( reinterpret_cast<const char*>( msg.data() ), msg.size() );
@@ -107,7 +157,6 @@ void helloack::check_rsa_pss_sha512(rsa_pss_public_key_view pubkey, bytes_view m
     );
 }
 
-[[eosio::action("btrsa1ksha1"), eosio::read_only]]
 void helloack::bt_rsa_1024_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha1::mod, rsa_1024_sha1::exp );
@@ -116,7 +165,6 @@ void helloack::bt_rsa_1024_sha1()
     );
 }
 
-[[eosio::action("btrsa2ksha1"), eosio::read_only]]
 void helloack::bt_rsa_2048_sha1()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha1::mod, rsa_2048_sha1::exp );
@@ -125,7 +173,6 @@ void helloack::bt_rsa_2048_sha1()
     );
 }
 
-[[eosio::action("btrsa1ksha2"), eosio::read_only]]
 void helloack::bt_rsa_1024_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha256::mod, rsa_1024_sha256::exp );
@@ -134,7 +181,6 @@ void helloack::bt_rsa_1024_sha256()
     );
 }
 
-[[eosio::action("btrsa2ksha2"), eosio::read_only]]
 void helloack::bt_rsa_2048_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha256::mod, rsa_2048_sha256::exp );
@@ -143,7 +189,6 @@ void helloack::bt_rsa_2048_sha256()
     );
 }
 
-[[eosio::action("btrsapss2sha2"), eosio::read_only]]
 void helloack::bt_rsa_pss_2048_sha256()
 {
     constexpr auto pubkey = rsa_pss_public_key_view( rsa_pss_mgf1_sha256_2048::mod, rsa_pss_mgf1_sha256_2048::exp, rsa_pss_mgf1_sha256_2048::salt_len );
@@ -152,7 +197,6 @@ void helloack::bt_rsa_pss_2048_sha256()
     );
 }
 
-[[eosio::action("btrsa4ksha2"), eosio::read_only]]
 void helloack::bt_rsa_4096_sha256()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_4096_sha256::mod, rsa_4096_sha256::exp );
@@ -161,7 +205,6 @@ void helloack::bt_rsa_4096_sha256()
     );
 }
 
-[[eosio::action("btrsapss4sha2"), eosio::read_only]]
 void helloack::bt_rsa_pss_4096_sha256()
 {
     constexpr auto pubkey = rsa_pss_public_key_view( rsa_pss_mgf1_sha256_4096::mod, rsa_pss_mgf1_sha256_4096::exp, rsa_pss_mgf1_sha256_4096::salt_len );
@@ -170,7 +213,6 @@ void helloack::bt_rsa_pss_4096_sha256()
     );
 }
 
-[[eosio::action("btrsa1ksha512"), eosio::read_only]]
 void helloack::bt_rsa_1024_sha512()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_1024_sha512::mod, rsa_1024_sha512::exp );
@@ -179,7 +221,6 @@ void helloack::bt_rsa_1024_sha512()
     );
 }
 
-[[eosio::action("btrsa2ksha512"), eosio::read_only]]
 void helloack::bt_rsa_2048_sha512()
 {
     constexpr auto pubkey = rsa_public_key_view( rsa_2048_sha512::mod, rsa_2048_sha512::exp );
@@ -188,8 +229,67 @@ void helloack::bt_rsa_2048_sha512()
     );
 }
 
-[[eosio::action("btecck1"), eosio::read_only]]
-void helloack::bt_ecc_secp256k1_sha256()
+void helloack::bt_ecdsa_brainpoolP256r1_sha256()
+{
+   using tv = brainpoolP256r1_sha256_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP256r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_brainpoolP256r1_sha256()
+{
+    using tv = brainpoolP256r1_sha256_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA brainpoolP256r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_brainpoolP320r1_sha384()
+{
+   using tv = brainpoolP320r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP320r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_brainpoolP320r1_sha384()
+{
+    using tv = brainpoolP320r1_sha384_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA brainpoolP320r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_brainpoolP384r1_sha384()
+{
+   using tv = brainpoolP384r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpoolP384r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_brainpoolP384r1_sha384()
+{
+    using tv = brainpoolP384r1_sha384_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA brainpoolP384r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_brainpoolP512r1_sha512()
+{
+   using tv = brainpoolP512r1_sha512_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA brainpool512r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_brainpoolP512r1_sha512()
+{
+    using tv = brainpoolP512r1_sha512_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA brainpoolP512r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_secp256k1_sha256()
 {
    using tv = secp256k1_sha256_tv;
    assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
@@ -197,11 +297,54 @@ void helloack::bt_ecc_secp256k1_sha256()
    );
 }
 
-[[eosio::action("bteccr1"), eosio::read_only]]
-void helloack::bt_ecc_secp256r1_sha256()
+void helloack::bt_ecdsa_recover_secp256k1_sha256()
+{
+    using tv = secp256k1_sha256_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA secp256k1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_secp256r1_sha256()
 {
    using tv = secp256r1_sha256_tv;
    assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
       "ECDSA secp256r1 signature verification failed!"
    );
+}
+
+void helloack::bt_ecdsa_recover_secp256r1_sha256()
+{
+    using tv = secp256r1_sha256_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA secp256r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_secp384r1_sha384()
+{
+   using tv = secp384r1_sha384_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA secp384r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_secp384r1_sha384()
+{
+    using tv = secp384r1_sha384_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA secp384r1 key recovery failed!" );
+}
+
+void helloack::bt_ecdsa_secp521r1_sha512()
+{
+   using tv = secp521r1_sha512_tv;
+   assert_ecdsa( tv::pub_point, tv::h, tv::r, tv::s,
+      "ECDSA secp521r1 signature verification failed!"
+   );
+}
+
+void helloack::bt_ecdsa_recover_secp521r1_sha512()
+{
+    using tv = secp521r1_sha512_tv;
+    const auto rkey = ecdsa_recover( tv::curve, tv::h, tv::r, tv::s, tv::recid );
+    check( rkey == tv::pub_point, "ECDSA secp521r1 key recovery failed!" );
 }

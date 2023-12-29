@@ -509,7 +509,7 @@ namespace ack {
                 }
                 else {
                     //word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
-                    word_t t[sizeof(word_t) * yn];
+                    word_t t[yn];
                     qv = x[yn - 1] / (yTop + 1);
                     mul_word_n(t, y, qv, yn);
                     sub(x, x, t);
@@ -539,7 +539,7 @@ namespace ack {
             }
 
             //word_t* t = (word_t*)__builtin_alloca(sizeof(word_t) * yn);
-            word_t t[sizeof(word_t) * yn];
+            word_t t[yn];
             //word_t* t = (word_t*)alloca(sizeof(word_t) * yn);
             word_t rev = 0;
             // rev = M/2 M / yTop where M = 1 << word_bit_size
@@ -640,11 +640,11 @@ namespace ack {
             const size_t shift = word_bit_size - 1 - yTopBit;
             if (shift) {
                 //word_t* yShift = (word_t* )__builtin_alloca(sizeof(word_t) * yn);
-                word_t yShift[sizeof(word_t) * yn];
+                word_t yShift[yn];
                 //word_t* yShift = (word_t* )alloca(sizeof(word_t) * yn);
                 shl_n(yShift, y, shift, yn);
                 //word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * (xn + 1));
-                word_t xx[sizeof(word_t) * (xn + 1)];
+                word_t xx[xn + 1];
                 //word_t* xx = (word_t*)alloca(sizeof(word_t) * (xn + 1));
                 word_t v = shl_n(xx, x, shift, xn);
                 if (v) {
@@ -982,7 +982,7 @@ namespace ack {
                 }
 
                 //word_t* xx = (word_t*)__builtin_alloca(sizeof(word_t) * xn);
-                word_t xx[sizeof(word_t) * xn];
+                word_t xx[xn];
                 detail::copy_n(xx, &x[0], xn);
 
                 word_t* qq = q ? &q->buf_[0] : nullptr;
@@ -1010,7 +1010,7 @@ namespace ack {
             static constexpr uint32_t count_trailing_zero(bigint& x)
             {
                 uint32_t s = 0;
-                while (x.is_even()) {
+                while ( x.is_even() ) {
                     x >>= 1;
                     s++;
                 }
@@ -1021,8 +1021,11 @@ namespace ack {
                 const bigint* pm;
                 constexpr bool operator()(bigint& z, const bigint& x, const bigint& y) const
                 {
-                    bool success = mul(z, x, y);
-                    return success && mod(z, z, *pm);
+                    bool success = bigint::mul(z, x, y);
+                    bigint u;
+                    success = success && bigint::mod(u, z, *pm);
+                    z = std::move( u );
+                    return success;
                 }
             };
 
@@ -1031,7 +1034,9 @@ namespace ack {
                 constexpr bool operator()(bigint& y, const bigint& x) const
                 {
                     bool success = bigint::sqr(y, x);
-                    success = success && bigint::mod(y, y, *pm);
+                    bigint u; // storing result in temp var avoids pointer aliasing
+                    success = success && bigint::mod(u, y, *pm);
+                    y = std::move( u );
                     return success;
                 }
             };
@@ -1071,12 +1076,12 @@ namespace ack {
                     }
                 }
 
-                const size_t w = 4; // don't change
-                const size_t m = word_bit_size / w;
-                const size_t tblSize = (1 << w) - 1;
-                bigint tbl[tblSize];
+                constexpr size_t w = 4; // don't change
+                constexpr size_t m = word_bit_size / w;
+                constexpr size_t tbl_size = (1 << w) - 1;
+                bigint tbl[tbl_size];
                 tbl[0] = x;
-                for (size_t i = 1; i < tblSize; i++) {
+                for (size_t i = 1; i < tbl_size; i++) {
                     if (!mul(tbl[i], tbl[i - 1], x)) {
                         return false;
                     }
@@ -1100,7 +1105,7 @@ namespace ack {
                             }
                         }
 
-                        word_t idx = (v >> ((m - 1 - j) * w)) & tblSize;
+                        const word_t idx = (v >> ((m - 1 - j) * w)) & tbl_size;
                         if (idx) {
                             if (!mul(z, z, tbl[idx - 1])) {
                                 return false;
@@ -1277,7 +1282,7 @@ namespace ack {
             {
                 if (&rhs != this)
                 {
-                    buf_    = std::move(rhs.buf_);
+                    buf_    = std::move( rhs.buf_ );
                     size_   = rhs.size_;
                     is_neg_ = rhs.is_neg_;
                 }
@@ -1489,9 +1494,9 @@ namespace ack {
                 *this = 0;
             }
 
-            /*
-                return bit_size(abs(*this))
-                @note return 1 if zero
+            /**
+            * Returns number of bits to represent this.
+            * @return Number of bits.
             */
             constexpr std::size_t bit_length() const
             {
@@ -1510,7 +1515,7 @@ namespace ack {
             {
                 size_t q = i / word_bit_size;
                 size_t r = i % word_bit_size;
-                if (q >= size()) {
+                if ( q >= size() ) {
                     return false;
                 }
 
@@ -1639,7 +1644,7 @@ namespace ack {
 
             constexpr uint32_t get_low32bit() const
             {
-                return (uint32_t)buf_[0];
+                return static_cast<uint32_t>( buf_[0] );
             }
 
             constexpr bool is_odd() const
@@ -1870,6 +1875,14 @@ namespace ack {
                 return div_mod(0, r, x, y);
             }
 
+            [[maybe_unused]] inline bigint mod(const bigint& m) const
+            {
+                bigint r;
+                const bool ret = mod(r, *this, m);
+                check( ret, "mod failed" );
+                return r;
+            }
+
             static constexpr void divs1(bigint& q, const bigint& x, int y)
             {
                 div_mods1(&q, x, y);
@@ -2070,7 +2083,6 @@ namespace ack {
             // TODO: make constexpr when _pow is constexpr
             static bool pow(bigint& z, const bigint& x, const bigint& y)
             {
-                assert(!y.is_neg_);
                 if (y.is_neg_) {
                     return false;
                 }
@@ -2086,8 +2098,7 @@ namespace ack {
             // TODO: make constexpr when _pow is constexpr
             static bool pow(bigint& z, const bigint& x, int64_t y)
             {
-                assert(y >= 0);
-                if (y < 0) {
+                if ( y < 0 ) {
                     return false;
                 }
 
@@ -2100,6 +2111,22 @@ namespace ack {
                 return _pow(z, x, u, un, Mul, Sqr);
             }
 
+            [[maybe_unused]] inline bigint pow(const bigint& e) const
+            {
+                bigint r;
+                const bool ret = pow(r, *this, e);
+                check( ret, "pow failed" );
+                return r;
+            }
+
+            [[maybe_unused]] inline bigint pow(int64_t e) const
+            {
+                bigint r;
+                const bool ret = pow(r, *this, e);
+                check( ret, "pow failed" );
+                return r;
+            }
+
             /*
                 z = x ^ y mod m
                 REMARK y >= 0;
@@ -2109,7 +2136,6 @@ namespace ack {
             template<typename UBuffer>
             static bool modexp(bigint& z, const bigint& x, const bigint<UBuffer>& y, const bigint& m)
             {
-                assert(!y.is_neg_);
                 if (y.is_neg_) {
                     return false;
                 }
@@ -2134,6 +2160,22 @@ namespace ack {
                 mm.pm = &m;
                 sm.pm = &m;
                 return _pow(z, x, &y, 1, mm, sm);
+            }
+
+            [[maybe_unused]] inline bigint modexp(const bigint& e, const bigint& m) const
+            {
+                bigint r;
+                const bool ret = modexp(r, *this, e, m);
+                check( ret, "modexp failed" );
+                return r;
+            }
+
+            [[maybe_unused]] inline bigint modexp(const word_t e, const bigint& m) const
+            {
+                bigint r;
+                const bool ret = modexp(r, *this, e, m);
+                check( ret, "modexp failed" );
+                return r;
             }
 
             /*
@@ -2286,7 +2328,7 @@ namespace ack {
             }
 
             // TODO: make constexpr when gcd is constexpr
-            bigint gcd(const bigint& y)
+            bigint gcd(const bigint& y) const
             {
                 bigint z;
                 gcd(z, *this, y);
@@ -2303,69 +2345,104 @@ namespace ack {
             }
 
             // TODO: make constexpr when lcm is constexpr
-            bigint lcm(const bigint& y)
+            bigint lcm(const bigint& y) const
             {
                 bigint z;
                 lcm(z, *this, y);
                 return z;
             }
 
-            /*
-                 1 if m is quadratic residue modulo n (i.e., there exists an x s.t. x^2 = m mod n)
-                 0 if m = 0 mod n
-                -1 otherwise
-                @note return legendre_symbol(m, p) for m and odd prime p
+           /**
+            * Calculates the Legendre symbol (m/n) using the Jacobi symbol,
+            * where 'm' is an integer and 'n' is an odd prime.
+            *
+            * The Jacobi symbol is a generalization of the Legendre symbol and is used in number theory to
+            * determine whether a given integer 'm' is a quadratic residue modulo an odd positive integer 'n'.
+            * The result of the Legendre symbol is:
+            *
+            *    1 if 'm' is a quadratic residue modulo 'n' (i.e. there exists such x that m = x^2 mod n).
+            *    0 if 'm' is 0 or divisible by 'n'.
+            *   -1 if 'm' is a non-quadratic residue modulo 'n'.
+            *
+            * This function assumes 'n' is an odd positive integer and 'a' is an integer.
+            *
+            * @param m The integer for which the Jacobi symbol is calculated.
+            * @param n The odd positive integer modulo which the Jacobi symbol is computed.
+            * @return The Legendre symbol (m/n) as described above.
             */
             // TODO: make constexpr when quot_rem is constexpr
             static int jacobi(bigint m, bigint n)
             {
-                assert(n.is_odd());
+                assert( n.is_odd() );
                 if ( n.is_one() ) return 1;
-                if (m < 0 || m > n) {
-                    quot_rem(0, m, m, n); // m = m mod n
+                if ( m < 0 || m > n ) {
+                    quot_rem( 0, m, m, n) ; // m = m mod n
                 }
                 if ( m.is_zero() ) return 0;
                 if ( m.is_one() )  return 1;
-                if ( gcd(m, n) != 1 ) return 0;
+                if ( gcd( m, n ) != 1 ) return 0;
 
                 int j = 1;
                 bigint t;
-                goto START;
-                while (m != 1) {
-                    if ((m.get_low32bit() % 4) == 3 && (n.get_low32bit() % 4) == 3) {
-                        j = -j;
+                bool start = true;
+                do {
+                    if ( !start ) {
+                        if (( m.get_low32bit() % 4 ) == 3 && ( n.get_low32bit() % 4 ) == 3 ) {
+                            j = -j;
+                        }
+                        mod( t, n, m );
+                        n = m;
+                        m = t;
                     }
-                    mod(t, n, m);
-                    n = m;
-                    m = t;
-                START:
-                    int s = count_trailing_zero(m);
-                    uint32_t nmod8 = n.get_low32bit() % 8;
-                    if ((s % 2) && (nmod8 == 3 || nmod8 == 5)) {
-                        j = -j;
-                    }
-                }
-                // TODO: transform loop to this code
-                // bool start = true;
-                // do {
-                //     if (!start) {
-                //         if ((m.get_low32bit() % 4) == 3 && (n.get_low32bit() % 4) == 3) {
-                //             j = -j;
-                //         }
-                //         mod(t, n, m);
-                //         n = m;
-                //         m = t;
-                //     }
 
-                //     int s = count_trailing_zero(m);
-                //     uint32_t nmod8 = n.get_low32bit() % 8;
-                //     if ((s % 2) && (nmod8 == 3 || nmod8 == 5)) {
+                    const int s = count_trailing_zero( m );
+                    const uint32_t nmod8 = n.get_low32bit() % 8;
+                    if (( s % 2 ) && ( nmod8 == 3 || nmod8 == 5 )) {
+                        j = -j;
+                    }
+                    start = false;
+
+                } while ( m != 1 );
+
+                // goto START;
+                // while (m != 1) {
+                //     if (( m.get_low32bit() % 4 ) == 3 && ( n.get_low32bit() % 4 ) == 3) {
                 //         j = -j;
                 //     }
-                //     start = false;
-                // } while (m != 1)
+                //     mod( t, n, m );
+                //     n = m;
+                //     m = t;
+                // START:
+                //     int s = count_trailing_zero( m );
+                //     uint32_t nmod8 = n.get_low32bit() % 8;
+                //     if (( s % 2 ) && ( nmod8 == 3 || nmod8 == 5 )) {
+                //         j = -j;
+                //     }
+                // }
 
                 return j;
+            }
+
+            /**
+            * Calculates the Legendre symbol (this/n) using the Jacobi symbol,
+            * where 'this' is an integer and 'n' is an odd prime.
+            *
+            * The Jacobi symbol is a generalization of the Legendre symbol and is used in number theory to
+            * determine whether a given integer 'm' is a quadratic residue modulo an odd positive integer 'n'.
+            * The result of the Legendre symbol is:
+            *
+            *    1 if 'this' is a quadratic residue modulo 'n' (i.e. there exists such x that m = x^2 mod n).
+            *    0 if 'this' is 0 or divisible by 'n'.
+            *   -1 if 'this' is a non-quadratic residue modulo 'n'.
+            *
+            * This function assumes 'n' is an odd positive integer.
+            *
+            * @param n The odd positive integer modulo which the Jacobi symbol is computed.
+            * @return The Legendre symbol (this/n) as described above.
+            */
+            inline int jacobi(bigint n) const
+            {
+                return jacobi( *this, n );
             }
 
             constexpr bigint& operator++() { adds1(*this, *this, 1); return *this; }
@@ -2530,6 +2607,9 @@ namespace ack {
      */
     template<std::size_t MaxBitSize>
     using fixed_bigint = bigint<fixed_word_buffer<bitsize_to_wordsize(MaxBitSize)>>;
+
+    template<std::size_t MaxBitSize>
+    using bignum = bigint<word_buffer<bitsize_to_wordsize(MaxBitSize)>>;
 
     template <typename>
     struct is_bigint : std::false_type {};

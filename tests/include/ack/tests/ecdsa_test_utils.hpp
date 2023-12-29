@@ -35,6 +35,18 @@ namespace ack::tests {
                     "ECDSA signature verification failed"
                 );
             })
+
+            // test recovery
+            bool recovered = false;
+            for (std::size_t i = 0; i < 4; i ++) {
+                if ( ecdsa_recover( q.curve(), hb, r, s, i, /*verify=*/true ) == q ) {
+                    REQUIRE_EQUAL( ecdsa_recover( q.curve(), digest, r, s, i, /*verify=*/true ), q )
+                    recovered = true;
+                    break;
+                }
+            }
+
+            REQUIRE_EQUAL( recovered, true )
         }
         else {
             REQUIRE_ASSERT( "ECDSA signature verification failed", [&]() {

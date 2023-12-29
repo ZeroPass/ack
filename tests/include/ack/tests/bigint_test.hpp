@@ -5690,6 +5690,7 @@ namespace ack::tests {
             using bn_t = fixed_bigint<384>;
             int64_t tv = 85; // b01010101
             auto t = bn_t(85);
+            bn_t r;
 
             REQUIRE_EQUAL( t * 0, 0 )
             REQUIRE_EQUAL( t * bn_t(0), 0 )
@@ -5709,8 +5710,18 @@ namespace ack::tests {
             REQUIRE_ASSERT( "division by zero", [&]() {
                 t / bn_t(0);
             })
+
+            REQUIRE_ASSERT( "mod by zero", [&]() {
+               bn_t::mod( t, t, 0 );
+            })
+            REQUIRE_ASSERT( "mod by zero", [&]() {
+                t.mod( 0 );
+            })
             REQUIRE_ASSERT( "mod by zero", [&]() {
                 t % 0;
+            })
+            REQUIRE_ASSERT( "mod by zero", [&]() {
+                t.mod( bn_t(0) );
             })
             REQUIRE_ASSERT( "mod by zero", [&]() {
                 t % bn_t(0);
@@ -5740,6 +5751,9 @@ namespace ack::tests {
             REQUIRE_EQUAL( 0 % t, 0 % tv )
             REQUIRE_EQUAL( bn_t(0) % t, 0 % tv )
 
+            bn_t::mod( r, t, 1 );
+            REQUIRE_EQUAL( r, 0 )
+            REQUIRE_EQUAL( t.mod( 1 ), 0 )
             REQUIRE_EQUAL( t % 1, 0 )
             REQUIRE_EQUAL( t % bn_t(1), 0 )
             REQUIRE_EQUAL( t % bn_t(1), 0 )
@@ -5772,6 +5786,39 @@ namespace ack::tests {
             REQUIRE_EQUAL( t , tv         )
             REQUIRE_EQUAL( t , 1219657095 )
 
+            // Test squqre
+            REQUIRE_EQUAL( bn_t::sqr( r, 0 ), true )
+            REQUIRE_EQUAL( r, 0 );
+            REQUIRE_EQUAL( bn_t(0).sqr(), 0 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 1 ), true )
+            REQUIRE_EQUAL( r, 1 );
+            REQUIRE_EQUAL( bn_t(1).sqr(), 1 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 2 ), true )
+            REQUIRE_EQUAL( r, 4 );
+            REQUIRE_EQUAL( bn_t(2).sqr(), 4 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 3 ), true )
+            REQUIRE_EQUAL( r, 9 );
+            REQUIRE_EQUAL( bn_t(3).sqr(), 9 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 4 ), true )
+            REQUIRE_EQUAL( r, 16 );
+            REQUIRE_EQUAL( bn_t(4).sqr(), 16 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 5 ), true )
+            REQUIRE_EQUAL( r, 25 );
+            REQUIRE_EQUAL( bn_t(5).sqr(), 25 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, 5 ), true )
+            REQUIRE_EQUAL( r, 25 );
+            REQUIRE_EQUAL( bn_t(5).sqr(), 25 )
+
+            REQUIRE_EQUAL( bn_t::sqr( r, bn_t("fefefefefefefefefefefefefefefefefefefefe") ), true )
+            REQUIRE_EQUAL( r, "fdff000102030405060708090a0b0c0d0e0f100f161514131211100f0e0d0c0b0a09080706050404" );
+            REQUIRE_EQUAL( bn_t("fefefefefefefefefefefefefefefefefefefefe").sqr(), "fdff000102030405060708090a0b0c0d0e0f100f161514131211100f0e0d0c0b0a09080706050404" )
+
             // Test division to final sum -405140023 (0xe7da0dc9)
             for ( uint32_t i = 1; i < 256; i *= 2 ) { // at 256 t & tv are 0
                 auto neg_i = -int32_t(i);
@@ -5793,56 +5840,99 @@ namespace ack::tests {
 
             // Test modulo
             // Modulus of a positive number
-            REQUIRE_EQUAL( bn_t(10) % bn_t(3), 10 % 3  )
+            bn_t::mod( r, bn_t(10) , bn_t(3) );
+            REQUIRE_EQUAL( r, 10 % 3 )
+            REQUIRE_EQUAL( bn_t(10).mod( 3 ) , bn_t(1) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(3), bn_t(1) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(3), bn_t(1) )
 
             // Modulus of a negative number
-            REQUIRE_EQUAL( bn_t(-10) % bn_t(3), -10 % 3 )
+            bn_t::mod( r, bn_t(-10) , bn_t(3) );
+            REQUIRE_EQUAL( r, -10 % 3 )
+            REQUIRE_EQUAL( bn_t(-10).mod( 3 ) , bn_t(-1) )
+            REQUIRE_EQUAL( bn_t(-10) % bn_t(3), bn_t(-1) )
             REQUIRE_EQUAL( bn_t(-10) % bn_t(3), bn_t(-1) )
 
             // Modulus of a number with a larger divisor
-            REQUIRE_EQUAL( bn_t(10) % bn_t(20), 10 % 20  )
+            bn_t::mod( r, bn_t(10) , bn_t(20) );
+            REQUIRE_EQUAL( r, 10 % 20 )
+            REQUIRE_EQUAL( bn_t(10).mod( 20 ) , bn_t(10) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(20), bn_t(10) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(20), bn_t(10) )
 
             // Modulus of a number with a smaller number
-            REQUIRE_EQUAL( bn_t(10) % bn_t(5), 10 % 5  )
+            bn_t::mod( r, bn_t(10) , bn_t(5) );
+            REQUIRE_EQUAL( r, 10 % 5 )
+            REQUIRE_EQUAL( bn_t(10).mod( 5 ) , bn_t(0) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(5), bn_t(0) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(5), bn_t(0) )
 
             // Modulus of a number with a negative divisor
-            REQUIRE_EQUAL( bn_t(10) % bn_t(-3), 10 % -3 )
+            bn_t::mod( r, bn_t(10) , bn_t(-3) );
+            REQUIRE_EQUAL( r, 10 % -3 )
+            REQUIRE_EQUAL( bn_t(10).mod( -3 ) , bn_t(1) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(-3), bn_t(1) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(-3), bn_t(1) )
 
             // Modulus of a negative number with a negative divisor
-            REQUIRE_EQUAL( bn_t(-10) % bn_t(-3), -10 % -3 )
+            bn_t::mod( r, bn_t(-10) , bn_t(-3) );
+            REQUIRE_EQUAL( r, -10 % -3 )
+            REQUIRE_EQUAL( bn_t(-10).mod( -3 ) , bn_t(-1) )
+            REQUIRE_EQUAL( bn_t(-10) % bn_t(-3), bn_t(-1) )
             REQUIRE_EQUAL( bn_t(-10) % bn_t(-3), bn_t(-1) )
 
             // Modulus of a number with a larger negative divisor
-            REQUIRE_EQUAL( bn_t(10) % bn_t(-20), 10 % -20 )
+            bn_t::mod( r, bn_t(10) , bn_t(-20) );
+            REQUIRE_EQUAL( r, 10 % -20 )
+            REQUIRE_EQUAL( bn_t(10).mod( -20 ) , bn_t(10) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(-20), bn_t(10) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(-20), bn_t(10) )
 
             // Modulus of a number with a smaller negative divisor
-            REQUIRE_EQUAL( bn_t(10) % bn_t(-5), 10 % -5 )
+            bn_t::mod( r, bn_t(10) , bn_t(-5) );
+            REQUIRE_EQUAL( r, 10 % -5 )
+            REQUIRE_EQUAL( bn_t(10).mod( -5 ) , bn_t(0) )
+            REQUIRE_EQUAL( bn_t(10) % bn_t(-5), bn_t(0) )
             REQUIRE_EQUAL( bn_t(10) % bn_t(-5), bn_t(0) )
 
             // Modulus of a negative number with a positive divisor
-            REQUIRE_EQUAL( bn_t(-10) % bn_t(3), -10 % 3  )
+            bn_t::mod( r, bn_t(-10) , bn_t(3) );
+            REQUIRE_EQUAL( r, -10 % 3 )
+            REQUIRE_EQUAL( bn_t(-10).mod( 3 ) , bn_t(-1) )
+            REQUIRE_EQUAL( bn_t(-10) % bn_t(3), bn_t(-1) )
             REQUIRE_EQUAL( bn_t(-10) % bn_t(3), bn_t(-1) )
 
             // Modulus of a number with a larger positive divisor
-            REQUIRE_EQUAL( bn_t(-10) % bn_t(20), -10 % 20  )
+            bn_t::mod( r, bn_t(-10) , bn_t(20) );
+            REQUIRE_EQUAL( r, -10 % 20 )
+            REQUIRE_EQUAL( bn_t(-10).mod( 20 ) , bn_t(-10) )
+            REQUIRE_EQUAL( bn_t(-10) % bn_t(20), bn_t(-10) )
             REQUIRE_EQUAL( bn_t(-10) % bn_t(20), bn_t(-10) )
 
             // Modulus of a number with a smaller positive divisor
-            REQUIRE_EQUAL( bn_t(-10) % bn_t(5), -10 % 5 )
+            bn_t::mod( r, bn_t(-10) , bn_t(5) );
+            REQUIRE_EQUAL( r, -10 % 5 )
+            REQUIRE_EQUAL( bn_t(-10).mod( 5 ) , bn_t(0) )
+            REQUIRE_EQUAL( bn_t(-10) % bn_t(5), bn_t(0) )
             REQUIRE_EQUAL( bn_t(-10) % bn_t(5), bn_t(0) )
 
             // Modulo with a 128-bit number
+            bn_t::mod( r, bn_t("FEDCBA9876543210") , bn_t("7FFFFFFFFFFFFFFF") );
+            REQUIRE_EQUAL( r, bn_t("7EDCBA9876543211") )
+            REQUIRE_EQUAL( bn_t("FEDCBA9876543210").mod( "7FFFFFFFFFFFFFFF" ) , bn_t("7EDCBA9876543211") )
             REQUIRE_EQUAL( bn_t("FEDCBA9876543210") % bn_t("7FFFFFFFFFFFFFFF"), bn_t("7EDCBA9876543211") )
 
             // Modulo with a 256-bit number
+            bn_t::mod( r, bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF") , bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE") );
+            REQUIRE_EQUAL( r, 1 )
+            REQUIRE_EQUAL( bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF").mod( "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE" ) , 1 )
             REQUIRE_EQUAL( bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF") % bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE"), 1 )
 
             // Modulo with a 384-bit number
+            bn_t::mod( r, bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF") , bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFF") );
+            REQUIRE_EQUAL( r, bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF") )
+            REQUIRE_EQUAL( bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF").mod( "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFF" ) ,
+                bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF") )
             REQUIRE_EQUAL( bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF") % bn_t("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFF"),
                 bn_t("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF") )
 
@@ -5912,11 +6002,94 @@ namespace ack::tests {
                 bn_t("F6546F0BA42282D01A41C096543F0AB1"))
 
             // Modulo
+            bn_t r;
+            bn_t::mod( r, bn_t("7890ABCDEF1234567890ABCDEF") , bn_t("1234567890ABCDEF7890ABCDEF") );
+            REQUIRE_EQUAL( r, bn_t("0B56A4FA8B0B60B9A52CA4FA55") )
+            REQUIRE_EQUAL( bn_t("7890ABCDEF1234567890ABCDEF").mod( "1234567890ABCDEF7890ABCDEF" ) , bn_t("0B56A4FA8B0B60B9A52CA4FA55"))
             REQUIRE_EQUAL( bn_t("7890ABCDEF1234567890ABCDEF") % bn_t("1234567890ABCDEF7890ABCDEF"), bn_t("0B56A4FA8B0B60B9A52CA4FA55"))
+
+            bn_t::mod( r, bn_t("FEDCBA9876543210FEDCBA9876543210") , bn_t("123456789ABCDEF0") );
+            REQUIRE_EQUAL( r, bn_t("E2E0") )
+            REQUIRE_EQUAL( bn_t("FEDCBA9876543210FEDCBA9876543210").mod( "123456789ABCDEF0" ) , bn_t("E2E0") )
             REQUIRE_EQUAL( bn_t("FEDCBA9876543210FEDCBA9876543210") % bn_t("123456789ABCDEF0"), bn_t("E2E0"))
+
+            bn_t::mod( r, bn_t("12F234E5C06B7D81B054ACFA69A654C90DB25E070") , bn_t("123456789ABCDEF0") );
+            REQUIRE_EQUAL( r, bn_t("09EA91C4E18F9580") )
+            REQUIRE_EQUAL( bn_t("12F234E5C06B7D81B054ACFA69A654C90DB25E070").mod( "123456789ABCDEF0" ) , bn_t("09EA91C4E18F9580"))
             REQUIRE_EQUAL( bn_t("12F234E5C06B7D81B054ACFA69A654C90DB25E070") % bn_t("123456789ABCDEF0"), bn_t("09EA91C4E18F9580"))
+
+            bn_t::mod( r, bn_t("38FE76F2495078F063E1070B7D6F41EA43FA450D6CDD9C76C23E40898C41C86D") , bn_t("3B3B3E3EF08C1D15C9B2A71ABEF78C01") );
+            REQUIRE_EQUAL( r, bn_t("7AA1C6CE8C187F138A5AA240F62F1BC") )
+            REQUIRE_EQUAL( bn_t("38FE76F2495078F063E1070B7D6F41EA43FA450D6CDD9C76C23E40898C41C86D").mod( "3B3B3E3EF08C1D15C9B2A71ABEF78C01" ) , bn_t("7AA1C6CE8C187F138A5AA240F62F1BC"))
             REQUIRE_EQUAL(bn_t("38FE76F2495078F063E1070B7D6F41EA43FA450D6CDD9C76C23E40898C41C86D") % bn_t("3B3B3E3EF08C1D15C9B2A71ABEF78C01"),
                 bn_t("7AA1C6CE8C187F138A5AA240F62F1BC"))
+        }
+
+        // test exponentiation
+        {
+            using bn_t = fixed_bigint<256*2>;
+
+            // Test cases taken from mcl library
+            bn_t x = 2;
+            bn_t y;
+            REQUIRE_EQUAL( bn_t::pow( y, x, 3 ), true )
+            REQUIRE_EQUAL( y, 8 )
+            REQUIRE_EQUAL( bn_t::pow( y, x, bn_t( 3 ) ), true )
+            REQUIRE_EQUAL( y, 8 )
+            REQUIRE_EQUAL( x.pow( 3 ), 8 )
+            REQUIRE_EQUAL( x.pow( bn_t( 3 )), 8 )
+
+            x = -2;
+            REQUIRE_EQUAL( bn_t::pow( y, x, 3 ), true )
+            REQUIRE_EQUAL( y, -8 )
+            REQUIRE_EQUAL( bn_t::pow( y, x, bn_t( 3 ) ), true )
+            REQUIRE_EQUAL( y, -8 )
+            REQUIRE_EQUAL( x.pow( 3 ), -8 )
+            REQUIRE_EQUAL( x.pow( bn_t( 3 ) ), -8 )
+
+            REQUIRE_EQUAL( bn_t::pow( y, x, -2 ), false );
+            REQUIRE_EQUAL( bn_t::pow( y, x, bn_t( -2 ) ), false );
+            REQUIRE_ASSERT( "pow failed", [&]() {
+                x.pow( -2 );
+            })
+            REQUIRE_ASSERT( "pow failed", [&]() {
+               x.pow( bn_t( -2 ) );
+            })
+        }
+
+        // test modular exponentiation
+        {
+            using bn_t = fixed_bigint<256*2>;
+
+            // Test cases taken from mcl library
+            bn_t x = 7;
+            bn_t m = 65537;
+            bn_t y;
+
+            REQUIRE_EQUAL( bn_t::modexp( y, x, 20U, m ), true )
+            REQUIRE_EQUAL( y, 55277 )
+            REQUIRE_EQUAL( x.modexp( 20, m ), 55277U )
+
+            REQUIRE_EQUAL( bn_t::modexp( y, x, m - 1, m ), true )
+            REQUIRE_EQUAL( y, 1 )
+            REQUIRE_EQUAL( x.modexp( m - 1, m ), 1U )
+
+            x = "2ac00f2c9af814438db241461ec7825ed88d00b0951049aa1b5116e6dca345ec";
+            y = "3fffffffffffffffffffffffffffffffaeabb739abd2280eeff497a3340d905";
+            m = "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141";
+
+            bn_t z;
+            REQUIRE_EQUAL( bn_t::modexp( z, x, y - 1, m ), true )
+            REQUIRE_EQUAL( z, "6af700db33cdba6c5710093d7f9109c83ebad54f09ebe71a057de152b336cc8e" )
+            REQUIRE_EQUAL( x.modexp( y - 1, m ), "6af700db33cdba6c5710093d7f9109c83ebad54f09ebe71a057de152b336cc8e" )
+
+            REQUIRE_EQUAL( bn_t::modexp( z, x, y, m ), true )
+            REQUIRE_EQUAL( z, 1 );
+            REQUIRE_EQUAL( x.modexp( y, m ), 1 );
+
+            REQUIRE_EQUAL( bn_t::modexp( z, x, x, m ), true )
+            REQUIRE_EQUAL( z, "46f4a4a79b4937c14e782cda991fcba63cfb9f51821571e6ce08b7a29b33583d" )
+            REQUIRE_EQUAL( x.modexp( x, m ), "46f4a4a79b4937c14e782cda991fcba63cfb9f51821571e6ce08b7a29b33583d" )
         }
 
         // Test multiplicative inverse
@@ -6021,6 +6194,11 @@ namespace ack::tests {
             REQUIRE_EQUAL( bn_t::modinv( r, "1FFFFFFFFFFFFFFFFFFFFFFFFFFC00000000000000000000000000", "1F01A01B01C01E01D01010101010101001" ), true )
             REQUIRE_EQUAL( r, "1545D9535378BE5B27D1096E3F179B336" )
             REQUIRE_EQUAL( bn_t("1FFFFFFFFFFFFFFFFFFFFFFFFFFC00000000000000000000000000").modinv( "1F01A01B01C01E01D01010101010101001" ), r )
+
+            // Test vector from Crypto++ library
+            REQUIRE_EQUAL( bn_t::modinv( r, "2F0500010000018000000000001C1C000000000000000A000B0000000000000000000000000000FDFFFFFF00000000", "3D2F050001" ), true )
+            REQUIRE_EQUAL( r, "3529E4FEBC" )
+            REQUIRE_EQUAL( bn_t("2F0500010000018000000000001C1C000000000000000A000B0000000000000000000000000000FDFFFFFF00000000").modinv( "3D2F050001" ), r )
 
             // 256-bit numbers
             REQUIRE_EQUAL( bn_t("AE7FD295C6DF1F6F882D9A0D65D621A58AA1E0A44C0EE24A504F1C192A8E07E0")
@@ -6310,6 +6488,52 @@ namespace ack::tests {
                 y = x;
                 y >>= i;
                 REQUIRE_EQUAL( y, z )
+            }
+        }
+
+        // GCD, LCM tests
+        {
+            using bn_t = fixed_bigint<64>;
+
+            // Test cases taken from mcl library
+            bn_t x = 12;
+            bn_t y = 18;
+            bn_t z;
+            bn_t::gcd( z, x, y );
+            REQUIRE_EQUAL( z, 6 )
+            REQUIRE_EQUAL( bn_t::gcd( x, y ), 6 )
+            REQUIRE_EQUAL( x.gcd( y ), 6 )
+
+            bn_t::lcm( z, x, y );
+            REQUIRE_EQUAL( z, 36 )
+            REQUIRE_EQUAL( x.lcm( y ), 36 )
+
+            bn_t::lcm( x, x, y );
+            REQUIRE_EQUAL( x, 36 )
+
+            REQUIRE_EQUAL( x.lcm( x ), 36 )
+            bn_t::lcm( x, x, x );
+            REQUIRE_EQUAL( x, 36 )
+        }
+
+        // Jacobi symbol
+        {
+            using bn_t = fixed_bigint<512>;
+            const auto tvs = std::vector<std::tuple<bn_t, bn_t, int>>{
+                {   0U,   3U,  0 }, // m == 0
+                {   0U,   1U,  1 },
+                {   1U,   1U,  1 },
+                {   3U,  21U,  0 }, // gcd == 3
+                { 123U,   1U,  1 },
+                {  45U,  77U, -1 },
+                {  60U, 121U,  1 },
+                { "029d429f012f5808f71c",     "0cd0a8b60a81ee3b",  1 },
+                { "029d429f012f5808f71c", "0753412f6ff3f8f8463b", -1 },
+            };
+
+            for ( const auto& [m, n, r] : tvs ) {
+                REQUIRE_EQUAL( bn_t::jacobi( m, n ), r )
+                REQUIRE_EQUAL( m.jacobi( n )       , r )
             }
         }
     EOSIO_TEST_END
