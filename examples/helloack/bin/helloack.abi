@@ -13,42 +13,82 @@
     ],
     "structs": [
         {
-            "name": "bt_ecc_brainpoolP320r1_sha384",
+            "name": "bt_ecdsa_brainpoolP256r1_sha256",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_brainpoolP256r1_sha256",
+            "name": "bt_ecdsa_brainpoolP320r1_sha384",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_brainpoolP384r1_sha384",
+            "name": "bt_ecdsa_brainpoolP384r1_sha384",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_brainpoolP521r1_sha512",
+            "name": "bt_ecdsa_brainpoolP521r1_sha512",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_secp256k1_sha256",
+            "name": "bt_ecdsa_recover_brainpoolP256r1_sha256",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_secp256r1_sha256",
+            "name": "bt_ecdsa_recover_brainpoolP320r1_sha384",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_secp384r1_sha384",
+            "name": "bt_ecdsa_recover_brainpoolP384r1_sha384",
             "base": "",
             "fields": []
         },
         {
-            "name": "bt_ecc_secp521r1_sha512",
+            "name": "bt_ecdsa_recover_brainpoolP521r1_sha512",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_recover_secp256k1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_recover_secp256r1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_recover_secp384r1_sha384",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_recover_secp521r1_sha512",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_secp256k1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_secp256r1_sha256",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_secp384r1_sha384",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "bt_ecdsa_secp521r1_sha512",
             "base": "",
             "fields": []
         },
@@ -449,42 +489,82 @@
     "actions": [
         {
             "name": "bteccbr1",
-            "type": "bt_ecc_brainpoolP256r1_sha256",
+            "type": "bt_ecdsa_brainpoolP256r1_sha256",
             "ricardian_contract": ""
         },
         {
             "name": "bteccbr13",
-            "type": "bt_ecc_brainpoolP384r1_sha384",
+            "type": "bt_ecdsa_brainpoolP384r1_sha384",
             "ricardian_contract": ""
         },
         {
             "name": "bteccbr132",
-            "type": "bt_ecc_brainpoolP320r1_sha384",
+            "type": "bt_ecdsa_brainpoolP320r1_sha384",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccbr132r",
+            "type": "bt_ecdsa_recover_brainpoolP320r1_sha384",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccbr13r",
+            "type": "bt_ecdsa_recover_brainpoolP384r1_sha384",
             "ricardian_contract": ""
         },
         {
             "name": "bteccbr15",
-            "type": "bt_ecc_brainpoolP521r1_sha512",
+            "type": "bt_ecdsa_brainpoolP521r1_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccbr15r",
+            "type": "bt_ecdsa_recover_brainpoolP521r1_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccbr1r",
+            "type": "bt_ecdsa_recover_brainpoolP256r1_sha256",
             "ricardian_contract": ""
         },
         {
             "name": "btecck1",
-            "type": "bt_ecc_secp256k1_sha256",
+            "type": "bt_ecdsa_secp256k1_sha256",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "btecck1r",
+            "type": "bt_ecdsa_recover_secp256k1_sha256",
             "ricardian_contract": ""
         },
         {
             "name": "bteccr1",
-            "type": "bt_ecc_secp256r1_sha256",
+            "type": "bt_ecdsa_secp256r1_sha256",
             "ricardian_contract": ""
         },
         {
             "name": "bteccr13",
-            "type": "bt_ecc_secp384r1_sha384",
+            "type": "bt_ecdsa_secp384r1_sha384",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccr13r",
+            "type": "bt_ecdsa_recover_secp384r1_sha384",
             "ricardian_contract": ""
         },
         {
             "name": "bteccr15",
-            "type": "bt_ecc_secp521r1_sha512",
+            "type": "bt_ecdsa_secp521r1_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccr15r",
+            "type": "bt_ecdsa_recover_secp521r1_sha512",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "bteccr1r",
+            "type": "bt_ecdsa_recover_secp256r1_sha256",
             "ricardian_contract": ""
         },
         {

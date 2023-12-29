@@ -240,47 +240,95 @@ struct [[eosio::contract]] helloack : public eosio::contract {
      * Benchmark action for testing verification of 1 brainpoolP256r1 ECDSA signature.
      */
     [[eosio::action("bteccbr1"), eosio::read_only]]
-    void bt_ecc_brainpoolP256r1_sha256();
+    void bt_ecdsa_brainpoolP256r1_sha256();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from brainpoolP256r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr1r"), eosio::read_only]]
+    void bt_ecdsa_recover_brainpoolP256r1_sha256();
 
     /**
      * Benchmark action for testing verification of 1 brainpoolP320r1 ECDSA signature.
      */
     [[eosio::action("bteccbr132"), eosio::read_only]]
-    void bt_ecc_brainpoolP320r1_sha384();
+    void bt_ecdsa_brainpoolP320r1_sha384();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from brainpoolP320r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr132r"), eosio::read_only]]
+    void bt_ecdsa_recover_brainpoolP320r1_sha384();
 
     /**
      * Benchmark action for testing verification of 1 brainpoolP384r1 ECDSA signature.
      */
     [[eosio::action("bteccbr13"), eosio::read_only]]
-    void bt_ecc_brainpoolP384r1_sha384();
+    void bt_ecdsa_brainpoolP384r1_sha384();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from brainpoolP384r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr13r"), eosio::read_only]]
+    void bt_ecdsa_recover_brainpoolP384r1_sha384();
 
     /**
      * Benchmark action for testing verification of 1 brainpoolP512r1 ECDSA signature.
      */
     [[eosio::action("bteccbr15"), eosio::read_only]]
-    void bt_ecc_brainpoolP521r1_sha512();
+    void bt_ecdsa_brainpoolP512r1_sha512();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from brainpoolP512r1 ECDSA signature.
+     */
+    [[eosio::action("bteccbr15r"), eosio::read_only]]
+    void bt_ecdsa_recover_brainpoolP512r1_sha512();
 
     /**
      * Benchmark action for testing verification of 1 secp256k1 ECDSA signature.
      */
     [[eosio::action("btecck1"), eosio::read_only]]
-    void bt_ecc_secp256k1_sha256();
+    void bt_ecdsa_secp256k1_sha256();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from secp256k1 ECDSA signature.
+     */
+    [[eosio::action("btecck1r"), eosio::read_only]]
+    void bt_ecdsa_recover_secp256k1_sha256();
 
     /**
      * Benchmark action for testing verification of 1 secp256r1 ECDSA signature.
      */
     [[eosio::action("bteccr1"), eosio::read_only]]
-    void bt_ecc_secp256r1_sha256();
+    void bt_ecdsa_secp256r1_sha256();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from secp256r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr1r"), eosio::read_only]]
+    void bt_ecdsa_recover_secp256r1_sha256();
 
     /**
      * Benchmark action for testing verification of 1 secp384r1 ECDSA signature.
      */
     [[eosio::action("bteccr13"), eosio::read_only]]
-    void bt_ecc_secp384r1_sha384();
+    void bt_ecdsa_secp384r1_sha384();
 
     /**
-     * Benchmark action for testing verification of 1 secp384r1 ECDSA signature.
+     * Benchmark action for testing recovery of 1 key from secp384r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr13r"), eosio::read_only]]
+    void bt_ecdsa_recover_secp384r1_sha384();
+
+    /**
+     * Benchmark action for testing verification of 1 secp521r1 ECDSA signature.
      */
     [[eosio::action("bteccr15"), eosio::read_only]]
-    void bt_ecc_secp521r1_sha512();
+    void bt_ecdsa_secp521r1_sha512();
+
+    /**
+     * Benchmark action for testing recovery of 1 key from secp521r1 ECDSA signature.
+     */
+    [[eosio::action("bteccr15r"), eosio::read_only]]
+    void bt_ecdsa_recover_secp521r1_sha512();
 };
