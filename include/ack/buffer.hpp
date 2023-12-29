@@ -223,7 +223,7 @@ namespace ack {
                 }
                 else {
                     if ( n > N && n > dsize_ ) {
-                        bool scpy = ( ddata_ == nullptr );
+                        const bool scpy = ( ddata_ == nullptr );
                         T* pold = ddata_;
 
                         dsize_ += std::max( N, n );
