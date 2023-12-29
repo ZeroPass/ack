@@ -26,7 +26,11 @@ namespace ack::tests {
         REQUIRE_EQUAL( secp256k1.g.y, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8" )
         REQUIRE_EQUAL( secp256k1.n  , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141" )
         REQUIRE_EQUAL( secp256k1.h  , 1 )
-        REQUIRE_EQUAL( secp256k1.verify(), true )
+
+        REQUIRE_EQUAL( secp256k1.a_is_minus_3, false  )
+        REQUIRE_EQUAL( secp256k1.a_is_zero   , true )
+        REQUIRE_EQUAL( secp256k1.p_minus_n   , "14551231950b75fc4402da1722fc9baee" )
+        REQUIRE_EQUAL( secp256k1.verify()    , true )
 
         // Custom test vectors
         {

@@ -28,7 +28,11 @@ namespace ack::tests {
         REQUIRE_EQUAL( brainpoolP320r1.g.y, "14fdd05545ec1cc8ab4093247f77275e0743ffed117182eaa9c77877aaac6ac7d35245d1692e8ee1" )
         REQUIRE_EQUAL( brainpoolP320r1.n  , "d35e472036bc4fb7e13c785ed201e065f98fcfa5b68f12a32d482ec7ee8658e98691555b44c59311" )
         REQUIRE_EQUAL( brainpoolP320r1.h  , 1 )
-        REQUIRE_EQUAL( brainpoolP320r1.verify(), true )
+
+        REQUIRE_EQUAL( brainpoolP320r1.a_is_minus_3, false )
+        REQUIRE_EQUAL( brainpoolP320r1.a_is_zero   , false )
+        REQUIRE_EQUAL( brainpoolP320r1.p_minus_n   , "14064fb4c224a8b248a0d933f7642bd56aced9b16" )
+        REQUIRE_EQUAL( brainpoolP320r1.verify()    , true )
 
         // Test vectors from Google's Wycheproof RSA signature verification tests.
         // Generated from: 'ecdsa_brainpoolP320r1_sha384_p1363_test.json'

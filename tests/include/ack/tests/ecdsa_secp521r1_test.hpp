@@ -28,7 +28,11 @@ namespace ack::tests {
         REQUIRE_EQUAL( secp521r1.g.y, "011839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650" )
         REQUIRE_EQUAL( secp521r1.n  , "01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa51868783bf2f966b7fcc0148f709a5d03bb5c9b8899c47aebb6fb71e91386409" )
         REQUIRE_EQUAL( secp521r1.h  , 1 )
-        REQUIRE_EQUAL( secp521r1.verify(), true )
+
+        REQUIRE_EQUAL( secp521r1.a_is_minus_3, true  )
+        REQUIRE_EQUAL( secp521r1.a_is_zero   , false )
+        REQUIRE_EQUAL( secp521r1.p_minus_n   , "5ae79787c40d069948033feb708f65a2fc44a36477663b851449048e16ec79bf6" )
+        REQUIRE_EQUAL( secp521r1.verify()    , true )
 
         // NIST FIPS 186-4 test vectors
         // https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/digital-signatures

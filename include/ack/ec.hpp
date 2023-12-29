@@ -1154,15 +1154,15 @@ namespace ack {
             // https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-1998-cmo-2
             // note: faster than https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian.html#addition-add-2007-bl
 
-            const bool bZ1IsOne = p.z.is_one();
-            const bool bZ2IsOne = q.z.is_one();
-            if ( bZ1IsOne && bZ2IsOne ) {
+            const bool z1_is_one = p.z.is_one();
+            const bool z2_is_one = q.z.is_one();
+            if ( z1_is_one && z2_is_one ) {
                 return add_z_1( p, q );
             }
-            else if ( bZ1IsOne ) {
+            else if ( z1_is_one ) {
                 return add_z2_1( q, p );
             }
-            else if ( bZ2IsOne ) {
+            else if ( z2_is_one ) {
                 return add_z2_1( p, q );
             }
             return add_ne( p, q );
@@ -1189,16 +1189,16 @@ namespace ack {
             // note: this algo was measured to be the most efficient of them all.
 
             const auto M = [](const auto& p) {
-                const bool bZIsOne = p.z.is_one();
+                const bool z_is_one = p.z.is_one();
                 if ( p.curve().a_is_zero ) {
                     return 3 * p.x.sqr();
                 }
                 else if ( p.curve().a_is_minus_3 ) {
-                    const auto z2 = bZIsOne ? p.z : p.z.sqr();
+                    const auto z2 = z_is_one ? p.z : p.z.sqr();
                     return 3 * ( p.x - z2 ) * ( p.x + z2 );
                 }
                 else {
-                    const auto z4 = bZIsOne ? p.z : p.z.sqr().sqr();
+                    const auto z4 = z_is_one ? p.z : p.z.sqr().sqr();
                     return 3 * p.x.sqr() + p.curve().a * z4;
                 }
             }( p );
@@ -1526,9 +1526,9 @@ namespace ack {
         const IntT       n;      // order of g
         const uint32_t   h;      // cofactor, i.e.: h = #E(Fp) / n
                                  //     #E(Fp) - number of points on the curve
-        const bool a_is_minus_3; // cached a == p - 3
-        const bool a_is_zero;    // cached a == 0
-        const IntT p_minus_n;    // cached p - n; used for checking the maximum negative point coordinate
+        const bool a_is_minus_3; // cached constant a == p - 3
+        const bool a_is_zero;    // cached constant a == 0
+        const IntT p_minus_n;    // cached constant p - n; used for checking the maximum negative point coordinate
 
         /**
          * Creates a curve from the given parameters.
@@ -1732,7 +1732,7 @@ namespace ack {
             if ( y.is_zero() ) {
                 return PointT{};
             }
-            return make_point<PointT>( std::move( x ), y );
+            return make_point<PointT>( std::move( x ), std::move( y ) );
         }
 
         /**
